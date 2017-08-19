@@ -3,6 +3,12 @@
 The proxy for local managment of microservices. The goal of ergo is to be
 a reverse proxy that follow the unix filosofy of do only one thing.
 
+## Installation
+
+```
+go get cristianoliveira/ergo
+```
+
 ## Usage
 
 Ergo looks for a `.ergo` in the current folder. It should contain the names and
