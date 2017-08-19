@@ -106,5 +106,5 @@ func main() {
 	config := loadConfig()
 	proxy := NewErgoProxy(config)
 	http.Handle("/", proxy)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":2000", nil)
 }

@@ -19,7 +19,7 @@ Ergo looks for a `.ergo` inside the current folder. It must contain the names an
 url of the services following the same format as the `/etc/hosts` the main difference
 is that Ergo also consider the port specified.
 
-**Ergo runs on `localhost:8080` you have to configure it as your proxy in Network configs of your system**
+**Ergo runs on `127.0.0.1:2000` you have to configure it as your proxy in Network configs of your system**
 
 Let's start:
 ```
@@ -29,7 +29,7 @@ Now you are able to access: `http://ergoproxy.dev`.
 Ergo redirects anything that finish with `.dev` to the configured url.
 Simple, no magic involved.
 
-Do you want add more services? So is simple add more lines in `.ergo`:
+Do you want add more services? So is simple, just add more lines in `.ergo`:
 ```
 echo "otherservice=http://localhost:5000" >> .ergo
 ```
