@@ -90,7 +90,7 @@ func loadConfig() *Config {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		config := strings.Split(line, "=")
+		config := strings.Split(line, " ")
 		name, url := config[0], config[1]
 		services = append(services, Service{Name: name, Url: url})
 	}
