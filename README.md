@@ -3,6 +3,8 @@
 The proxy for local microservices managment and development.
 The goal of ergo is to be a simple reverse proxy that follow the unix philosophy of doing only one thing.
 
+Simple means no magic involved.
+
 This project is under development but it is usable. Feel free to give me
 feedback and opening issues. Suggestions and contributions are welcome. :)
 
