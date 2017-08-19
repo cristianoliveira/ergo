@@ -3,10 +3,16 @@
 The proxy for local microservices managment and development.
 The goal of ergo is to be a simple reverse proxy that follow the unix philosophy of doing only one thing.
 
+# Why
+
+The problem that Ergo solves is simple. I had a bunch of services wich one
+running on a different port. Locally was complicated to remember each port
+so I wanted to put a proper name for each service and access then by it's name.
+
 ## Installation
 
 ```
-go get cristianoliveira/ergo
+go get github.com/cristianoliveira/ergo
 ```
 
 ## Usage
