@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/cristianoliveira/ergo/commands"
 	"github.com/cristianoliveira/ergo/proxy"
-	"net/http"
 	"os"
 )
 
@@ -17,6 +17,7 @@ The local proxy agent for multiple services development.
 Usage:
   ergo [options]
   ergo run [options]
+  ergo list
 
 Options:
   -h      Shows this message.
@@ -24,9 +25,16 @@ Options:
 `
 
 func main() {
-	run := flag.Bool("run", true, "Starts the proxy service")
+	var command string = "run"
+
+	if len(os.Args) > 1 {
+		command = os.Args[1]
+	}
+
 	help := flag.Bool("-h", false, "Shows ergs's help.")
 	version := flag.Bool("-v", false, "Shows ergs's version.")
+
+	flag.Parse()
 
 	if *help {
 		fmt.Println(USAGE)
@@ -38,18 +46,14 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *run {
-		config := proxy.LoadConfig("./.ergo")
+	config := proxy.LoadConfig("./.ergo")
+	switch command {
+	case "list":
+		commands.List(config)
+		os.Exit(0)
 
-		http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
-			http.ServeFile(w, r, "./resources/proxy.pac")
-		})
+	case "run":
+		commands.Run(config)
 
-		proxy := proxy.NewErgoProxy(config)
-		http.Handle("/", proxy)
-
-		fmt.Println("Ergo Proxy listening on port: 2000")
-		http.ListenAndServe(":2000", nil)
-		return
 	}
 }

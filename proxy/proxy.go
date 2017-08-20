@@ -46,3 +46,13 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 
 	return &httputil.ReverseProxy{Director: director}
 }
+
+func ServeProxy(config *Config) {
+	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./resources/proxy.pac")
+	})
+
+	http.Handle("/", NewErgoProxy(config))
+
+	http.ListenAndServe(":2000", nil)
+}
