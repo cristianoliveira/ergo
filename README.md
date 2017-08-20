@@ -30,6 +30,14 @@ on top of ergo's interface. That's the magic of the unix philosophy, composition
 
 ## Installation
 
+### Osx
+```
+brew tap cristianoliveira/tap
+brew install ergo
+```
+
+
+### Using golang
 ```
 go install github.com/cristianoliveira/ergo
 ```
