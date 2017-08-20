@@ -6,11 +6,11 @@
 <span>Ergo Proxy - The local proxy agent for multiple services development</span>
 </p>
 
-The managment of multiple apps running over diferent ports made easy. Create custom local domains for your dev environment.
+The management of multiple apps running over different ports made easy. Create custom local domains for your dev environment.
 
 The Ergo's goal is to be a simple reverse proxy that follows the [unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
 
-Simplicity means no magic involved. Just a flexible reverse proxy that extends the well known `/etc/hosts` declaration.
+Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
 **Disclaimer**
 
@@ -19,14 +19,11 @@ feedback and opening issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-When dealing with multiple apps locally is really annoying have to remember each
-port that represent each service and it's gets even worse when you have microservices.
-So I wanted a simple way to give a proper local domain for each app.
-Ergos comes to solve this simple problem.
+When dealing with multiple apps locally is really annoying having to remember each port that represents each service and it gets even worse when you have microservices. So I wanted a simple way to give a proper local domain for each app. Ergos comes to solve this simple problem.
 
-It's not aim to be fancy. It solve this problem and nothing else.
+It doesn't aim to be fancy. It solves this problem and nothing else.
 Do you want a web interface? You can either try another project or create it
-on top of ergo's interface. That's the magic of the unix philosophy, composition. :D
+on top of ergo's interface. That's the magic of the Unix philosophy, composition. :D
 
 ## Installation
 
@@ -49,9 +46,7 @@ Make sure you have `$GOPATH/bin` in your path. `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
-Ergo looks for a `.ergo` file inside the current folder. It must contain the names and
-url of the services following the same format as the `/etc/hosts` the main difference
-is that Ergo also consider the port specified.
+Ergo looks for a `.ergo` file inside the current folder. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url) the main difference is that it also considers the port specified.
 
 **Set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config (Details below)**
 
@@ -62,9 +57,10 @@ ergo run
 ```
 Now you are able to access: `http://ergoproxy.dev`.
 Ergo redirects anything that finish with `.dev` to the configured url.
-Simple, no magic involved.
 
-Do you want add more services? So is simple, just add more lines in `.ergo`:
+Simple right? No magic involved.
+
+Do you want add more services? So is easy, just add more lines in `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
 ergo run
