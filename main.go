@@ -1,21 +1,55 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/cristianoliveira/ergo/proxy"
 	"net/http"
+	"os"
 )
 
+const VERSION = "0.0.2"
+
+const USAGE = `
+Ergo proxy.
+The local proxy agent for multiple services development.
+
+Usage:
+  ergo [options]
+  ergo run [options]
+
+Options:
+  -h      Shows this message.
+  -v      Shows ergs's version.
+`
+
 func main() {
-	config := proxy.LoadConfig("./.ergo")
+	run := flag.Bool("run", true, "Starts the proxy service")
+	help := flag.Bool("-h", false, "Shows ergs's help.")
+	version := flag.Bool("-v", false, "Shows ergs's version.")
 
-	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./resources/proxy.pac")
-	})
+	if *help {
+		fmt.Println(USAGE)
+		os.Exit(0)
+	}
 
-	proxy := proxy.NewErgoProxy(config)
-	http.Handle("/", proxy)
+	if *version {
+		fmt.Println(VERSION)
+		os.Exit(0)
+	}
 
-	fmt.Println("Ergo Proxy listening on port: 2000")
-	http.ListenAndServe(":2000", nil)
+	if *run {
+		config := proxy.LoadConfig("./.ergo")
+
+		http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "./resources/proxy.pac")
+		})
+
+		proxy := proxy.NewErgoProxy(config)
+		http.Handle("/", proxy)
+
+		fmt.Println("Ergo Proxy listening on port: 2000")
+		http.ListenAndServe(":2000", nil)
+		return
+	}
 }

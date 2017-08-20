@@ -45,7 +45,7 @@ is that Ergo also consider the port specified.
 Let's start:
 ```
 echo "ergoproxy http://localhost:3000" > .ergo
-ergo
+ergo run
 ```
 Now you are able to access: `http://ergoproxy.dev`.
 Ergo redirects anything that finish with `.dev` to the configured url.
@@ -54,12 +54,12 @@ Simple, no magic involved.
 Do you want add more services? So is simple, just add more lines in `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
-ergo
+ergo run
 ```
 
 Restart the server and access: `http://otherservice.dev`
 
-# Configuration
+## Configuration
 
 ##### OS X
 
@@ -77,7 +77,7 @@ On Ubuntu
 
 For other distributions, check your network manager and look for proxy configuration. Use browser configuration as an alternative.
 
-## Browser configuration
+### Browser configuration
 
 Browsers can be configured to use a specific proxy. Use this method as an alternative to system-wide configuration.
 

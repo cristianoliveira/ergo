@@ -12,7 +12,7 @@ build:
 	@go build -o bin/apitogo
 
 start:
-	@go run main.go
+	@go run main.go run
 
 test:
 	@go test ./... -v
