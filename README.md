@@ -3,12 +3,12 @@
 
 <p align="left" >
 <img src="https://s-media-cache-ak0.pinimg.com/736x/aa/bc/3b/aabc3b2b789f478ffb87ac2f0bdd2d33--ergo-proxy-manga-anime.jpg" width="250" align="center" />
-<span>Ergo Proxy - The local proxy agent for multiple services development</span>
+<span>Ergo Proxy - The proxy agent for local domain management.</span>
 </p>
 
-The management of multiple apps running over different ports made easy. Create custom local domains for your dev environment.
+The management of multiple apps running over different ports made easy through custom local domains for your dev environment.
 
-The Ergo's goal is to be a simple reverse proxy that follows the [unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
+The Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
 
 Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
@@ -63,6 +63,7 @@ Simple right? No magic involved.
 Do you want add more services? So is easy, just add more lines in `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
+ergo list
 ergo run
 ```
 
@@ -72,7 +73,7 @@ More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/mas
 
 ## Configuration
 
-In order to leave Ergo manage your domains you need to set it as a proxy. Set the `http://127.0.0.1:2000/proxy.pac` on:
+In order to use Ergo domains you need to set it as a proxy. Set the `http://127.0.0.1:2000/proxy.pac` on:
 
 ##### OS X
 
