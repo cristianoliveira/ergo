@@ -31,8 +31,8 @@ func main() {
 		command = os.Args[1]
 	}
 
-	help := flag.Bool("-h", false, "Shows ergs's help.")
-	version := flag.Bool("-v", false, "Shows ergs's version.")
+	help := flag.Bool("h", false, "Shows ergs's help.")
+	version := flag.Bool("v", false, "Shows ergs's version.")
 
 	flag.Parse()
 
@@ -55,5 +55,8 @@ func main() {
 	case "run":
 		commands.Run(config)
 
+	default:
+		fmt.Println(USAGE)
+		os.Exit(0)
 	}
 }
