@@ -1,0 +1,2 @@
+serviceone http://localhost:8001
+servicetwo http://localhost:8002
