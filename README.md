@@ -72,7 +72,11 @@ ergo run
 
 Restart the server and access: `http://otherservice.dev`
 
+More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
+
 ## Configuration
+
+In order to leave Ergo manage your domains you need to set it as a proxy. Set the `http://127.0.0.1:2000/proxy.pac` on:
 
 ##### OS X
 
