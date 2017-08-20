@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	config := proxy.LoodConfig()
+	config := proxy.LoadConfig("./.ergo")
 	proxy := proxy.NewErgoProxy(config)
 	http.Handle("/", proxy)
 	http.ListenAndServe(":2000", nil)

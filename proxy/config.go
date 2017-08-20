@@ -34,8 +34,8 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
-func LoodConfig() *Config {
-	file, e := os.Open("./.ergo")
+func LoadConfig(filepath string) *Config {
+	file, e := os.Open(filepath)
 	defer file.Close()
 	if e != nil {
 		fmt.Printf("File error: %v\n", e)
