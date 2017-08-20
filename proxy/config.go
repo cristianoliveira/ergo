@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func (c *Config) GetService(host string) *Service {
-	isDev := regexp.MustCompile(`.*\.dev$`)
+	isDev := regexp.MustCompile(c.UrlPattern)
 	if !isDev.MatchString(host) {
 		return nil
 	}
@@ -48,9 +48,12 @@ func LoadConfig(filepath string) *Config {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		config := strings.Split(line, " ")
-		name, url := config[0], config[1]
-		services = append(services, Service{Name: name, Url: url})
+		declaration := regexp.MustCompile(`(\S+)`)
+		config := declaration.FindAllString(line, -1)
+		if config != nil {
+			name, url := config[0], config[1]
+			services = append(services, Service{Name: name, Url: url})
+		}
 	}
 
 	return &Config{

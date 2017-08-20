@@ -8,7 +8,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	config := LoadConfig("../.ergo")
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 2
+		expected := 3
 		result := len(config.Services)
 
 		if expected != result {
@@ -27,6 +27,15 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 	t.Run("It match the service host foo.dev", func(t *testing.T) {
 		url := "foo.dev"
+		result := config.GetService(url)
+
+		if result == nil {
+			t.Errorf("Expected result to not be nil", result)
+		}
+	})
+
+	t.Run("It match the service host withspaces.dev", func(t *testing.T) {
+		url := "withspaces.dev"
 		result := config.GetService(url)
 
 		if result == nil {
