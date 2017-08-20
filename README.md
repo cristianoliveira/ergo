@@ -1,5 +1,5 @@
 
-# Ergo [![Build Status](https://travis-ci.org/cristianoliveira/apitogo.svg?branch=master)](https://travis-ci.org/cristianoliveira/apitogo)
+# Ergo [[Build Status](https://travis-ci.org/cristianoliveapitogo.svg?branch=master)](https://travis-ci.org/cristianoliveira/ergo)
 
 <p align="left" >
 <img src="https://s-media-cache-ak0.pinimg.com/736x/aa/bc/3b/aabc3b2b789f478ffb87ac2f0bdd2d33--ergo-proxy-manga-anime.jpg" width="250" align="center" />
@@ -20,11 +20,12 @@ feedback and opening issues. Suggestions and contributions are welcome. :)
 ## Why?
 
 When dealing with multiple apps locally is really annoyoing have to remember each
-port that represent each service. So I wanted a simple way to give a proper local
-domain for each app. Ergos comes to solve this simple problem.
+port that represent each service and it's worse when you have microservices.
+So I wanted a simple way to give a proper local domain for each app.
+Ergos comes to solve this simple problem.
 
 It's not aim to be fancy. It solve this problem and nothing else.
-Do you want a web interface? You can either try other projects or create it
+Do you want a web interface? You can either try another project or create it
 on top of ergo's interface. That's the magic of the unix philosophy, composition. :D
 
 ## Installation

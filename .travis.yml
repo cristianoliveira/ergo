@@ -1,0 +1,63 @@
+language: go
+
+go:
+  - 1.7.x
+  - 1.8.x
+  - master
+
+env:
+  global:
+    # This will be part of the release tarball
+    - PROJECT_NAME=ergo
+
+matrix:
+  # Clear the whole matrix
+  exclude:
+    - os: linux
+    - os: osx
+  # Add each target manually
+  include:
+    - os: linux
+      env: GOOS=linux GOARCH=amd64 TARGET=linux-amd64
+
+    - os: osx
+      env: GOOS=darwin GOARCH=amd64 TARGET=darwin-amd64
+
+install:
+    - sh ci/install.sh
+
+script:
+    - sh ci/script.sh
+
+before_deploy:
+    - sh ci/before_deploy.sh
+
+deploy:
+  provider: releases
+  # TODO Regenerate this api_key for your project, this one won't work for you. Here's how:
+  # - Go to 'https://github.com/settings/tokens/new' and generate a Token with only the
+  # `public_repo` scope enabled
+  # - Call `travis encrypt $github_token` where $github_token is the token you got in the previous
+  # step and `travis` is the official Travis CI gem (see https://rubygems.org/gems/travis/)
+  # - Enter the "encrypted value" below
+  api_key:
+    secure: "KxG9rS8pHeFAJ4w9xTfIKhLHjDR7hmXv1wtBkGhSWcXwg4HhCglyiNEC7im2cyZsZmbckx++i4z0unEXj8ch7dUzQZwAuDkJqWX9AP2D1yvmHGZaajWiH9j6FxNxcKeWVIt1iqTF5EK2qs+dsvw6a2OthtuW5yBgHRQyHLslZj9+EN8uxfUFqM17js9FoUIGC1hFXX2v0p1oVIccqY4b5s55AjY+m6uYVSJyox7IjIR8HxjebHBnofQpgDcjORDZae/Vjzw8bYWfc7PBgWbBU5KtXl2QlfgtjKoL47P70oZu4hsINIKyXAWSrw0HGqRsYCD0DSEhOe1QhdYadCj2xCfdlKlWgb4KljPvYvaNwdCxW4ZJkUKyvtr9n2laHNaMgb37xss0F7w26OpAvRMz1ALoEA0YdT3S7OCgsjwuiZ+t8UzilbawgUW3sWHSc/zPfcJ9R0WjqHIbv1LVi9N64NFCavyc10Cv7PFZFy0pe3HsbaPAtwNhr4xOZEqil7PslUWrHWGr3+qFfNH12IEn8KT4IDXYT+h/S2NjUxGg6mYeOgmH4Fb62YmA2g6B43hxes3IRWjOvvTujxPluNt+uSWsQ2ok8VtRaPPrgwy4NNN+CT3+lHLACg8wcYdO5/72l2yi5Lqe0zLRRHzv0W78bsk0mBnHd0HwJGUheFqDzCc="
+
+  file: ${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET}.tar.gz
+  # don't delete the artifacts from previous phases
+  skip_cleanup: true
+  # deploy when a new tag is pushed
+  on:
+    tags: true
+
+branches:
+  only:
+    # Pushes and PR to the master branch
+    - master
+    # IMPORTANT Ruby regex to match tags. Required, or travis won't trigger deploys when a new tag
+    # is pushed. This regex matches semantic versions like v1.2.3-rc4+2016.02.22
+    - /^v\d+\.\d+\.\d+.*$/
+
+notifications:
+  email:
+    on_success: never
