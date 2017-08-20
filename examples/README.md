@@ -1,20 +1,20 @@
 ## Examples
 
-Two services `service_one.go` and `service_two.go` running on `8001` and `8002`.
-
+There are two services `serviceone` and `servicetwo` running on `8001` and `8002`.
 
 On the first terminal:
-```
-go run service_one.go
+```bash
+go run serviceone/main.go
 ```
 
 On the second terminal:
-```
-go run service_two.go
+```bash
+go run servicetwo/main.go
 ```
 
 Finally run ergo: (See installation and configuration instructions)
-```
+```bash
+ergo list # To see the configurations
 ergo run
 ```
 

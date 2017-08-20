@@ -5,12 +5,10 @@ import (
 	"net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello from service two!")
-}
-
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello from service two!")
+	})
 	fmt.Println("Running service on localhost:8002")
 	http.ListenAndServe(":8002", nil)
 }
