@@ -19,8 +19,8 @@ feedback and opening issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-When dealing with multiple apps locally is really annoyoing have to remember each
-port that represent each service and it's worse when you have microservices.
+When dealing with multiple apps locally is really annoying have to remember each
+port that represent each service and it's gets even worse when you have microservices.
 So I wanted a simple way to give a proper local domain for each app.
 Ergos comes to solve this simple problem.
 
