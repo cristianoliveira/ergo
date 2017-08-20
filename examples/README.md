@@ -1,14 +1,14 @@
 ## Examples
 
-Two services `service_one.go` and `services_two.go` running on `8001` and `8002`.
+Two services `service_one.go` and `service_two.go` running on `8001` and `8002`.
 
 
-in one terminal do:
+On the first terminal:
 ```
 go run service_one.go
 ```
 
-in second terminal do:
+On the second terminal:
 ```
 go run service_two.go
 ```
@@ -19,5 +19,6 @@ ergo run
 ```
 
 Then access: `http://serviceone.dev` and `http://servicetwo.dev`
+On `./examples/.ergo` are the configured domains.
 
 Simple :)
