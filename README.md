@@ -10,7 +10,7 @@ The managment of multiple apps running over diferent ports made easy.
 
 The Ergo's goal is to be a simple reverse proxy that follows the [unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
 
-Simplicity means no magic involved. Just a flexible reverse proxy. 
+Simplicity means no magic involved. Just a flexible reverse proxy.
 
 **Disclaimer**
 
@@ -30,11 +30,12 @@ Ergo looks for a `.ergo` file inside the current folder. It must contain the nam
 url of the services following the same format as the `/etc/hosts` the main difference
 is that Ergo also consider the port specified.
 
-**Ergo runs on `127.0.0.1:2000` you have to configure it as your proxy in Network configs of your system**
+**Set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config (Details below)**
 
 Let's start:
 ```
-echo "ergoproxy http://localhost:3000" > .ergo && ergo
+echo "ergoproxy http://localhost:3000" > .ergo
+ergo
 ```
 Now you are able to access: `http://ergoproxy.dev`.
 Ergo redirects anything that finish with `.dev` to the configured url.
@@ -43,9 +44,44 @@ Simple, no magic involved.
 Do you want add more services? So is simple, just add more lines in `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
+ergo
 ```
 
 Restart the server and access: `http://otherservice.dev`
+
+# Configuration
+
+##### OS X
+
+`Network Preferences > Advanced > Proxies > Automatic Proxy Configuration`
+
+##### Windows
+
+`Settings > Network and Internet > Proxy > Use setup script`
+
+##### Linux
+
+On Ubuntu
+
+`System Settings > Network > Network Proxy > Automatic`
+
+For other distributions, check your network manager and look for proxy configuration. Use browser configuration as an alternative.
+
+## Browser configuration
+
+Browsers can be configured to use a specific proxy. Use this method as an alternative to system-wide configuration.
+
+##### Chrome
+
+Exit Chrome and start it using the following option:
+
+```sh
+# Linux
+$ google-chrome --proxy-pac-url=http://localhost:2000/proxy.pac
+
+# OS X
+$ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
+```
 
 # License
 

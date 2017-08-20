@@ -22,9 +22,9 @@ func singleJoiningSlash(a, b string) string {
 
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
+		fmt.Println("request", req.URL)
 		service := config.GetService(req.URL.Host)
 		if service != nil {
-			fmt.Println("request", req.URL)
 			target, _ := url.Parse(service.Url)
 			targetQuery := target.RawQuery
 			fmt.Println(config)
