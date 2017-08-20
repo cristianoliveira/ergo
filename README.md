@@ -6,11 +6,11 @@
 <span>Ergo Proxy - The local proxy agent for multiple services development</span>
 </p>
 
-The managment of multiple apps running over diferent ports made easy.
+The managment of multiple apps running over diferent ports made easy. Create custom local domains for your dev environment.
 
 The Ergo's goal is to be a simple reverse proxy that follows the [unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
 
-Simplicity means no magic involved. Just a flexible reverse proxy.
+Simplicity means no magic involved. Just a flexible reverse proxy that extends the well known `/etc/hosts` declaration.
 
 **Disclaimer**
 
