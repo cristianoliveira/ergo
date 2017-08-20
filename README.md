@@ -8,9 +8,9 @@
 
 The managment of multiple apps running over diferent ports made easy.
 
-The Ergo's goal is to be a simple reverse proxy that follows the unix philosophy of doing only one thing.
+The Ergo's goal is to be a simple reverse proxy that follows the [unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
 
-Simple means no magic involved.
+Simplicity means no magic involved. Just a flexible reverse proxy. 
 
 **Disclaimer**
 
