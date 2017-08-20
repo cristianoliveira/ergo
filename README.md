@@ -17,6 +17,16 @@ Simplicity means no magic involved. Just a flexible reverse proxy.
 This project is under development but it's already usable. Feel free to give me
 feedback and opening issues. Suggestions and contributions are welcome. :)
 
+## Why?
+
+When dealing with multiple apps locally is really annoyoing have to remember each
+port that represent each service. So I wanted a simple way to give a proper local
+domain for each app. Ergos comes to solve this simple problem.
+
+It's not aim to be fancy. It solve this problem and nothing else.
+Do you want a web interface? You can either try other projects or create it
+on top of ergo's interface. That's the magic of the unix philosophy, composition. :D
+
 ## Installation
 
 ```
