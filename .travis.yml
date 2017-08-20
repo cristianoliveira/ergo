@@ -27,6 +27,7 @@ install:
     - sh ci/install.sh
 
 script:
+    - make test
     - sh ci/script.sh
 
 before_deploy:
