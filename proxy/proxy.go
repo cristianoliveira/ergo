@@ -49,7 +49,14 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 
 func ServeProxy(config *Config) {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "./resources/proxy.pac")
+		content := `.
+	function FindProxyForURL(url, host)
+	{
+		return "PROXY 127.0.0.1:2000; DIRECT";
+	}
+`
+		w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
+		w.Write([]byte(content))
 	})
 
 	http.Handle("/", NewErgoProxy(config))
