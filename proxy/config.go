@@ -14,6 +14,7 @@ type Service struct {
 }
 
 type Config struct {
+	Port       string
 	UrlPattern string
 	Services   []Service
 }
@@ -57,6 +58,7 @@ func LoadConfig(filepath string) *Config {
 	}
 
 	return &Config{
+		Port:       "2000",
 		UrlPattern: `.*\.dev$`,
 		Services:   services,
 	}

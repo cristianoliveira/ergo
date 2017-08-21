@@ -23,11 +23,12 @@ func singleJoiningSlash(a, b string) string {
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
 		fmt.Println("request", req.URL)
+
 		service := config.GetService(req.URL.Host)
 		if service != nil {
 			target, _ := url.Parse(service.Url)
 			targetQuery := target.RawQuery
-			fmt.Println(config)
+
 			req.URL.Scheme = target.Scheme
 			req.URL.Host = target.Host
 			req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path)
@@ -49,11 +50,14 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 
 func ServeProxy(config *Config) {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
-		content := `.
-	function FindProxyForURL(url, host)
-	{
-		return "PROXY 127.0.0.1:2000; DIRECT";
+		content := `
+function FindProxyForURL (url, host) {
+	if (dnsDomainIs(host, '.dev')) {
+		return 'PROXY 127.0.0.1:` + config.Port + `';
 	}
+
+	return 'DIRECT';
+}
 `
 		w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
 		w.Write([]byte(content))
@@ -61,5 +65,5 @@ func ServeProxy(config *Config) {
 
 	http.Handle("/", NewErgoProxy(config))
 
-	http.ListenAndServe(":2000", nil)
+	http.ListenAndServe(":"+config.Port, nil)
 }
