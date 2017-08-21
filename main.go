@@ -18,10 +18,12 @@ Usage:
   ergo [options]
   ergo run [options]
   ergo list
+  ergo list-names
+  ergo url <name>
 
 Options:
   -h      Shows this message.
-  -v      Shows ergs's version.
+  -v      Shows ergo's version.
 `
 
 func main() {
@@ -31,8 +33,8 @@ func main() {
 		command = os.Args[1]
 	}
 
-	help := flag.Bool("h", false, "Shows ergs's help.")
-	version := flag.Bool("v", false, "Shows ergs's version.")
+	help := flag.Bool("h", false, "Shows ergo's help.")
+	version := flag.Bool("v", false, "Shows ergo's version.")
 
 	flag.Parse()
 
@@ -47,20 +49,27 @@ func main() {
 	}
 
 	config := proxy.LoadConfig("./.ergo")
+
 	switch command {
 	case "list":
 		commands.List(config)
-		os.Exit(0)
 
 	case "list-names":
 		commands.ListNames(config)
-		os.Exit(0)
+
+	case "url":
+		if len(os.Args) != 3 {
+			fmt.Println(USAGE)
+			os.Exit(0)
+		}
+
+		name := os.Args[2]
+		commands.Url(name, config)
 
 	case "run":
 		commands.Run(config)
 
 	default:
 		fmt.Println(USAGE)
-		os.Exit(0)
 	}
 }
