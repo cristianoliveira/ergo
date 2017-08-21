@@ -12,7 +12,7 @@ build-linux-arm: test
 	GOOS=linux GOARCH=arm64 go build -o bin/linux/ergo
 
 bump-version:
-	@git describe --tags > .version
+	@git tag --sort=committerdate | tail -n 1 > .version
 	cat .version
 
 build: bump-version
