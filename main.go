@@ -52,6 +52,10 @@ func main() {
 		commands.List(config)
 		os.Exit(0)
 
+	case "list-names":
+		commands.ListNames(config)
+		os.Exit(0)
+
 	case "run":
 		commands.Run(config)
 

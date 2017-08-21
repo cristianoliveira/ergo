@@ -52,7 +52,7 @@ func ServeProxy(config *Config) {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
 		content := `
 function FindProxyForURL (url, host) {
-	if (dnsDomainIs(host, '.dev')) {
+	if (dnsDomainIs(host, '` + config.Domain + `')) {
 		return 'PROXY 127.0.0.1:` + config.Port + `';
 	}
 
