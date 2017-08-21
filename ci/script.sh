@@ -2,7 +2,7 @@
 
 set -ex
 
-go build -o bin/ergo
+make all
 
 # sanity check the file type
 file bin/ergo

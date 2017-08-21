@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-const VERSION = "0.1.1"
+var VERSION string
 
 const USAGE = `
 Ergo proxy.

@@ -1,4 +1,4 @@
-VERSION="v0.1.1"
+VERSION=`curl https://raw.githubusercontent.com/cristianoliveira/ergo/master/.version`
 
 cd /tmp
 
