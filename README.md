@@ -3,16 +3,21 @@
 
 <p align="left" >
 <img src="https://s-media-cache-ak0.pinimg.com/736x/aa/bc/3b/aabc3b2b789f478ffb87ac2f0bdd2d33--ergo-proxy-manga-anime.jpg" width="250" align="center" />
-<span>Ergo Proxy - The proxy agent for local domain management.</span>
+<span>Ergo Proxy - The reverse proxy agent for local domain management.</span>
+
 </p>
 
 The management of multiple apps running over different ports made easy through custom local domains for your dev environment.
 
-The Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well.
+## Demo
 
-Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+<img src="https://raw.githubusercontent.com/cristianoliveira/ergo/master/demo.gif" align="center" />
 
-**Disclaimer**
+More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
+
+The Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+
+**Feedback**
 
 This project is under development but it's already usable. Feel free to give me
 feedback and opening issues. Suggestions and contributions are welcome. :)
@@ -20,10 +25,6 @@ feedback and opening issues. Suggestions and contributions are welcome. :)
 ## Why?
 
 When dealing with multiple apps locally is really annoying having to remember each port that represents each service and it gets even worse when you have microservices. So I wanted a simple way to give a proper local domain for each app. Ergos comes to solve this simple problem.
-
-It doesn't aim to be fancy. It solves this problem and nothing else.
-Do you want a web interface? You can either try another project or create it
-on top of ergo's interface. That's the magic of the Unix philosophy, composition. :D
 
 ## Installation
 
@@ -33,7 +34,7 @@ brew tap cristianoliveira/tap
 brew install ergo
 ```
 
-### Linux / Others using scripts
+### Linux using scripts
 ```
 curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
 ```
@@ -68,8 +69,6 @@ ergo run
 ```
 
 Restart the server and access: `http://otherservice.dev`
-
-More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
 ## Configuration
 
