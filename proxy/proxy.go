@@ -20,9 +20,25 @@ func singleJoiningSlash(a, b string) string {
 	return a + b
 }
 
+func formatRequest(r *http.Request) string {
+	var request []string
+	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
+	request = append(request, url)
+	request = append(request, fmt.Sprintf("Host: %v", r.Host))
+
+	for name, headers := range r.Header {
+		for _, h := range headers {
+			request = append(request, fmt.Sprintf("%v: %v", name, h))
+		}
+	}
+
+	return strings.Join(request, "\n")
+}
+
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
-		fmt.Println("request", req.URL)
+		fmt.Printf("request: %v %v %v \n", req.Method, req.URL, req.Proto)
+		fmt.Println(formatRequest(req))
 
 		service := config.GetService(req.URL.Host)
 		if service != nil {
@@ -51,14 +67,14 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 func ServeProxy(config *Config) {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
 		content := `
-function FindProxyForURL (url, host) {
-	if (dnsDomainIs(host, '` + config.Domain + `')) {
-		return 'PROXY 127.0.0.1:` + config.Port + `';
-	}
+		function FindProxyForURL (url, host) {
+			if (dnsDomainIs(host, '` + config.Domain + `')) {
+				return 'PROXY 127.0.0.1:` + config.Port + `';
+			}
 
-	return 'DIRECT';
-}
-`
+			return 'DIRECT';
+		}
+		`
 		w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
 		w.Write([]byte(content))
 	})
