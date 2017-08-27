@@ -36,7 +36,16 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
-func LoadConfig(filepath string) *Config {
+func NewConfig() *Config {
+	return &Config{
+		Port:       "2000",
+		Domain:     ".dev",
+		UrlPattern: `.*\.dev$`,
+		Services:   nil,
+	}
+}
+
+func LoadConfig(filepath string) []Service {
 	file, e := os.Open(filepath)
 	defer file.Close()
 	if e != nil {
@@ -58,11 +67,5 @@ func LoadConfig(filepath string) *Config {
 		}
 	}
 
-	return &Config{
-		Port:       "2000",
-		Domain:     ".dev",
-		UrlPattern: `.*\.dev$`,
-		Services:   services,
-	}
-
+	return services
 }

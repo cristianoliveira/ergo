@@ -6,6 +6,6 @@ import (
 )
 
 func Run(config *proxy.Config) {
-	fmt.Println("Ergo Proxy listening on port: 2000")
+	fmt.Println("Ergo Proxy listening on port: " + config.Port)
 	proxy.ServeProxy(config)
 }

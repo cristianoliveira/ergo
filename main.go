@@ -24,18 +24,14 @@ Usage:
 Options:
   -h      Shows this message.
   -v      Shows ergo's version.
+
+  Run:
+	-p      Set ports to proxy
 `
 
 func main() {
-	var command string = "run"
-
-	if len(os.Args) > 1 {
-		command = os.Args[1]
-	}
-
 	help := flag.Bool("h", false, "Shows ergo's help.")
 	version := flag.Bool("v", false, "Shows ergo's version.")
-
 	flag.Parse()
 
 	if *help {
@@ -48,9 +44,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	config := proxy.LoadConfig("./.ergo")
+	config := proxy.NewConfig()
 
-	switch command {
+	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+
+	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+
+	config.Services = proxy.LoadConfig("./.ergo")
+	switch os.Args[1] {
 	case "list":
 		commands.List(config)
 
