@@ -38,7 +38,10 @@ func formatRequest(r *http.Request) string {
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
 		fmt.Printf("request: %v %v %v \n", req.Method, req.URL, req.Proto)
-		fmt.Println(formatRequest(req))
+
+		if config.Verbose {
+			fmt.Println(formatRequest(req))
+		}
 
 		service := config.GetService(req.URL.Host)
 		if service != nil {

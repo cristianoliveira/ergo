@@ -15,7 +15,6 @@ Ergo proxy.
 The local proxy agent for multiple services development.
 
 Usage:
-  ergo [options]
   ergo run [options]
   ergo list
   ergo list-names
@@ -26,15 +25,18 @@ Options:
   -v      Shows ergo's version.
 
   Run:
-	-p      Set ports to proxy
+	-p          Set ports to proxy.
+	-V          Set verbosity on output.
+	-config     Set the config file to the proxy.
 `
 
 func main() {
 	help := flag.Bool("h", false, "Shows ergo's help.")
 	version := flag.Bool("v", false, "Shows ergo's version.")
+
 	flag.Parse()
 
-	if *help {
+	if *help || len(os.Args) == 1 {
 		fmt.Println(USAGE)
 		os.Exit(0)
 	}
@@ -49,9 +51,12 @@ func main() {
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 
 	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
-	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+	configFile := command.String("config", "./.ergo", "Set the services file")
 
-	config.Services = proxy.LoadConfig("./.ergo")
+	command.Parse(os.Args[2:])
+
+	config.Services = proxy.LoadConfig(*configFile)
 	switch os.Args[1] {
 	case "list":
 		commands.List(config)

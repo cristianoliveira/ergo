@@ -17,6 +17,7 @@ type Config struct {
 	Port       string
 	Domain     string
 	UrlPattern string
+	Verbose    bool
 	Services   []Service
 }
 
