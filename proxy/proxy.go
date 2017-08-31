@@ -64,10 +64,12 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 		}
 	}
 
-	return &httputil.ReverseProxy{Director: director}
+	return &httputil.ReverseProxy{
+		Director: director,
+	}
 }
 
-func ServeProxy(config *Config) {
+func ServeProxy(config *Config) error {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
 		content := `
 		function FindProxyForURL (url, host) {
@@ -84,5 +86,5 @@ func ServeProxy(config *Config) {
 
 	http.Handle("/", NewErgoProxy(config))
 
-	http.ListenAndServe(":"+config.Port, nil)
+	return http.ListenAndServe(":"+config.Port, nil)
 }
