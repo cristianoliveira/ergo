@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 )
 
 type Service struct {
@@ -22,14 +21,10 @@ type Config struct {
 }
 
 func (c *Config) GetService(host string) *Service {
-	isDev := regexp.MustCompile(c.UrlPattern)
-	if !isDev.MatchString(host) {
-		return nil
-	}
-
-	name := strings.Split(host, ".")[0]
+	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(\w.+)` + c.Domain)
+	parts := domainPattern.FindAllString(host, -1)
 	for _, s := range c.Services {
-		if s.Name == name {
+		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
 			return &s
 		}
 	}
