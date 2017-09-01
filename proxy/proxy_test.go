@@ -79,4 +79,50 @@ func TestWhenHasCollectionFile(t *testing.T) {
 			t.Errorf("Expected %s got %s", expected, result)
 		}
 	})
+
+	t.Run("when subdomains", func(tt *testing.T) {
+		tt.Run("it redirects one.domain to localhost 8081", func(_ *testing.T) {
+			req, err := http.NewRequest("GET", "http://one.domain.dev/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			proxy.Director(req)
+
+			expected, _ := url.Parse("http://localhost:8081/")
+			result := req.URL
+
+			if expected.Host != result.Host {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+			if expected.Scheme != result.Scheme {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+			if expected.Path != result.Path {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+		})
+
+		tt.Run("it redirects two.domain to localhost 8082", func(_ *testing.T) {
+			req, err := http.NewRequest("GET", "http://two.domain.dev/", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			proxy.Director(req)
+
+			expected, _ := url.Parse("http://localhost:8082/")
+			result := req.URL
+
+			if expected.Host != result.Host {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+			if expected.Scheme != result.Scheme {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+			if expected.Path != result.Path {
+				tt.Errorf("Expected %s got %s", expected, result)
+			}
+		})
+	})
 }

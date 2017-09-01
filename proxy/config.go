@@ -21,7 +21,7 @@ type Config struct {
 }
 
 func (c *Config) GetService(host string) *Service {
-	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(\w.+)` + c.Domain)
+	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
 	parts := domainPattern.FindAllString(host, -1)
 	for _, s := range c.Services {
 		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
