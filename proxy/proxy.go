@@ -6,6 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strings"
+	"time"
 )
 
 func singleJoiningSlash(a, b string) string {
@@ -22,8 +23,6 @@ func singleJoiningSlash(a, b string) string {
 
 func formatRequest(r *http.Request) string {
 	var request []string
-	url := fmt.Sprintf("%v %v %v", r.Method, r.URL, r.Proto)
-	request = append(request, url)
 	request = append(request, fmt.Sprintf("Host: %v", r.Host))
 
 	for name, headers := range r.Header {
@@ -37,7 +36,14 @@ func formatRequest(r *http.Request) string {
 
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
-		fmt.Printf("request: %v %v %v \n", req.Method, req.URL, req.Proto)
+		t := time.Now()
+		fmt.Printf(
+			"[%s] %v %v %v \n",
+			t.Format("2006-01-02 15:04:05"),
+			req.Method,
+			req.URL,
+			req.Proto,
+		)
 
 		if config.Verbose {
 			fmt.Println(formatRequest(req))
