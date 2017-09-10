@@ -49,9 +49,26 @@ Make sure you have `$GOPATH/bin` in your path. `export PATH=$PATH:$GOPATH/bin`
 
 Ergo looks for a `.ergo` file inside the current folder. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url) the main difference is that it also considers the port specified.
 
-**Set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config (Details below)**
-
 Let's start:
+
+#### Simplest Setup
+
+**You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config.
+
+Ergo comes with a setup command that can configure the proxy for you. The current
+systems supporteds are:
+ - osx
+ - linux-gnome
+
+(Contributions are welcomed)
+
+```bash
+ergo setup <operation-system>
+```
+
+In case of errors or it doesn't work please take a look on detailed config session below.
+
+
 ```
 echo "ergoproxy http://localhost:3000" > .ergo
 ergo run
@@ -105,6 +122,11 @@ $ google-chrome --proxy-pac-url=http://localhost:2000/proxy.pac
 # OS X
 $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 ```
+
+##### Ephemeral Setup
+
+As an alternative you can see the scripts inside `/resources` for running an
+ephemeral setup. Those scripts sets the proxy only while `ergo` is running.
 
 # License
 
