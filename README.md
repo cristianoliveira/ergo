@@ -53,7 +53,7 @@ Let's start:
 
 #### Simplest Setup
 
-**You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config.
+**You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config**
 
 Ergo comes with a setup command that can configure the proxy for you. The current
 systems supporteds are:
@@ -65,9 +65,9 @@ systems supporteds are:
 ```bash
 ergo setup <operation-system>
 ```
-
 In case of errors or it doesn't work please take a look on detailed config session below.
 
+##### Showtime
 
 ```
 echo "ergoproxy http://localhost:3000" > .ergo
