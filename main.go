@@ -19,6 +19,7 @@ Usage:
   ergo list
   ergo list-names
   ergo url <name>
+  ergo setup [linux-gnome|osx]
 
 Options:
   -h      Shows this message.
@@ -28,6 +29,9 @@ Options:
 	-p          Set ports to proxy.
 	-V          Set verbosity on output.
 	-config     Set the config file to the proxy.
+
+  setup:
+	-remove     Set remove proxy configurations.
 `
 
 func main() {
@@ -47,22 +51,26 @@ func main() {
 	}
 
 	config := proxy.NewConfig()
-
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 
-	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
-	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
-	configFile := command.String("config", "./.ergo", "Set the services file")
-
-	command.Parse(os.Args[2:])
-
-	config.Services = proxy.LoadConfig(*configFile)
 	switch os.Args[1] {
 	case "list":
 		commands.List(config)
 
 	case "list-names":
 		commands.ListNames(config)
+
+	case "setup":
+		if len(os.Args) <= 2 {
+			fmt.Println(USAGE)
+			os.Exit(0)
+		}
+
+		system := os.Args[2]
+		setupRemove := command.Bool("remove", false, "Set remove proxy configurations.")
+		command.Parse(os.Args[3:])
+
+		commands.Setup(system, *setupRemove, config)
 
 	case "url":
 		if len(os.Args) != 3 {
@@ -74,6 +82,12 @@ func main() {
 		commands.Url(name, config)
 
 	case "run":
+		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+		configFile := command.String("config", "./.ergo", "Set the services file")
+		config.Services = proxy.LoadConfig(*configFile)
+
+		command.Parse(os.Args[2:])
 		commands.Run(config)
 
 	default:
