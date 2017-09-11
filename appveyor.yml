@@ -26,7 +26,28 @@ install:
   - go env
 
 build: false
-deploy: false
+
+before_deploy:
+  - go build
+  - choco install 7zip
+  - echo "%APPVEYOR_REPO_TAG_NAME% - ${appveyor_repo_tag_name}"
+  - 7z a -tzip ergo-win.zip ergo*
+
+deploy:
+  tag: '${appveyor_repo_tag_name}'
+  release: '${appveyor_repo_tag_name}'
+  provider: GitHub
+  auth_token:
+    secure: "XlXg6r5idqW5O3qBiQHbZ73goavVOVKYaZx11GW7s8DO+M0/ERBImmXa4TAHbSOj"
+  artifact:
+    - path: '*.exe'
+      name: ergo
+      type: zip
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    # appveyor_repo_tag: true
 
 test_script:
   - go test ./... -v
