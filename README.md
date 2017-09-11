@@ -51,12 +51,12 @@ Ergo looks for a `.ergo` file inside the current folder. It must contain the nam
 
 Let's start:
 
-#### Simplest Setup
+### Simplest Setup
 
 **You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config**
 
-Ergo comes with a setup command that can configure the proxy for you. The current
-systems supporteds are:
+Ergo comes with a setup command that can configure that for you. The current systems supported are:
+
  - osx
  - linux-gnome
 
@@ -65,9 +65,9 @@ systems supporteds are:
 ```bash
 ergo setup <operation-system>
 ```
-In case of errors or it doesn't work please take a look on detailed config session below.
+In case of errors or if it doesn't work please take a look on detailed config session below.
 
-##### Showtime
+### Showtime
 
 ```
 echo "ergoproxy http://localhost:3000" > .ergo
@@ -123,7 +123,7 @@ $ google-chrome --proxy-pac-url=http://localhost:2000/proxy.pac
 $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 ```
 
-##### Ephemeral Setup
+### Ephemeral Setup
 
 As an alternative you can see the scripts inside `/resources` for running an
 ephemeral setup. Those scripts sets the proxy only while `ergo` is running.
