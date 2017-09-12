@@ -28,7 +28,9 @@ install:
 build: false
 
 build_script:
-  - go build -o bin/ergo -i .
+  - go build -o bin/ergo.exe -i .
+  - choco install 7zip
+  - 7z a -tzip ergo-$(appveyor_repo_tag_name)-win.zip bin/ergo.exe
 
 # before_deploy:
 #   - go build
@@ -37,12 +39,11 @@ build_script:
 #   - 7z a -tzip ergo-win.zip c:\gopath\src\github.com\cristianoliveira\ergo\*.exe
 
 artifacts:
-  - path: bin/ergo
-    name: ergo-win
+  - path: bin/ergo.exe
+    name: ergo-win.zip
     type: zip
 
 deploy:
-  tag: $(appveyor_repo_tag_name)
   release: $(appveyor_repo_tag_name)
   provider: GitHub
   auth_token:
