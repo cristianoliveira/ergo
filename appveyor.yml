@@ -20,18 +20,21 @@ install:
   - rmdir c:\go /s /q
   - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
   - msiexec /i go%GOVERSION%.windows-amd64.msi /q
-  - choco install bzr
+  # - choco install bzr
   - set Path=c:\go\bin;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Mercurial\%Path%
   - go version
   - go env
 
 build: false
 
-before_deploy:
-  - go build
-  - choco install 7zip
-  - echo "%APPVEYOR_REPO_TAG_NAME% - ${appveyor_repo_tag_name}"
-  - 7z a -tzip ergo-win.zip c:\gopath\src\github.com\cristianoliveira\ergo\*.exe
+build_script:
+  - go build -o bin/ergo -i .
+
+# before_deploy:
+#   - go build
+#   - choco install 7zip
+#   - echo "%APPVEYOR_REPO_TAG_NAME% - ${appveyor_repo_tag_name}"
+#   - 7z a -tzip ergo-win.zip c:\gopath\src\github.com\cristianoliveira\ergo\*.exe
 
 deploy:
   tag: $(appveyor_repo_tag_name)
@@ -39,7 +42,10 @@ deploy:
   provider: GitHub
   auth_token:
     secure: "XlXg6r5idqW5O3qBiQHbZ73goavVOVKYaZx11GW7s8DO+M0/ERBImmXa4TAHbSOj"
-  artifact: ergo-win.zip
+  artifact:
+    - path: bin/ergo
+      name: ergo-win
+      type: zip
   draft: false
   prerelease: false
   on:
