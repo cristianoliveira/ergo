@@ -34,14 +34,12 @@ before_deploy:
   - 7z a -tzip ergo-win.zip ergo*
 
 deploy:
-  release: "${appveyor_repo_tag_name}"
+  tag: $(appveyor_repo_tag_name)
+  release: $(appveyor_repo_tag_name)
   provider: GitHub
   auth_token:
     secure: "XlXg6r5idqW5O3qBiQHbZ73goavVOVKYaZx11GW7s8DO+M0/ERBImmXa4TAHbSOj"
-  artifact:
-    - path: '*.exe'
-      name: ergo
-      type: zip
+  artifact: '**\*.zip'
   draft: false
   prerelease: false
   on:
