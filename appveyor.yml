@@ -34,8 +34,7 @@ before_deploy:
   - 7z a -tzip ergo-win.zip ergo*
 
 deploy:
-  tag: '${appveyor_repo_tag_name}'
-  release: '${appveyor_repo_tag_name}'
+  release: "${appveyor_repo_tag_name}"
   provider: GitHub
   auth_token:
     secure: "XlXg6r5idqW5O3qBiQHbZ73goavVOVKYaZx11GW7s8DO+M0/ERBImmXa4TAHbSOj"
@@ -47,7 +46,7 @@ deploy:
   prerelease: false
   on:
     branch: master                 # release from master branch only
-    # appveyor_repo_tag: true
+    appveyor_repo_tag: true
 
 test_script:
   - go test ./... -v
