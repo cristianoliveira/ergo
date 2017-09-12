@@ -39,6 +39,12 @@ brew install ergo
 curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
 ```
 
+### Windows
+For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
+
+***Disclaimer:***
+I don't use any windows system in my daily basis, so I can't test each build :(
+
 ### Using golang
 ```
 go install github.com/cristianoliveira/ergo
