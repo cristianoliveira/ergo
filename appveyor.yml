@@ -42,8 +42,7 @@ artifacts:
     type: zip
 
 deploy:
-  tag: $(appveyor_repo_tag_name)
-  release: $(appveyor_repo_tag_name)
+  release: $(appveyor_repo_tag_name)-win
   provider: GitHub
   auth_token:
     secure: "XlXg6r5idqW5O3qBiQHbZ73goavVOVKYaZx11GW7s8DO+M0/ERBImmXa4TAHbSOj"
