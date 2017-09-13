@@ -1,17 +1,17 @@
 .PHONY: all start build test deps
 
-all: deps test bump-version build
+all: deps bump-version build test
 
 VERSION=`cat .version`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
 
-build-darwin-arm: test
+build-darwin-arm:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/darwin/ergo
 
-build-linux-arm: test
+build-linux-arm:
 	GOOS=linux GOARCH=arm64 go build -o bin/linux/ergo
 
-build-windows-i386: test
+build-windows-i386:
 	GOOS=windows GOARCH=386 go build -o bin/win/ergo.exe
 
 bump-version:
