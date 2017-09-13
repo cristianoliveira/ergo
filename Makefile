@@ -11,6 +11,9 @@ build-darwin-arm: test
 build-linux-arm: test
 	GOOS=linux GOARCH=arm64 go build -o bin/linux/ergo
 
+build-windows-i386: test
+	GOOS=windows GOARCH=386 go build -o bin/win/ergo.exe
+
 bump-version:
 	@git tag --sort=committerdate | tail -n 1 > .version
 	cat .version
