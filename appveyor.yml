@@ -28,7 +28,7 @@ install:
 build: false
 
 build_script:
-  - go build -ldflags "-w -s -X main.VERSION=$(appveyor_repo_tag_name)"-o bin/ergo.exe -i .
+  - go build -ldflags "-w -s -X main.VERSION=$(appveyor_repo_tag_name)" -o bin/ergo.exe
   - choco install 7zip
   - 7z a -tzip bin/ergo-$(appveyor_repo_tag_name)-win.zip bin/ergo.exe
 
