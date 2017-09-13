@@ -1,0 +1,105 @@
+package main
+
+import (
+	"log"
+	"os/exec"
+	"runtime"
+	"strings"
+	"testing"
+)
+
+func ergo(args ...string) *exec.Cmd {
+	return exec.Command("../bin/ergo", args...)
+}
+
+func TestIntegration(t *testing.T) {
+	// TODO: create tests for windows
+	if runtime.GOOS == "windows" {
+		t.Skipf("skipping test on %q", runtime.GOOS)
+	}
+
+	t.Run("it lists the apps", func(tt *testing.T) {
+		apps_outoput := []string{
+			"http://foo.dev -> http://localhost:3000",
+			"http://bla.dev -> http://localhost:5000",
+			"http://withspaces.dev -> http://localhost:8080",
+			"http://one.domain.dev -> http://localhost:8081",
+			"http://two.domain.dev -> http://localhost:8082",
+			"http://redis://redislocal.dev -> redis://localhost:6543",
+		}
+
+		cmd := ergo("list")
+		bs, err := cmd.Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		output := string(bs)
+
+		for _, app := range apps_outoput {
+			if !strings.Contains(output, app) {
+				tt.Errorf("Expected output:\n %s \n got %s", output, app)
+			}
+		}
+	})
+
+	t.Run("it lists the app names", func(tt *testing.T) {
+		apps_outoput := []string{
+			"foo -> http://localhost:3000",
+			"bla -> http://localhost:5000",
+			"withspaces -> http://localhost:8080",
+			"one.domain -> http://localhost:8081",
+			"two.domain -> http://localhost:8082",
+			"redis://redislocal -> redis://localhost:6543",
+		}
+
+		cmd := ergo("list-names", "foo")
+		bs, err := cmd.Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		output := string(bs)
+
+		for _, app := range apps_outoput {
+			if !strings.Contains(output, app) {
+				tt.Errorf("Expected output:\n %s \n got %s", output, app)
+			}
+		}
+	})
+
+	t.Run("it shows the url for a given name", func(tt *testing.T) {
+		apps_output := map[string]string{
+			"foo":                "http://localhost:3000",
+			"bla":                "http://localhost:5000",
+			"withspaces":         "http://localhost:8080",
+			"one.domain":         "http://localhost:8081",
+			"two.domain":         "http://localhost:8082",
+			"redis://redislocal": "redis://localhost:6543",
+		}
+
+		for name, url := range apps_output {
+			cmd := ergo("list-names", "foo")
+			bs, err := cmd.Output()
+			if err != nil {
+				tt.Fatal(err)
+			}
+
+			output := string(bs)
+			if !strings.Contains(output, url) {
+				tt.Errorf("Expected output:\n %s \n got %s", output, name)
+			}
+		}
+	})
+
+	// TODO: Add tests for server
+	//
+	// t.Run("it runs binding the sites", func(tt *testing.T) {
+	// 	cmd := ergo("run", "-p", "25000")
+	// 	defer cmd.Process.Kill()
+	// 	err := cmd.Run()
+	// 	if err != nil {
+	// 		tt.Fatal(err)
+	// 	}
+	// })
+}
