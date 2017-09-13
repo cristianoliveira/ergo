@@ -25,13 +25,13 @@ Options:
   -h      Shows this message.
   -v      Shows ergo's version.
 
-  Run:
-	-p          Set ports to proxy.
-	-V          Set verbosity on output.
-	-config     Set the config file to the proxy.
+run:
+  -p          Set ports to proxy.
+  -V          Set verbosity on output.
+  -config     Set the config file to the proxy.
 
-  setup:
-	-remove     Set remove proxy configurations.
+setup:
+  -remove     Set remove proxy configurations.
 `
 
 func main() {
