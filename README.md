@@ -7,7 +7,9 @@
 
 </p>
 
-The management of multiple apps running over different ports made easy through custom local domains for your dev environment.
+<p align="center">
+  The management of multiple apps running over different ports made easy through custom local domains.
+</p>
 
 ## Demo
 
@@ -28,13 +30,13 @@ When dealing with multiple apps locally is really annoying having to remember ea
 
 ## Installation
 
-### OSX using brew
+### OSX
 ```
 brew tap cristianoliveira/tap
 brew install ergo
 ```
 
-### Linux using scripts
+### Linux
 ```
 curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
 ```
@@ -43,7 +45,7 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
 
 ***Disclaimer:***
-I don't use any windows system in my daily basis, so I can't test each build :(
+I only use unix based systems on my daily basis, so I can't test each build :(
 
 ### Using golang
 ```
