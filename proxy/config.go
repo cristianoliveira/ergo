@@ -41,7 +41,7 @@ func NewConfig() *Config {
 	}
 }
 
-func LoadConfig(filepath string) []Service {
+func LoadServices(filepath string) []Service {
 	file, e := os.Open(filepath)
 	defer file.Close()
 	if e != nil {

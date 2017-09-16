@@ -6,7 +6,7 @@ import (
 
 func TestWhenHasErgoFile(t *testing.T) {
 	config := NewConfig()
-	config.Services = LoadConfig("../.ergo")
+	config.Services = LoadServices("../.ergo")
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
 		expected := 6

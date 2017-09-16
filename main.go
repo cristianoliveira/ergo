@@ -55,7 +55,7 @@ func main() {
 	configFile := command.String("config", "./.ergo", "Set the services file")
 	command.Parse(os.Args[2:])
 
-	config.Services = proxy.LoadConfig(*configFile)
+	config.Services = proxy.LoadServices(*configFile)
 
 	switch os.Args[1] {
 	case "list":
