@@ -11,7 +11,7 @@ import (
 
 func Setup(system string, remove bool, config *proxy.Config) {
 	fmt.Println("Current detected system: " + runtime.GOOS)
-	proxy_url := "http://127.0.0.1:" + config.Port + "/proxy.pac"
+	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
 	script := ""
 	cmd := exec.Command("/bin/sh")
 
@@ -25,7 +25,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 		} else {
 			script = `
 				gsettings set org.gnome.system.proxy mode 'auto'
-				gsettings set org.gnome.system.proxy autoconfig-url '` + proxy_url + `'`
+				gsettings set org.gnome.system.proxy autoconfig-url '` + proxyURL + `'`
 
 			fmt.Println(`To configure the proxy on your terminal execute:
 			export http_proxy=http://127.0.0.1:` + config.Port)
@@ -41,7 +41,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 		if remove {
 			script = `sudo networksetup -setautoproxyurl "Wi-Fi" ""`
 		} else {
-			script = `sudo networksetup -setautoproxyurl "Wi-Fi" "` + proxy_url + `"`
+			script = `sudo networksetup -setautoproxyurl "Wi-Fi" "` + proxyURL + `"`
 
 			fmt.Println(`To configure the proxy on your terminal execute:
 			export http_proxy=http://127.0.0.1:` + config.Port)

@@ -9,13 +9,13 @@ import (
 
 type Service struct {
 	Name string
-	Url  string
+	URL  string
 }
 
 type Config struct {
 	Port       string
 	Domain     string
-	UrlPattern string
+	URLPattern string
 	Verbose    bool
 	Services   []Service
 }
@@ -36,7 +36,7 @@ func NewConfig() *Config {
 	return &Config{
 		Port:       "2000",
 		Domain:     ".dev",
-		UrlPattern: `.*\.dev$`,
+		URLPattern: `.*\.dev$`,
 		Services:   nil,
 	}
 }
@@ -59,7 +59,7 @@ func LoadServices(filepath string) []Service {
 		config := declaration.FindAllString(line, -1)
 		if config != nil {
 			name, url := config[0], config[1]
-			services = append(services, Service{Name: name, Url: url})
+			services = append(services, Service{Name: name, URL: url})
 		}
 	}
 

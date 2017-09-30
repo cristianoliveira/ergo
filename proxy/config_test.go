@@ -13,7 +13,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := len(config.Services)
 
 		if expected != result {
-			t.Errorf("Expected %s got %s", expected, result)
+			t.Errorf("Expected %d got %d", expected, result)
 		}
 	})
 
@@ -21,7 +21,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := config.GetService("bla.dev")
 
 		if result == nil {
-			t.Errorf("Expected result to not be nil", result)
+			t.Errorf("Expected result to not be nil")
 		}
 	})
 
@@ -29,7 +29,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := config.GetService("foo.dev")
 
 		if result == nil {
-			t.Errorf("Expected result to not be nil", result)
+			t.Errorf("Expected result to not be nil")
 		}
 	})
 
@@ -37,7 +37,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := config.GetService("withspaces.dev")
 
 		if result == nil {
-			t.Errorf("Expected result to not be nil", result)
+			t.Errorf("Expected result to not be nil")
 		}
 	})
 
@@ -45,7 +45,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := config.GetService("undefined.dev")
 
 		if result != nil {
-			t.Errorf("Expected result to be nil got: ", result)
+			t.Errorf("Expected result to be nil got: %d", result)
 		}
 	})
 

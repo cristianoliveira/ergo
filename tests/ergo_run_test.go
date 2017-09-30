@@ -19,7 +19,7 @@ func TestIntegration(t *testing.T) {
 	}
 
 	t.Run("it lists the apps", func(tt *testing.T) {
-		apps_outoput := []string{
+		appsOutput := []string{
 			"http://foo.dev -> http://localhost:3000",
 			"http://bla.dev -> http://localhost:5000",
 			"http://withspaces.dev -> http://localhost:8080",
@@ -36,7 +36,7 @@ func TestIntegration(t *testing.T) {
 
 		output := string(bs)
 
-		for _, app := range apps_outoput {
+		for _, app := range appsOutput {
 			if !strings.Contains(output, app) {
 				tt.Errorf("Expected output:\n %s \n got %s", output, app)
 			}
@@ -44,7 +44,7 @@ func TestIntegration(t *testing.T) {
 	})
 
 	t.Run("it lists the app names", func(tt *testing.T) {
-		apps_outoput := []string{
+		appsOutput := []string{
 			"foo -> http://localhost:3000",
 			"bla -> http://localhost:5000",
 			"withspaces -> http://localhost:8080",
@@ -61,7 +61,7 @@ func TestIntegration(t *testing.T) {
 
 		output := string(bs)
 
-		for _, app := range apps_outoput {
+		for _, app := range appsOutput {
 			if !strings.Contains(output, app) {
 				tt.Errorf("Expected output:\n %s \n got %s", output, app)
 			}
@@ -69,7 +69,7 @@ func TestIntegration(t *testing.T) {
 	})
 
 	t.Run("it shows the url for a given name", func(tt *testing.T) {
-		apps_output := map[string]string{
+		appsOutput := map[string]string{
 			"foo":                "http://localhost:3000",
 			"bla":                "http://localhost:5000",
 			"withspaces":         "http://localhost:8080",
@@ -78,7 +78,7 @@ func TestIntegration(t *testing.T) {
 			"redis://redislocal": "redis://localhost:6543",
 		}
 
-		for name, url := range apps_output {
+		for name, url := range appsOutput {
 			cmd := ergo("list-names", "foo")
 			bs, err := cmd.Output()
 			if err != nil {
