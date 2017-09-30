@@ -90,6 +90,13 @@ func ServeProxy(config *Config) error {
 		w.Write([]byte(content))
 	})
 
+	http.HandleFunc("/_ergo/list", func(w http.ResponseWriter, r *http.Request) {
+		for _, s := range config.Services {
+			localUrl := `http://` + s.Name + config.Domain
+			fmt.Fprintf(w, "- %s -> %s \n", localUrl, s.Url)
+		}
+	})
+
 	http.Handle("/", NewErgoProxy(config))
 
 	return http.ListenAndServe(":"+config.Port, nil)
