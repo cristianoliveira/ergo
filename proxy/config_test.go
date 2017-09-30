@@ -45,7 +45,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := config.GetService("undefined.dev")
 
 		if result != nil {
-			t.Errorf("Expected result to be nil got: %d", result)
+			t.Errorf("Expected result to be nil got: %#v", result)
 		}
 	})
 
