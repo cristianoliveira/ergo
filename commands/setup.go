@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 )
+
 // Setup command tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
 //   - OSX

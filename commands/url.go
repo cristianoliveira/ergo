@@ -5,7 +5,7 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// Url command find and print the url for a given app name.
+// URL command find and print the url for a given app name.
 // Usage:
 // `ergo url foo`
 func URL(name string, config *proxy.Config) {

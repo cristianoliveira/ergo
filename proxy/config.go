@@ -7,11 +7,13 @@ import (
 	"regexp"
 )
 
+//Service holds the details of the service (Name and URL)
 type Service struct {
 	Name string
 	URL  string
 }
 
+//Config holds the configuration for the proxy.
 type Config struct {
 	Port       string
 	Domain     string
