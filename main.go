@@ -85,7 +85,7 @@ func main() {
 		}
 
 		name := os.Args[2]
-		commands.Url(name, config)
+		commands.URL(name, config)
 
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")

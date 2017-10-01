@@ -11,6 +11,6 @@ import (
 func ListNames(config *proxy.Config) {
 	fmt.Println("Ergo Proxy current list: ")
 	for _, s := range config.Services {
-		fmt.Printf(" - %s -> %s \n", s.Name, s.Url)
+		fmt.Printf(" - %s -> %s \n", s.Name, s.URL)
 	}
 }
