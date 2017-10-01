@@ -22,6 +22,7 @@ type Config struct {
 	Services   []Service
 }
 
+//GetService gets the service for the given host.
 func (c *Config) GetService(host string) *Service {
 	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
 	parts := domainPattern.FindAllString(host, -1)
@@ -34,6 +35,7 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
+//NewConfig gets the new config.
 func NewConfig() *Config {
 	return &Config{
 		Port:       "2000",
@@ -43,6 +45,7 @@ func NewConfig() *Config {
 	}
 }
 
+//LoadServices loads the services from filepath
 func LoadServices(filepath string) []Service {
 	file, e := os.Open(filepath)
 	defer file.Close()

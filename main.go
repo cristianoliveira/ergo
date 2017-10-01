@@ -8,8 +8,10 @@ import (
 	"os"
 )
 
+//VERSION of ergo.
 var VERSION string
 
+//USAGE details the usage for ergo proxy.
 const USAGE = `
 Ergo proxy.
 The local proxy agent for multiple services development.
