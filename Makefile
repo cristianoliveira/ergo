@@ -24,7 +24,7 @@ build: bump-version
 start:
 	@go run main.go run
 
-test:
+test: build
 	@go test ./... -v
 
 watch:

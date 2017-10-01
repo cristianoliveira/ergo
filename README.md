@@ -47,7 +47,7 @@ For windows you can find the executable in each [release](https://github.com/cri
 ***Disclaimer:***
 I only use unix based systems on my daily basis, so I can't test each build :(
 
-### Using golang
+### Using go
 ```
 go install github.com/cristianoliveira/ergo
 ```
@@ -135,6 +135,24 @@ $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 
 As an alternative you can see the scripts inside `/resources` for running an
 ephemeral setup. Those scripts sets the proxy only while `ergo` is running.
+
+## Testing 
+
+Running tests:
+```
+  make test
+```
+
+## Contributing
+ - Fork it!
+ - Create your feature branch: `git checkout -b my-new-feature`
+ - Commit your changes: `git commit -am 'Add some feature'`
+ - Push to the branch: `git push origin my-new-feature`
+ - Submit a pull request
+
+Pull Requests are welcome!
+
+**Pull Request should have unit tests**
 
 # License
 
