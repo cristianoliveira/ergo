@@ -8,7 +8,13 @@ import (
 	"runtime"
 	"strings"
 )
-
+// Setup command tries set ergo as the proxy on networking settings.
+// For now, this feature is only supported for:
+//   - OSX
+//   - Linux-gnome
+//
+// Usage:
+// `ergo setup osx`
 func Setup(system string, remove bool, config *proxy.Config) {
 	fmt.Println("Current detected system: " + runtime.GOOS)
 	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
