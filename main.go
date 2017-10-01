@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/cristianoliveira/ergo/commands"
 	"github.com/cristianoliveira/ergo/proxy"
-	"os"
 )
 
 //VERSION of ergo.
@@ -22,6 +23,7 @@ Usage:
   ergo list-names
   ergo url <name>
   ergo setup [linux-gnome|osx]
+  ergo add <service-name> <url:host> 
 
 Options:
   -h      Shows this message.
@@ -93,6 +95,17 @@ func main() {
 
 		command.Parse(os.Args[2:])
 		commands.Run(config)
+	case "add":
+		if len(os.Args) <= 3 {
+			fmt.Println(USAGE)
+			os.Exit(0)
+		}
+
+		name := os.Args[2]
+		url := os.Args[3]
+		service := proxy.NewService(name, url)
+
+		commands.AddService(config, service, *configFile)
 
 	default:
 		fmt.Println(USAGE)
