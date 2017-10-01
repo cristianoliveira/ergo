@@ -14,3 +14,7 @@
 .glide/
 
 bin/
+
+# Gogland specific files
+.idea
+*.iml

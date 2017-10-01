@@ -34,6 +34,7 @@ func formatRequest(r *http.Request) string {
 	return strings.Join(request, "\n")
 }
 
+//NewErgoProxy returns the new reverse proxy.
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
 		t := time.Now()
@@ -51,7 +52,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 
 		service := config.GetService(req.URL.Host)
 		if service != nil {
-			target, _ := url.Parse(service.Url)
+			target, _ := url.Parse(service.URL)
 			targetQuery := target.RawQuery
 
 			req.URL.Scheme = target.Scheme
@@ -75,6 +76,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	}
 }
 
+//ServeProxy listens & serves the HTTP proxy.
 func ServeProxy(config *Config) error {
 	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
 		content := `

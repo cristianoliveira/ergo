@@ -7,19 +7,22 @@ import (
 	"regexp"
 )
 
+//Service holds the details of the service (Name and URL)
 type Service struct {
 	Name string
-	Url  string
+	URL  string
 }
 
+//Config holds the configuration for the proxy.
 type Config struct {
 	Port       string
 	Domain     string
-	UrlPattern string
+	URLPattern string
 	Verbose    bool
 	Services   []Service
 }
 
+//GetService gets the service for the given host.
 func (c *Config) GetService(host string) *Service {
 	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
 	parts := domainPattern.FindAllString(host, -1)
@@ -32,15 +35,17 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
+//NewConfig gets the new config.
 func NewConfig() *Config {
 	return &Config{
 		Port:       "2000",
 		Domain:     ".dev",
-		UrlPattern: `.*\.dev$`,
+		URLPattern: `.*\.dev$`,
 		Services:   nil,
 	}
 }
 
+//LoadServices loads the services from filepath
 func LoadServices(filepath string) []Service {
 	file, e := os.Open(filepath)
 	defer file.Close()
@@ -59,7 +64,7 @@ func LoadServices(filepath string) []Service {
 		config := declaration.FindAllString(line, -1)
 		if config != nil {
 			name, url := config[0], config[1]
-			services = append(services, Service{Name: name, Url: url})
+			services = append(services, Service{Name: name, URL: url})
 		}
 	}
 

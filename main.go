@@ -8,8 +8,10 @@ import (
 	"os"
 )
 
+//VERSION of ergo.
 var VERSION string
 
+//USAGE details the usage for ergo proxy.
 const USAGE = `
 Ergo proxy.
 The local proxy agent for multiple services development.
@@ -83,7 +85,7 @@ func main() {
 		}
 
 		name := os.Args[2]
-		commands.Url(name, config)
+		commands.URL(name, config)
 
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
