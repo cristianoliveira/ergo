@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -12,10 +13,22 @@ func ergo(args ...string) *exec.Cmd {
 	return exec.Command("../bin/ergo", args...)
 }
 
+func integrationDisabled() bool {
+	value, found := os.LookupEnv("INTEGRATION_TEST")
+	if found == false || value == "false" {
+		return true
+	}
+
+	return false
+}
 func TestIntegration(t *testing.T) {
 	// TODO: create tests for windows
 	if runtime.GOOS == "windows" {
 		t.Skipf("skipping test on %q", runtime.GOOS)
+	}
+
+	if integrationDisabled() {
+		t.Skip("skipping integration tests - run with INTEGRATION_TEST=true to include")
 	}
 
 	t.Run("it lists the apps", func(tt *testing.T) {
