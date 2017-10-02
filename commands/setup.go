@@ -2,21 +2,24 @@ package commands
 
 import (
 	"fmt"
-	"github.com/cristianoliveira/ergo/proxy"
 	"log"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/cristianoliveira/ergo/proxy"
 )
 
 // Setup command tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
 //   - OSX
 //   - Linux-gnome
+//   - Windows
 //
 // Usage:
 // `ergo setup osx`
 func Setup(system string, remove bool, config *proxy.Config) {
+	
 	fmt.Println("Current detected system: " + runtime.GOOS)
 	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
 	script := ""
@@ -60,12 +63,24 @@ func Setup(system string, remove bool, config *proxy.Config) {
 			log.Fatal(err)
 		}
 
+	case "windows":
+		if remove {
+			cmd = exec.Command("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/f")
+		} else {
+			cmd = exec.Command("reg", "add", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/t", "REG_SZ", "/d", proxyURL, "/f")
+		}
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
+		//this is because windows needs to be told about the change
+		InetRefresh()
 	default:
 		fmt.Println(`
 List of supported system
 
 -linux-gnome
 -osx
+-windows
 
 For more support please open an issue on: https://github.com/cristianoliveira/ergo
 		`)

@@ -22,8 +22,8 @@ Usage:
   ergo list
   ergo list-names
   ergo url <name>
-  ergo setup [linux-gnome|osx]
-  ergo add <service-name> <host:port> 
+  ergo setup [linux-gnome|osx|windows]
+  ergo add <service-name> <host:port>
 
 Options:
   -h      Shows this message.

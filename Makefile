@@ -5,6 +5,7 @@ all: deps bump-version build test
 VERSION=`cat .version`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
 
+
 build-darwin-arm:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/darwin/ergo
 
@@ -24,11 +25,14 @@ build: bump-version
 start:
 	@go run main.go run
 
-test:
-	@go test ./... -v
+test: build
+	@INTEGRATION_TEST=true go test ./... -v
 
 watch:
 	funzzy watch
+
+clean:
+	rm bin/ergo
 
 deps:
 	@go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v ergo | go get
