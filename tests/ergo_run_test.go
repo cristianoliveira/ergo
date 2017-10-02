@@ -79,7 +79,7 @@ func TestShowUrlForName(t *testing.T){
 			"withspaces":         "http://withspaces.dev",
 			"one.domain":         "http://one.domain.dev",
 			"two.domain":         "http://two.domain.dev",
-			"redis://redislocal": "http://redis://redislocal.dev",
+			"redis://redislocal": "redis://redislocal.dev",
 		}
 
 		for name, url := range appsOutput {
@@ -89,7 +89,7 @@ func TestShowUrlForName(t *testing.T){
 				tt.Fatal(err)
 			}
 
-			output := string(bs)			
+			output := string(bs)
 			if strings.Trim(output," \r\n")!=url {
 				tt.Errorf("Expected output:\n [%s] \n got [%s]", url, strings.Trim(output," \r\n"))
 			}

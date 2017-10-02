@@ -57,4 +57,5 @@ deploy:
     appveyor_repo_tag: true
 
 test_script:
-  - ./make.ps1 test
+
+  - powershell -File make.ps1 -test
