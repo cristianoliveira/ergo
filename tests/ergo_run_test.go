@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"runtime"
@@ -92,6 +93,37 @@ func TestIntegration(t *testing.T) {
 		}
 	})
 
+	t.Run("it adds new service if not present", func(tt *testing.T) {
+		appsOutput := fmt.Sprintf("%s\n", "Service added successfully!")
+
+		cmd := ergo("add", "new.service", "http://localhost:8083")
+		bs, err := cmd.Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		output := string(bs)
+
+		if strings.Compare(output, appsOutput) != 0 {
+			tt.Errorf("Expected output:\n %s \n got %s", appsOutput, output)
+		}
+	})
+
+	t.Run("it prints message for already added service", func(tt *testing.T) {
+		appsOutput := fmt.Sprintf("%s\n", "Service already present!")
+
+		cmd := ergo("add", "foo", "http://localhost:3000")
+		bs, err := cmd.Output()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		output := string(bs)
+
+		if strings.Compare(output, appsOutput) != 0 {
+			tt.Errorf("Expected output:\n %s \n got %s", appsOutput, output)
+		}
+	})
 	// TODO: Add tests for server
 	//
 	// t.Run("it runs binding the sites", func(tt *testing.T) {

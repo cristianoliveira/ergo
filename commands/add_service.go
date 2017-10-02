@@ -10,8 +10,8 @@ import (
 // Usage:
 // `ergo add service servicehost:port`
 func AddService(config *proxy.Config, service proxy.Service, configFile string) {
-	old_service := config.GetService(service.Name + config.Domain)
-	if old_service != nil {
+	oldService := config.GetService(service.Name + config.Domain)
+	if oldService != nil {
 		fmt.Println("Service already present!")
 	} else {
 		config.Services = append(config.Services, service)

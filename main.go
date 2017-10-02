@@ -23,7 +23,7 @@ Usage:
   ergo list-names
   ergo url <name>
   ergo setup [linux-gnome|osx]
-  ergo add <service-name> <url:host> 
+  ergo add <service-name> <host:port> 
 
 Options:
   -h      Shows this message.
