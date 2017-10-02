@@ -70,10 +70,15 @@ func LoadServices(filepath string) []Service {
 
 		declaration := regexp.MustCompile(`(\S+)`)
 		config := declaration.FindAllString(line, -1)
-		if config != nil {
-			name, url := config[0], config[1]
-			services = append(services, Service{Name: name, URL: url})
+		if config == nil {
+			continue
 		}
+		if len(config) != 2 {
+			fmt.Printf("File error: invalid format `%v` expected `{NAME} {URL}`\n", line)
+			os.Exit(1)
+		}
+		name, url := config[0], config[1]
+		services = append(services, Service{Name: name, URL: url})
 	}
 
 	return services
