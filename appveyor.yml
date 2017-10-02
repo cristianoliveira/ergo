@@ -57,4 +57,4 @@ deploy:
     appveyor_repo_tag: true
 
 test_script:
-  - go test ./... -v
+  - ./make.ps1 test

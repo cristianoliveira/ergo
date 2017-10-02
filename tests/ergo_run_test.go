@@ -1,36 +1,21 @@
+// +build integration
+
 package main
 
 import (
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 	"testing"
+	"path/filepath"
 )
 
 func ergo(args ...string) *exec.Cmd {
-	return exec.Command("../bin/ergo", args...)
+	return exec.Command(filepath.Join("..","bin","ergo"), args...)
 }
 
-func integrationDisabled() bool {
-	value, found := os.LookupEnv("INTEGRATION_TEST")
-	if found == false || value == "false" {
-		return true
-	}
-
-	return false
-}
-func TestIntegration(t *testing.T) {
-	// TODO: create tests for windows
-	if runtime.GOOS == "windows" {
-		t.Skipf("skipping test on %q", runtime.GOOS)
-	}
-
-	if integrationDisabled() {
-		t.Skip("skipping integration tests - run with INTEGRATION_TEST=true to include")
-	}
+func TestListApps(t *testing.T) {	
 
 	t.Run("it lists the apps", func(tt *testing.T) {
 		appsOutput := []string{
@@ -56,6 +41,9 @@ func TestIntegration(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestListAppNames(t *testing.T){
 
 	t.Run("it lists the app names", func(tt *testing.T) {
 		appsOutput := []string{
@@ -81,27 +69,29 @@ func TestIntegration(t *testing.T) {
 			}
 		}
 	})
+}
+func TestShowUrlForName(t *testing.T){ 
 
 	t.Run("it shows the url for a given name", func(tt *testing.T) {
 		appsOutput := map[string]string{
-			"foo":                "http://localhost:3000",
-			"bla":                "http://localhost:5000",
-			"withspaces":         "http://localhost:8080",
-			"one.domain":         "http://localhost:8081",
-			"two.domain":         "http://localhost:8082",
-			"redis://redislocal": "redis://localhost:6543",
+			"foo":                "http://foo.dev",
+			"bla":                "http://bla.dev",
+			"withspaces":         "http://withspaces.dev",
+			"one.domain":         "http://one.domain.dev",
+			"two.domain":         "http://two.domain.dev",
+			"redis://redislocal": "http://redis://redislocal.dev",
 		}
 
 		for name, url := range appsOutput {
-			cmd := ergo("list-names", "foo")
+			cmd := ergo("url", name)
 			bs, err := cmd.Output()
 			if err != nil {
 				tt.Fatal(err)
 			}
 
-			output := string(bs)
-			if !strings.Contains(output, url) {
-				tt.Errorf("Expected output:\n %s \n got %s", output, name)
+			output := string(bs)			
+			if strings.Trim(output," \r\n")!=url {
+				tt.Errorf("Expected output:\n [%s] \n got [%s]", url, strings.Trim(output," \r\n"))
 			}
 		}
 	})
