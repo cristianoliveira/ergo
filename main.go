@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/cristianoliveira/ergo/commands"
 	"github.com/cristianoliveira/ergo/proxy"
-	"os"
 )
 
 //VERSION of ergo.
@@ -21,7 +22,7 @@ Usage:
   ergo list
   ergo list-names
   ergo url <name>
-  ergo setup [linux-gnome|osx]
+  ergo setup [linux-gnome|osx|windows]
 
 Options:
   -h      Shows this message.

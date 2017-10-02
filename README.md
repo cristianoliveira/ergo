@@ -67,12 +67,14 @@ Ergo comes with a setup command that can configure that for you. The current sys
 
  - osx
  - linux-gnome
+ - windows
 
 (Contributions are welcomed)
 
 ```bash
 ergo setup <operation-system>
 ```
+
 In case of errors or if it doesn't work please take a look on detailed config session below.
 
 ### Showtime
