@@ -45,6 +45,14 @@ func NewConfig() *Config {
 	}
 }
 
+//NewService gets the new service.
+func NewService(name, url string) Service {
+	return Service{
+		Name: name,
+		URL:  url,
+	}
+}
+
 //LoadServices loads the services from filepath
 func LoadServices(filepath string) []Service {
 	file, e := os.Open(filepath)
@@ -69,4 +77,18 @@ func LoadServices(filepath string) []Service {
 	}
 
 	return services
+}
+
+//AddService adds new service to the filepath
+func AddService(filepath string, service Service) error {
+	file, e := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	defer file.Close()
+	if e != nil {
+		fmt.Printf("File error: %v\n", e)
+		os.Exit(1)
+	}
+
+	serviceStr := service.Name + " " + service.URL + "\n"
+	_, err := file.WriteString(serviceStr)
+	return err
 }

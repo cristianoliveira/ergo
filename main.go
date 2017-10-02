@@ -23,6 +23,7 @@ Usage:
   ergo list-names
   ergo url <name>
   ergo setup [linux-gnome|osx|windows]
+  ergo add <service-name> <host:port>
 
 Options:
   -h      Shows this message.
@@ -94,6 +95,17 @@ func main() {
 
 		command.Parse(os.Args[2:])
 		commands.Run(config)
+	case "add":
+		if len(os.Args) <= 3 {
+			fmt.Println(USAGE)
+			os.Exit(0)
+		}
+
+		name := os.Args[2]
+		url := os.Args[3]
+		service := proxy.NewService(name, url)
+
+		commands.AddService(config, service, *configFile)
 
 	default:
 		fmt.Println(USAGE)

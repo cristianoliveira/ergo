@@ -68,4 +68,12 @@ func TestWhenHasErgoFile(t *testing.T) {
 			}
 		})
 	})
+
+	t.Run("It adds new service", func(tt *testing.T) {
+		service := NewService("testservice", "http://localhost:8080")
+
+		if err := AddService("../.ergo", service); err != nil {
+			tt.Errorf("Expected service to be added")
+		}
+	})
 }
