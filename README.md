@@ -15,18 +15,18 @@
 
 <img src="https://raw.githubusercontent.com/cristianoliveira/ergo/master/demo.gif" align="center" />
 
-More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
+See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
 The Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
 
-This project is under development but it's already usable. Feel free to give me
+This project is under development but it's ready to use. Feel free to give me
 feedback and opening issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-When dealing with multiple apps locally is really annoying having to remember each port that represents each service and it gets even worse when you have microservices. So I wanted a simple way to give a proper local domain for each app. Ergos comes to solve this simple problem.
+When dealing with multiple apps locally it's really annoying having to remember each port that represents each service and it gets even worse when you have microservices. So I wanted a simple way to give each app a proper local domain. Ergo comes to solve this simple problem.
 
 ## Installation
 
@@ -55,7 +55,7 @@ Make sure you have `$GOPATH/bin` in your path. `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
-Ergo looks for a `.ergo` file inside the current folder. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url) the main difference is that it also considers the port specified.
+Ergo looks for a `.ergo` file inside the current folder. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url) the main difference is that it also considers the specified port.
 
 Let's start:
 
@@ -84,11 +84,11 @@ echo "ergoproxy http://localhost:3000" > .ergo
 ergo run
 ```
 Now you are able to access: `http://ergoproxy.dev`.
-Ergo redirects anything that finish with `.dev` to the configured url.
+Ergo redirects anything that finishes with `.dev` to the configured url.
 
-Simple right? No magic involved.
+Simple, right? No magic involved.
 
-Do you want add more services? So is easy, just add more lines in `.ergo`:
+Do you want to add more services? It's easy, just add more lines in `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
 ergo list
@@ -136,7 +136,7 @@ $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 ### Ephemeral Setup
 
 As an alternative you can see the scripts inside `/resources` for running an
-ephemeral setup. Those scripts sets the proxy only while `ergo` is running.
+ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
 ## Testing 
 
