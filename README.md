@@ -17,7 +17,7 @@
 
 More you can see in [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
-The Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
 
@@ -26,7 +26,7 @@ feedback and opening issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-When dealing with multiple apps locally is really annoying having to remember each port that represents each service and it gets even worse when you have microservices. So I wanted a simple way to give a proper local domain for each app. Ergos comes to solve this simple problem.
+Dealing with multiple apps locally is really annoying. Having to remember each port that represents each service, and this gets even worse when you have microservices. So I wanted a simple way to give a proper local domain for each app. Ergos comes to solve this simple problem.
 
 ## Installation
 
@@ -45,7 +45,7 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
 
 ***Disclaimer:***
-I only use unix based systems on my daily basis, so I can't test each build :(
+I only use unix based systems on a daily basis, so I am not able test each build :(
 
 ### Using go
 ```
@@ -55,7 +55,7 @@ Make sure you have `$GOPATH/bin` in your path. `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
-Ergo looks for a `.ergo` file inside the current folder. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url) the main difference is that it also considers the port specified.
+Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url). The main difference is that it also considers the port specified.
 
 Let's start:
 
