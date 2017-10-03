@@ -1,6 +1,6 @@
-.PHONY: all start build test deps
+.PHONY: all start build test test-integration deps
 
-all: deps bump-version build test
+all: deps bump-version test build test-integration
 
 VERSION=`cat .version`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
@@ -25,7 +25,10 @@ build: bump-version
 start:
 	@go run main.go run
 
-test: build
+test: 
+	go test -v ./...
+
+test-integration: build
 	go test -tags=integration -v ./... 
 
 watch:

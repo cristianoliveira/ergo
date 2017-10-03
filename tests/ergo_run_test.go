@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 	"path/filepath"
+	"io/ioutil"
 )
 
 func ergo(args ...string) *exec.Cmd {
@@ -96,8 +97,19 @@ func TestShowUrlForName(t *testing.T){
 		}
 	})
 
+}
+
+func TestAddService (t *testing.T){
 	t.Run("it adds new service if not present", func(tt *testing.T) {
 		appsOutput := fmt.Sprintf("%s\n", "Service added successfully!")
+
+		fileContent, err := ioutil.ReadFile("./.ergo")
+
+		if err == nil {
+			//we clean after the test. Otherwise the next test will fail
+			defer ioutil.WriteFile("./.ergo", fileContent, 0755)
+		}
+		
 
 		cmd := ergo("add", "new.service", "http://localhost:8083")
 		bs, err := cmd.Output()
@@ -127,14 +139,15 @@ func TestShowUrlForName(t *testing.T){
 			tt.Errorf("Expected output:\n %s \n got %s", appsOutput, output)
 		}
 	})
-	// TODO: Add tests for server
-	//
-	// t.Run("it runs binding the sites", func(tt *testing.T) {
-	// 	cmd := ergo("run", "-p", "25000")
-	// 	defer cmd.Process.Kill()
-	// 	err := cmd.Run()
-	// 	if err != nil {
-	// 		tt.Fatal(err)
-	// 	}
-	// })
 }
+
+// TODO: Add tests for server
+//
+// t.Run("it runs binding the sites", func(tt *testing.T) {
+// 	cmd := ergo("run", "-p", "25000")
+// 	defer cmd.Process.Kill()
+// 	err := cmd.Run()
+// 	if err != nil {
+// 		tt.Fatal(err)
+// 	}
+// })
