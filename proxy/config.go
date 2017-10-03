@@ -53,13 +53,13 @@ func NewService(name, url string) Service {
 	}
 }
 
-//LoadServices loads the services from filepath
-func LoadServices(filepath string) []Service {
+//LoadServices loads the services from filepath, returns an error
+//if the configuration could not be parsed
+func LoadServices(filepath string) ([]Service, error) {
 	file, e := os.Open(filepath)
 	defer file.Close()
 	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
+		return nil, fmt.Errorf("file error: %v", e)
 	}
 
 	services := []Service{}
@@ -74,14 +74,13 @@ func LoadServices(filepath string) []Service {
 			continue
 		}
 		if len(config) != 2 {
-			fmt.Printf("File error: invalid format `%v` expected `{NAME} {URL}`\n", line)
-			os.Exit(1)
+			return nil, fmt.Errorf("file error: invalid format `%v` expected `{NAME} {URL}`", line)
 		}
 		name, url := config[0], config[1]
 		services = append(services, Service{Name: name, URL: url})
 	}
 
-	return services
+	return services, nil
 }
 
 //AddService adds new service to the filepath

@@ -59,7 +59,11 @@ func main() {
 	configFile := command.String("config", "./.ergo", "Set the services file")
 	command.Parse(os.Args[2:])
 
-	config.Services = proxy.LoadServices(*configFile)
+	services, err := proxy.LoadServices(*configFile)
+	if err != nil {
+		fmt.Printf("Could not load services: %v\n", err)
+	}
+	config.Services = services
 
 	switch os.Args[1] {
 	case "list":

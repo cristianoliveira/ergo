@@ -11,7 +11,12 @@ import (
 
 func TestWhenHasCollectionFile(t *testing.T) {
 	config := NewConfig()
-	config.Services = LoadServices("../.ergo")
+	services, err := LoadServices("../.ergo")
+	if err != nil {
+		t.Errorf("could not load requied configuration file for tests")
+		t.FailNow()
+	}
+	config.Services = services
 	proxy := NewErgoProxy(config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {

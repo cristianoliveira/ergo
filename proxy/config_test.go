@@ -1,12 +1,19 @@
 package proxy
 
 import (
+	"io/ioutil"
 	"testing"
 )
 
 func TestWhenHasErgoFile(t *testing.T) {
 	config := NewConfig()
-	config.Services = LoadServices("../.ergo")
+	services, err := LoadServices("../.ergo")
+	if err != nil {
+		t.Errorf("could not load requied configuration file for tests")
+		t.FailNow()
+	}
+
+	config.Services = services
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
 		expected := 6
@@ -74,6 +81,23 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 		if err := AddService("../.ergo", service); err != nil {
 			tt.Errorf("Expected service to be added")
+		}
+	})
+
+	t.Run("It returns an error if there's an invalid declaration", func(tt *testing.T) {
+		fileContent, err := ioutil.ReadFile("../.ergo")
+
+		if err != nil {
+			tt.Skipf("Could not load initial .ergo file")
+		}
+
+		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
+
+		service := NewService("service-without-url", "")
+		AddService("../.ergo", service)
+		_, err = LoadServices("../.ergo")
+		if err == nil {
+			tt.Errorf("Expected LoadServices to fail")
 		}
 	})
 }
