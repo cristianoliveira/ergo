@@ -6,11 +6,17 @@ param(
     [switch]$bump_version,
     [switch]$start,
     [switch]$test,
+    [switch]$test_integration,
     [switch]$clean
 )
 
+function bumpVersion {
+    git tag --sort=committerdate | tail -n 1 > .version
+    Get-Content .version
+}
 function build(){
-    go build -o bin/ergo.exe
+    bumpVersion
+    go build -ldflags "-w -s -X main.VERSION=$(Get-Content .\.version)" -o bin/ergo.exe
 }
 
 if($build_darwin_arm) {
@@ -35,12 +41,18 @@ if($clean){
 }
 if($test){
     Write-Host "Starting tests ..."
-    build
-    go test -v -tags=integration ./... 
+    go test -v ./... 
 }
+
+if($test_integration) {
+    Write-Host "Starting integration tests ..."
+    build
+    go test -tags=integration -v ./... 
+    
+}
+
 if($bump_version){
-    git tag --sort=committerdate | tail -n 1 > .version
-    Get-Content .version
+    bumpVersion
 }
 
 function showHelp{
@@ -59,7 +71,8 @@ function showHelp{
 if(!$build -and !$build_darwin -and 
     !$build_linux_arm -and !$build_linux_x64 -and
     !$bump_version -and !$start -and
-    !$test -and !$clean){
+    !$test -and !$clean -and 
+    !$test_integration){
         showHelp
 }
 

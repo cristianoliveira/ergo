@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"io/ioutil"
 	"testing"
 )
 
@@ -13,7 +14,8 @@ func TestWhenHasErgoFile(t *testing.T) {
 		result := len(config.Services)
 
 		if expected != result {
-			t.Errorf("Expected %d got %d", expected, result)
+			t.Errorf("Expected to get %d services, but got %d\r\n%q",
+				expected, result, config.Services)
 		}
 	})
 
@@ -70,10 +72,20 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It adds new service", func(tt *testing.T) {
+		fileContent, err := ioutil.ReadFile("../.ergo")
+
+		if err != nil {
+			tt.Skipf("Could not load initial .ergo file")
+		}
+
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
+
 		service := NewService("testservice", "http://localhost:8080")
 
 		if err := AddService("../.ergo", service); err != nil {
 			tt.Errorf("Expected service to be added")
 		}
+
 	})
 }
