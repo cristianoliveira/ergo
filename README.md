@@ -90,7 +90,7 @@ Ergo redirects anything that ends with `*.dev` to the configured url.
 
 Simple, right? No magic involved.
 
-You can easily add more services by adding more lines in `.ergo`:
+You can easily add more services by adding more lines to `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
 ergo list
