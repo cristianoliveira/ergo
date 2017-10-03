@@ -1,5 +1,5 @@
 
-# Ergo [![GoDoc](https://godoc.org/github.com/cristianoliveira/ergo?status.svg)](https://godoc.org/github.com/cristianoliveira/ergo) [![Go Report Card](https://goreportcard.com/badge/github.com/cristianoliveira/ergo)](https://goreportcard.com/report/github.com/cristianoliveira/ergo) [![unix build](https://img.shields.io/travis/cristianoliveira/ergo.svg?label=unix)](https://travis-ci.org/cristianoliveira/ergo) [![win build](https://img.shields.io/appveyor/ci/cristianoliveira/ergo.svg?label=win)](https://ci.appveyor.com/project/cristianoliveira/ergo) 
+# Ergo [![GoDoc](https://godoc.org/github.com/cristianoliveira/ergo?status.svg)](https://godoc.org/github.com/cristianoliveira/ergo) [![Go Report Card](https://goreportcard.com/badge/github.com/cristianoliveira/ergo)](https://goreportcard.com/report/github.com/cristianoliveira/ergo) [![unix build](https://img.shields.io/travis/cristianoliveira/ergo.svg?label=unix)](https://travis-ci.org/cristianoliveira/ergo) [![win build](https://img.shields.io/appveyor/ci/cristianoliveira/ergo.svg?label=win)](https://ci.appveyor.com/project/cristianoliveira/ergo)
 
 <p align="left" >
 <img src="https://s-media-cache-ak0.pinimg.com/736x/aa/bc/3b/aabc3b2b789f478ffb87ac2f0bdd2d33--ergo-proxy-manga-anime.jpg" width="250" align="center" />
@@ -17,16 +17,16 @@
 
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
-Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and doing it well. Simplicity means no magic involved. Just a flexible reverse proxy which extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
 
-This project is under development but it's ready to use. Feel free to give me
-feedback and opening issues. Suggestions and contributions are welcome. :)
+This project is constantly undergoing development, however, it's ready to use. Feel free to provide
+feedback as well as open issues. All suggestions and contributions are welcome. :)
 
 ## Why?
 
-Dealing with multiple apps locally is really annoying. Having to remember each port that represents each service, and this gets even worse when you have microservices. So I wanted a simple way to give each app a proper local domain. Ergos comes to solve this simple problem.
+Dealing with multiple apps locally, and having to remember each port representing each microservice is frustrating. I wanted a simple way to assign each service a proper local domain. Ergos solves this problem.
 
 ## Installation
 
@@ -42,40 +42,36 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 ```
 
 ### Windows
-For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
+You can find the Windows executables in [release](https://github.com/cristianoliveira/ergo/releases).
 
 ***Disclaimer:***
-I only use unix based systems on a daily basis, so I am not able to test each build :(
+I use Unix-based systems on a daily basis, so I am not able to test each build alone. :(
 
-### Using go
+### Go
 ```
 go install github.com/cristianoliveira/ergo
 ```
-Make sure you have `$GOPATH/bin` in your path. `export PATH=$PATH:$GOPATH/bin`
+Make sure you have `$GOPATH/bin` in your path: `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
-Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as the `/etc/hosts` (domain+space+url). The main difference is that it also considers the specified port.
-
-Let's start:
+Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`domain`+`space`+`url`). The main difference is it also considers the specified port.
 
 ### Simplest Setup
 
-**You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config**
+**You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config.**
 
-Ergo comes with a setup command that can configure that for you. The current systems supported are:
+Ergo comes with a setup command that can configure it for you. The current systems supported are:
 
  - osx
  - linux-gnome
  - windows
 
-(Contributions are welcomed)
-
 ```bash
 ergo setup <operation-system>
 ```
 
-In case of errors or if it doesn't work please take a look on detailed config session below.
+In case of errors / it doesn't work, please look at the detailed config session below.
 
 ### Showtime
 
@@ -83,8 +79,8 @@ In case of errors or if it doesn't work please take a look on detailed config se
 echo "ergoproxy http://localhost:3000" > .ergo
 ergo run
 ```
-Now you are able to access: `http://ergoproxy.dev`.
-Ergo redirects anything that finishes with `.dev` to the configured url.
+Now you should be able to access: `http://ergoproxy.dev`.
+Ergo redirects anything ending with `.dev` to the configured url.
 
 Simple, right? No magic involved.
 
@@ -138,9 +134,8 @@ $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 As an alternative you can see the scripts inside `/resources` for running an
 ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
-## Testing 
+## Run tests
 
-Running tests:
 ```
   make test
 ```
@@ -150,11 +145,8 @@ Running tests:
  - Create your feature branch: `git checkout -b my-new-feature`
  - Commit your changes: `git commit -am 'Add some feature'`
  - Push to the branch: `git push origin my-new-feature`
- - Submit a pull request
-
-Pull Requests are welcome!
-
-**Pull Request should have unit tests**
+ - Submit a pull request, they are welcome!
+ - Please include unit tests in your pull requests
 
 # License
 
