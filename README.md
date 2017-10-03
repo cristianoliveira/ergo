@@ -45,7 +45,7 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
 
 ***Disclaimer:***
-I only use unix based systems on a daily basis, so I am not able test each build :(
+I only use unix based systems on a daily basis, so I am not able to test each build :(
 
 ### Using go
 ```
