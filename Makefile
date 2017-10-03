@@ -26,7 +26,7 @@ start:
 	@go run main.go run
 
 test: build
-	@INTEGRATION_TEST=true go test ./... -v
+	go test -tags=integration -v ./... 
 
 watch:
 	funzzy watch

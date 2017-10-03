@@ -12,6 +12,7 @@ import (
 // `ergo url foo`
 func URL(name string, config *proxy.Config) {
 	for _, s := range config.Services {
+
 		if name == s.Name {
 
 			localURL := s.Name + config.Domain
