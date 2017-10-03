@@ -3,30 +3,30 @@
 
 <p align="left" >
 <img src="https://s-media-cache-ak0.pinimg.com/736x/aa/bc/3b/aabc3b2b789f478ffb87ac2f0bdd2d33--ergo-proxy-manga-anime.jpg" width="250" align="center" />
-<span>Ergo Proxy - The reverse proxy agent for local domain management.</span>
+<span>Ergo Proxy - Reverse proxy agent for local domain.</span>
 
 </p>
 
 <p align="center">
-  The management of multiple apps running over different ports made easy through custom local domains.
+  Management of multiple apps running on different ports made easy through local domains.
 </p>
 
 ## Demo
 
 <img src="https://raw.githubusercontent.com/cristianoliveira/ergo/master/demo.gif" align="center" />
 
-See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
+See more [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
-Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+Ergo's goal is to be a simple reverse proxy that follows [Unix's philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and doing it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
 
-This project is under development but it's ready to use. Feel free to give me
+This project is still under development but it's ready to use. Feel free to leave your 
 feedback and opening issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-Dealing with multiple apps locally is really annoying. Having to remember each port that represents each service, and this gets even worse when you have microservices. So I wanted a simple way to give each app a proper local domain. Ergos comes to solve this simple problem.
+When dealing with multiple apps locally it's really annoying rememberinf which port represents each service and it gets even worse when you have microservices. Ergo solves this by assigning a local domain for each app.
 
 ## Installation
 
@@ -45,7 +45,8 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 For windows you can find the executable in each [release](https://github.com/cristianoliveira/ergo/releases).
 
 ***Disclaimer:***
-I only use unix based systems on a daily basis, so I am not able to test each build :(
+
+I use unix based systems on a daily basis, so I can't test every build on every OS :(
 
 ### Using go
 ```
@@ -63,7 +64,7 @@ Let's start:
 
 **You need to set the `http://127.0.0.1:2000/proxy.pac` configuration on your system network config**
 
-Ergo comes with a setup command that can configure that for you. The current systems supported are:
+Ergo provides a setup command to generate those config for you. Currently, the supported OS's are:
 
  - osx
  - linux-gnome
@@ -75,7 +76,7 @@ Ergo comes with a setup command that can configure that for you. The current sys
 ergo setup <operation-system>
 ```
 
-In case of errors or if it doesn't work please take a look on detailed config session below.
+If you have trouble using Ergo, please take a look on detailed config session below.
 
 ### Showtime
 
@@ -84,22 +85,23 @@ echo "ergoproxy http://localhost:3000" > .ergo
 ergo run
 ```
 Now you are able to access: `http://ergoproxy.dev`.
-Ergo redirects anything that finishes with `.dev` to the configured url.
+
+Ergo redirects anything that ends with `*.dev` to the configured url.
 
 Simple, right? No magic involved.
 
-Do you want to add more services? It's easy, just add more lines in `.ergo`:
+You can easily add more services by adding more lines to `.ergo`:
 ```
 echo "otherservice http://localhost:5000" >> .ergo
 ergo list
 ergo run
 ```
 
-Restart the server and access: `http://otherservice.dev`
+Restart the Ergo server and access: `http://otherservice.dev`
 
 ## Configuration
 
-In order to use Ergo domains you need to set it as a proxy. Set the `http://127.0.0.1:2000/proxy.pac` on:
+In order to use Ergo you need to set it up as your machine's proxy. Just point your proxy config to `http://127.0.0.1:2000/proxy.pac`:
 
 ##### OS X
 
@@ -135,8 +137,7 @@ $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 
 ### Ephemeral Setup
 
-As an alternative you can see the scripts inside `/resources` for running an
-ephemeral setup. Those scripts set the proxy only while `ergo` is running.
+You can run Ergo with an ephemeral setup, check the scripts inside `/resources` forlder. Those scripts set the proxy config only while `ergo` is running.
 
 ## Testing 
 
