@@ -11,7 +11,7 @@ param(
 )
 
 function bumpVersion {
-    git tag --sort=committerdate | tail -n 1 > .version
+    git tag --sort=committerdate | Select-Object -Last 1 > .version
     Get-Content .version
 }
 function build(){
@@ -64,6 +64,7 @@ function showHelp{
     .\make.ps1 -bump_version            bump the app version
     .\make.ps1 -start                   start the ergo proxy
     .\make.ps1 -test                    run the tests
+    .\make.ps1 -test-integration        run the integration tests
     .\make.ps1 -clean                   remove all the created executables
     "
 }
