@@ -17,16 +17,16 @@
 
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
-Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and do it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
+Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing one thing and doing it well. Simplicity means no magic involved. Just a flexible reverse proxy that extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
 
 This project is under development but it's ready to use. Feel free to give me
-feedback and opening issues. Suggestions and contributions are welcome. :)
+feedback and open issues. Suggestions and contributions are welcome. :)
 
 ## Why?
 
-Dealing with multiple apps locally is really annoying. Having to remember each port that represents each service, and this gets even worse when you have microservices. So I wanted a simple way to give each app a proper local domain. Ergos comes to solve this simple problem.
+Dealing with multiple apps locally is really annoying. You have to remember each port that represents each service, and this gets even worse when you have microservices. So I wanted a simple way to give each app a proper local domain. Ergos comes to solve this simple problem.
 
 ## Installation
 
@@ -115,7 +115,7 @@ On Ubuntu
 
 `System Settings > Network > Network Proxy > Automatic`
 
-For other distributions, check your network manager and look for proxy configuration. Use browser configuration as an alternative.
+For other distributions, check your network manager for proxy configuration. Use browser configuration as an alternative.
 
 ### Browser configuration
 
