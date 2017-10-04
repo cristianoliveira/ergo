@@ -9,7 +9,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	config := NewConfig()
 	services, err := LoadServices("../.ergo")
 	if err != nil {
-		t.Errorf("could not load requied configuration file for tests")
+		t.Errorf("could not load required configuration file for tests")
 		t.FailNow()
 	}
 
