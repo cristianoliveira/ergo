@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/cristianoliveira/ergo/commands"
@@ -61,7 +62,7 @@ func main() {
 
 	services, err := proxy.LoadServices(*configFile)
 	if err != nil {
-		fmt.Printf("Could not load services: %v\n", err)
+		log.Printf("Could not load services: %v\n", err)
 	}
 	config.Services = services
 
