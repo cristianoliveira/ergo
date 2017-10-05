@@ -13,8 +13,7 @@ func TestWhenHasCollectionFile(t *testing.T) {
 	config := NewConfig()
 	services, err := LoadServices("../.ergo")
 	if err != nil {
-		t.Errorf("could not load required configuration file for tests")
-		t.FailNow()
+		t.Fatal("could not load requied configuration file for tests")
 	}
 	config.Services = services
 	proxy := NewErgoProxy(config)

@@ -9,8 +9,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	config := NewConfig()
 	services, err := LoadServices("../.ergo")
 	if err != nil {
-		t.Errorf("could not load required configuration file for tests")
-		t.FailNow()
+		t.Fatal("could not load requied configuration file for tests")
 	}
 
 	config.Services = services
@@ -88,7 +87,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		fileContent, err := ioutil.ReadFile("../.ergo")
 
 		if err != nil {
-			tt.Skipf("Could not load initial .ergo file")
+			tt.Skip("Could not load initial .ergo file")
 		}
 
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
@@ -97,7 +96,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		AddService("../.ergo", service)
 		_, err = LoadServices("../.ergo")
 		if err == nil {
-			tt.Errorf("Expected LoadServices to fail")
+			tt.Error("Expected LoadServices to fail")
 		}
 	})
 }
