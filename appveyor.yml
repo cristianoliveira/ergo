@@ -58,4 +58,4 @@ deploy:
 
 test_script:
 
-  - powershell -File make.ps1 -test-integration
+  - powershell -File make.ps1 -test_integration
