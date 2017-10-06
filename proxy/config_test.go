@@ -7,7 +7,12 @@ import (
 
 func TestWhenHasErgoFile(t *testing.T) {
 	config := NewConfig()
-	config.Services = LoadServices("../.ergo")
+	services, err := LoadServices("../.ergo")
+	if err != nil {
+		t.Fatal("could not load requied configuration file for tests")
+	}
+
+	config.Services = services
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
 		expected := 6
@@ -87,5 +92,22 @@ func TestWhenHasErgoFile(t *testing.T) {
 			tt.Errorf("Expected service to be added")
 		}
 
+	})
+
+	t.Run("It returns an error if there's an invalid declaration", func(tt *testing.T) {
+		fileContent, err := ioutil.ReadFile("../.ergo")
+
+		if err != nil {
+			tt.Skip("Could not load initial .ergo file")
+		}
+
+		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
+
+		service := NewService("service-without-url", "")
+		AddService("../.ergo", service)
+		_, err = LoadServices("../.ergo")
+		if err == nil {
+			tt.Error("Expected LoadServices to fail")
+		}
 	})
 }
