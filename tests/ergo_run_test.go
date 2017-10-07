@@ -434,13 +434,16 @@ func TestRunWindows(t *testing.T) {
 	startTestWebServer()
 
 	cmd := ergo("run")
-	if cmd != nil {
-		defer func() {
-			if !cmd.ProcessState.Exited() {
-				cmd.Process.Kill()
-			}
-		}()
-	}
+	defer func() {
+		if cmd == nil || cmd.ProcessState == nil {
+			return
+		}
+
+		if !cmd.ProcessState.Exited() {
+			cmd.Process.Kill()
+		}
+	}()
+
 	go func() {
 		cmd.Run()
 	}()
