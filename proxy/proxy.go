@@ -94,8 +94,8 @@ func ServeProxy(config *Config) error {
 
 	http.HandleFunc("/_ergo/list", func(w http.ResponseWriter, r *http.Request) {
 		for _, s := range config.Services {
-			localUrl := `http://` + s.Name + config.Domain
-			fmt.Fprintf(w, "- %s -> %s \n", localUrl, s.URL)
+			localURL := `http://` + s.Name + config.Domain
+			fmt.Fprintf(w, "- %s -> %s \n", localURL, s.URL)
 		}
 	})
 

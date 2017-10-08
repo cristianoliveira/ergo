@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
@@ -11,7 +12,7 @@ import (
 func List(config *proxy.Config) {
 	fmt.Println("Ergo Proxy current list: ")
 	for _, s := range config.Services {
-		localUrl := `http://` + s.Name + config.Domain
-		fmt.Printf(" - %s -> %s \n", localUrl, s.URL)
+		localURL := `http://` + s.Name + config.Domain
+		fmt.Printf(" - %s -> %s \n", localURL, s.URL)
 	}
 }
