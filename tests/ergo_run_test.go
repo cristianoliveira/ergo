@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -435,11 +436,12 @@ func TestRunWindows(t *testing.T) {
 
 	cmd := ergo("run")
 	defer func() {
-		if cmd == nil || cmd.ProcessState == nil {
+		if cmd == nil {
+			os.Exit(1)
 			return
 		}
 
-		if !cmd.ProcessState.Exited() {
+		if cmd.Process != nil {
 			cmd.Process.Kill()
 		}
 	}()
