@@ -3,9 +3,18 @@ package proxy
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
+	"time"
 )
+
+var (
+	modTime time.Time
+	size    int64
+)
+
+var configChan = make(chan []Service, 1)
 
 //Service holds the details of the service (Name and URL)
 type Service struct {
@@ -20,12 +29,19 @@ type Config struct {
 	URLPattern string
 	Verbose    bool
 	Services   []Service
+	ConfigFile string
 }
 
 //GetService gets the service for the given host.
 func (c *Config) GetService(host string) *Service {
 	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
 	parts := domainPattern.FindAllString(host, -1)
+	//we must lock the access as the configuration can be dynamically loaded
+	select {
+	case srv := <-configChan:
+		c.Services = srv
+	default:
+	}
 	for _, s := range c.Services {
 		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
 			return &s
@@ -56,11 +72,25 @@ func NewService(name, url string) Service {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func LoadServices(filepath string) ([]Service, error) {
+
+	info, err := os.Stat(filepath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	size = info.Size()
+	modTime = info.ModTime()
+
 	file, e := os.Open(filepath)
-	defer file.Close()
+
 	if e != nil {
 		return nil, fmt.Errorf("file error: %v", e)
 	}
+
+	defer file.Close()
+
+	log.Println("Just received ", filepath)
 
 	services := []Service{}
 

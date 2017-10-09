@@ -414,6 +414,15 @@ func startTestWebServer() {
 	}()
 }
 
+//On windows please open port 9090 for this to work
+func startDynamicTestWebServer() {
+
+	http.HandleFunc("/dyn", handler)
+	go func() {
+		http.ListenAndServe(":9090", nil)
+	}()
+}
+
 //Please be aware that for windows you should have ports
 //2000 : ergo proxy
 // and
@@ -538,6 +547,225 @@ func TestRunOSX(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Expected no error while requesting http://bla.dev, Got %s\r\n", err.Error())
 	}
+	if strings.Trim(rez, " \r\n") != "ergo test response" {
+		t.Fatalf("Expected \"ergo test response\" as response and got: %s\r\n", rez)
+	}
+}
+
+func TestConfigDynamicWindows(t *testing.T) {
+	if *getOS() != "windows" {
+		t.Skip("Not running windows run specific tests")
+	}
+	err := setupErgo()
+
+	if err != nil {
+		t.Fatalf("Could not perform setup for windows. Got %s", err.Error())
+	}
+
+	defer cleanSetup()
+	//start a web server that will initialy have no mapping in our proxy
+	startDynamicTestWebServer()
+
+	cmd := ergo("run")
+	defer func() {
+		if cmd == nil {
+			os.Exit(1)
+			return
+		}
+
+		if cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+	}()
+
+	go func() {
+		cmd.Run()
+	}()
+
+	//wait for it to be sure it started
+	time.Sleep(2 * time.Second)
+
+	//we should not have a correct response
+	rez, err := getCommandResult("powershell", "-c", "$proxy=[System.Net.WebRequest]::GetSystemWebProxy();",
+		"$webclient=new-object system.net.webclient;", "$webclient.proxy=$proxy;",
+		"$webclient.DownloadString('http://dynamic.dev')")
+
+	//on windows we should get an error here
+	if err == nil {
+		t.Fatal("Expected error while requesting http://dynamic.dev, Got nil\r\n")
+	}
+
+	//make sure that we rewrite the config with the original values
+	fileContent, err := ioutil.ReadFile("./.ergo")
+
+	if err == nil {
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
+	}
+
+	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		t.Fatal("Could not write on the config file")
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString("dynamic http://localhost:9090"); err != nil {
+		panic(err)
+	}
+
+	time.Sleep(1 * time.Second)
+
+	rez, err = getCommandResult("powershell", "-c", "$proxy=[System.Net.WebRequest]::GetSystemWebProxy();",
+		"$webclient=new-object system.net.webclient;", "$webclient.proxy=$proxy;",
+		"$webclient.DownloadString('http://dynamic.dev')")
+
+	if err != nil {
+		t.Fatalf("Expected no error while asking for an added config. Got %s\r\n", err.Error())
+	}
+
+	if strings.Trim(rez, " \r\n") != "ergo test response" {
+		t.Fatalf("Expected \"ergo test response\" as response and got: %s\r\n", rez)
+	}
+}
+
+func TestConfigDynamicLinuxGnome(t *testing.T) {
+	if *getOS() != "linux-gnome" {
+		t.Skip("Not running linux-gnome run specific tests")
+	}
+	err := setupErgo()
+	//exit status 1 means that gsettings was not found. So if linux is not really gnome, this will fails otherwise
+	if err != nil && err.Error() != "exit status 1" {
+		t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
+	}
+
+	defer cleanSetup()
+
+	startDynamicTestWebServer()
+
+	cmd := ergo("run")
+	if cmd != nil {
+		defer func() {
+			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
+				cmd.Process.Kill()
+			}
+		}()
+	}
+	go func() {
+		cmd.Run()
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	//it would be better perhaps to use a brower like chrome-headless
+	rez, err := getCommandResult("./testCurlNotExisting.sh")
+
+	if err != nil {
+		t.Fatalf("Expected no error while requesting http://dynamic.dev, Got %s\r\n", err.Error())
+	}
+
+	if rez == "ergo test response" {
+		t.Fatalf("Expected diffrent response while asking for http://dynamic.dev, Got %s\r\n", rez)
+	}
+
+	//make sure that we rewrite the config with the original values
+	fileContent, err := ioutil.ReadFile("./.ergo")
+
+	if err == nil {
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
+	}
+
+	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		t.Fatal("Could not write on the config file")
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString("dynamic http://localhost:9090/dyn"); err != nil {
+		panic(err)
+	}
+
+	time.Sleep(2 * time.Second)
+
+	rez, err = getCommandResult("./testCurlNotExisting.sh")
+
+	if err != nil {
+		t.Fatalf("Expected no error while asking for an added config. Got %s\r\n", err.Error())
+	}
+
+	if strings.Trim(rez, " \r\n") != "ergo test response" {
+		t.Fatalf("Expected \"ergo test response\" as response and got: %s\r\n", rez)
+	}
+
+}
+
+func TestConfigDynamicOSX(t *testing.T) {
+	if *getOS() != "osx" {
+		t.Skip("Not running osx run specific tests")
+	}
+	err := setupErgo()
+	if err != nil {
+		t.Skip("Please fix this ... mac people")
+	}
+
+	defer cleanSetup()
+
+	startDynamicTestWebServer()
+
+	cmd := ergo("run")
+	if cmd != nil {
+		defer func() {
+			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
+				cmd.Process.Kill()
+			}
+		}()
+	}
+	go func() {
+		cmd.Run()
+	}()
+
+	time.Sleep(2 * time.Second)
+
+	//it would be better perhaps to use a brower like chrome-headless
+	rez, err := getCommandResult("./testCurl.sh")
+
+	if err != nil {
+		t.Fatalf("Expected no error while requesting http://dynamic.dev, Got %s\r\n", err.Error())
+	}
+
+	if rez == "ergo test response" {
+		t.Fatalf("Expected diffrent response while asking for http://dynamic.dev, Got %s\r\n", rez)
+	}
+
+	//make sure that we rewrite the config with the original values
+	fileContent, err := ioutil.ReadFile("./.ergo")
+
+	if err == nil {
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
+	}
+
+	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		t.Fatal("Could not write on the config file")
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString("dynamic http://localhost:9090/dyn"); err != nil {
+		panic(err)
+	}
+
+	time.Sleep(1 * time.Second)
+
+	rez, err = getCommandResult("./testCurlNotExisting.sh")
+
+	if err != nil {
+		t.Fatalf("Expected no error while asking for an added config. Got %s\r\n", err.Error())
+	}
+
 	if strings.Trim(rez, " \r\n") != "ergo test response" {
 		t.Fatalf("Expected \"ergo test response\" as response and got: %s\r\n", rez)
 	}
