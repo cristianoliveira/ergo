@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+
 	"time"
 )
 
@@ -42,6 +43,7 @@ func (c *Config) GetService(host string) *Service {
 		c.Services = srv
 	default:
 	}
+
 	for _, s := range c.Services {
 		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
 			return &s

@@ -185,6 +185,8 @@ func getOS() *string {
 	} else if runtime.GOOS == "linux" {
 		//here we only have the tests for gnome
 		runOS = "linux-gnome"
+	} else if runtime.GOOS =="freebsd"{
+		runOS = "freebsd-gnome"
 	} else if runtime.GOOS == "darwin" {
 		runOS = "osx"
 	}
@@ -210,7 +212,7 @@ func setupErgo(configFilePath string) error {
 
 	//we need to store the initial values to make sure they are restored
 	//linux-gnome
-	if *runOS == "linux-gnome" {
+	if *runOS == "linux-gnome" || *runOS == "freebsd-gnome"{
 		var mode string
 		var autoconfigURL string
 		mode, err = getLinuxGnomeProxyMode()
@@ -276,7 +278,7 @@ func cleanSetup() error {
 
 	//we need to store the initial values to make sure they are restored
 	//linux-gnome
-	if *runOS == "linux-gnome" {
+	if *runOS == "linux-gnome" || *runOS == "freebsd-gnome"{
 		s := initialSetup.(struct {
 			mode          string
 			autoconfigURL string
@@ -362,7 +364,7 @@ func clearWindowsSetup(autoconfigURL string) error {
 }
 func TestSetupLinuxGnome(t *testing.T) {
 
-	if *getOS() != "linux-gnome" {
+	if *getOS() != "linux-gnome" &&  *getOS() != "freebsd-gnome"{
 		t.Skip("Not running linux-gnome setup specific tests")
 	}
 	err := setupErgo("./.ergo")
@@ -513,7 +515,7 @@ func TestRunWindows(t *testing.T) {
 }
 
 func TestRunLinuxGnome(t *testing.T) {
-	if *getOS() != "linux-gnome" {
+	if *getOS() != "linux-gnome" && *getOS() != "freebsd-gnome" {
 		t.Skip("Not running linux-gnome run specific tests")
 	}
 	err := setupErgo("./.ergo")
@@ -658,7 +660,7 @@ func TestConfigDynamicWindows(t *testing.T) {
 }
 
 func TestConfigDynamicLinuxGnome(t *testing.T) {
-	if *getOS() != "linux-gnome" {
+	if *getOS() != "linux-gnome" &&  *getOS() != "freebsd-gnome" {
 		t.Skip("Not running linux-gnome run specific tests")
 	}
 
