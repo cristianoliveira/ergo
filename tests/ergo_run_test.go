@@ -184,9 +184,10 @@ func getOS() *string {
 		runOS = "windows"
 	} else if runtime.GOOS == "linux" {
 		//here we only have the tests for gnome
-		runOS = "linux-gnome"
-	} else if runtime.GOOS =="freebsd"{
-		runOS = "freebsd-gnome"
+		runOS = "gnome"
+	} else if runtime.GOOS == "freebsd" {
+		//again only tests for gnome
+		runOS = "gnome"
 	} else if runtime.GOOS == "darwin" {
 		runOS = "osx"
 	}
@@ -211,15 +212,15 @@ func setupErgo(configFilePath string) error {
 	runOS := getOS()
 
 	//we need to store the initial values to make sure they are restored
-	//linux-gnome
-	if *runOS == "linux-gnome" || *runOS == "freebsd-gnome"{
+	//gnome - tested on linux and freebsd
+	if *runOS == "gnome" {
 		var mode string
 		var autoconfigURL string
-		mode, err = getLinuxGnomeProxyMode()
+		mode, err = getGnomeProxyMode()
 		if err != nil {
 			return err
 		}
-		autoconfigURL, err = getLinuxGnomeProxyAutoConfig()
+		autoconfigURL, err = getGnomeProxyAutoConfig()
 		if err != nil {
 			return err
 		}
@@ -277,13 +278,13 @@ func cleanSetup() error {
 	}
 
 	//we need to store the initial values to make sure they are restored
-	//linux-gnome
-	if *runOS == "linux-gnome" || *runOS == "freebsd-gnome"{
+	//gnome
+	if *runOS == "gnome" {
 		s := initialSetup.(struct {
 			mode          string
 			autoconfigURL string
 		})
-		return clearLinuxSetup(s.mode, s.autoconfigURL)
+		return clearGnomeSetup(s.mode, s.autoconfigURL)
 	}
 	//osx
 	if *runOS == "osx" {
@@ -309,15 +310,15 @@ func getCommandResult(command string, args ...string) (string, error) {
 	return string(rez), err
 }
 
-func getLinuxGnomeProxyMode() (string, error) {
+func getGnomeProxyMode() (string, error) {
 	return getCommandResult("gsettings", "get", "org.gnome.system.proxy", "mode")
 }
 
-func getLinuxGnomeProxyAutoConfig() (string, error) {
+func getGnomeProxyAutoConfig() (string, error) {
 	return getCommandResult("gsettings", "get", "org.gnome.system.proxy", "autoconfig-url")
 }
 
-func clearLinuxSetup(mode string, autoconfigURL string) error {
+func clearGnomeSetup(mode string, autoconfigURL string) error {
 	_, err := getCommandResult("gsettings", "set", "org.gnome.system.proxy", "mode", "'"+mode+"'")
 	if err != nil {
 		if err.Error() != "exit status 1" {
@@ -362,22 +363,22 @@ func clearWindowsSetup(autoconfigURL string) error {
 
 	return err
 }
-func TestSetupLinuxGnome(t *testing.T) {
+func TestSetupGnome(t *testing.T) {
 
-	if *getOS() != "linux-gnome" &&  *getOS() != "freebsd-gnome"{
-		t.Skip("Not running linux-gnome setup specific tests")
+	if *getOS() != "gnome" {
+		t.Skip("Not running gnome setup specific tests")
 	}
 	err := setupErgo("./.ergo")
 	if err != nil {
 		if err.Error() != "exit status 1" {
-			t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
+			t.Fatalf("Could not perform setup for gnome. Got %s", err.Error())
 		}
 		t.Skipf("Skipping test as gsettings does not exist on this system.")
 	}
 
 	defer cleanSetup()
 
-	ac, err := getLinuxGnomeProxyAutoConfig()
+	ac, err := getGnomeProxyAutoConfig()
 	if err != nil {
 		t.Fatalf("No error expected while getting AutoconfigURL from gsettings. Got: %s, %s\r\n", err.Error(), ac)
 	}
@@ -386,7 +387,7 @@ func TestSetupLinuxGnome(t *testing.T) {
 		t.Fatalf("Expected to find \"http://127.0.0.1:2000/proxy.pac\" as part of the AutoconfigURL. Got \"%s\"\r\n", ac)
 	}
 
-	mode, err := getLinuxGnomeProxyMode()
+	mode, err := getGnomeProxyMode()
 	if err != nil {
 		t.Fatalf("No error expected while getting \"mode\" from gsettings. Got: %s, %s\r\n", err.Error(), mode)
 	}
@@ -514,14 +515,14 @@ func TestRunWindows(t *testing.T) {
 	}
 }
 
-func TestRunLinuxGnome(t *testing.T) {
-	if *getOS() != "linux-gnome" && *getOS() != "freebsd-gnome" {
-		t.Skip("Not running linux-gnome run specific tests")
+func TestRunGnome(t *testing.T) {
+	if *getOS() != "gnome" {
+		t.Skip("Not running gnome run specific tests")
 	}
 	err := setupErgo("./.ergo")
 	//exit status 1 means that gsettings was not found. So if linux is not really gnome, this will fails otherwise
 	if err != nil && err.Error() != "exit status 1" {
-		t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
+		t.Fatalf("Could not perform setup for gnome. Got %s", err.Error())
 	}
 
 	defer cleanSetup()
@@ -659,14 +660,15 @@ func TestConfigDynamicWindows(t *testing.T) {
 	}
 }
 
-func TestConfigDynamicLinuxGnome(t *testing.T) {
-	if *getOS() != "linux-gnome" &&  *getOS() != "freebsd-gnome" {
-		t.Skip("Not running linux-gnome run specific tests")
+func TestConfigDynamicGnome(t *testing.T) {
+	if *getOS() != "gnome" {
+		t.Skip("Not running gnome run specific tests")
 	}
 
 	c, err := setupErgoWithTempConfig("./.ergo")
 	if err != nil && err.Error() != "exit status 1" {
 		t.Fatalf("Could not perform setup for linux-gnome: %v", err)
+
 	}
 	defer c.clean()
 	defer cleanSetup()
@@ -703,11 +705,11 @@ func TestConfigDynamicLinuxGnome(t *testing.T) {
 		t.Fatal("Could not write on the config file")
 	}
 
-	defer f.Close()
-
-	if _, err = f.WriteString("dynamic http://localhost:9090/dyn"); err != nil {
+	if _, err = f.WriteString("dynamic http://127.0.0.1:9090/dyn"); err != nil {
+		f.Close()
 		panic(err)
 	}
+	f.Close()
 
 	time.Sleep(2 * time.Second)
 
@@ -768,13 +770,13 @@ func TestConfigDynamicOSX(t *testing.T) {
 		t.Fatal("Could not write on the config file")
 	}
 
-	defer f.Close()
-
 	if _, err = f.WriteString("dynamic http://localhost:9090/dyn"); err != nil {
+		f.Close()
 		panic(err)
 	}
+	f.Close()
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 
 	rez, err = getCommandResult("./testCurlNotExisting.sh")
 

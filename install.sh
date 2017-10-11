@@ -3,7 +3,7 @@
 VERSION_URL="https://raw.githubusercontent.com/cristianoliveira/ergo/master/.version"
 DOWNLOAD_URL="https://github.com/cristianoliveira/ergo/releases/download"
 declare -A SUPPORTED_PLATFORMS
-SUPPORTED_PLATFORMS=(["x86_64"]="linux-amd64")
+SUPPORTED_PLATFORMS=(["x86_64"]="linux-amd64", ["amd64"]="freebsd-amd64")
 DEST_FOLDER="/usr/local/bin"
 PROGNAME=`basename "$0"`
 
@@ -16,10 +16,11 @@ function install(){
     cd /tmp
 
     echo "Downloading version $latest_version from repo"
+    
     wget -q "$DOWNLOAD_URL/$latest_version/ergo-$latest_version-${SUPPORTED_PLATFORMS[$platform]}.tar.gz"
     [ $? -ne 0 ] && die "unable to download package"
 
-    echo "Extracting package"
+    echo "Extracting package"    
     tar -xf ergo-$latest_version-${SUPPORTED_PLATFORMS[$platform]}.tar.gz 
     [ $? -ne 0 ] && die "unable to extract ergo from package"
 

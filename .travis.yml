@@ -18,11 +18,10 @@ matrix:
   # Add each target manually
   include:
     - os: linux
-      env: GOOS=linux GOARCH=amd64 TARGET=linux-amd64
+      env: GOOS=linux GOARCH=amd64 TARGET=linux-amd64 TARGET_FREEBSD=freebsd-amd64
 
     - os: osx
       env: GOOS=darwin GOARCH=amd64 TARGET=darwin-amd64
-
 install:
     - sh ci/install.sh
 
@@ -45,8 +44,8 @@ deploy:
   # - Enter the "encrypted value" below
   api_key:
     secure: "XxN7hZIfzEVgFlFMqQLrO69cSQzOO3CLy3KoHTAaHQYJlpT+R/mH/UH+J4wHcJBHXR8fZnqfedkOPoRR7pQf4Wwol9U695yBbk2HSQoQ/KW630VE95gNliQgZKMOISYGQZ9NsR8vkHTpMByVRWL1xfFg6qd6LodNJa2BcDWHG2q5cV5jocT3LmVBaEAXijNgxKF7De0Qx7qeY23mvrjc1ChjF/mqMATuGYgstEZPymsCuQoHVm1q1GbIO35N4SIhXWFA9Y9ghOZxIx1jGGXYPv1KjIKwRTNsNrQjyC1Ba6oJu6+cb4BbOF1nFzw5InWZZDO26eMtCqdT9/AeVm89/VOJf7StUvKp3OBTguRHRVcN8bDnk1eD/2UicIRRlhBX9Eo4TyImWrWjZhNt/83qjuc4bBd7cfGTpfQF8O8HAeGY2SJu0HpkxJK8KmzodKSAsEF4fVVuz+T3KgtXNeak1mKfhTlQvmlHmUgORY5tH3ze3uknqEr8h6vW0lR9GrTzaRFtzJEaGDQU7gkG1nBTk30wzJpUJ5RwDMoK9sFGi+LPB59Q1PkahONRIknKutYSLtAMjkOlOzbMBhpxInXCjJxomh7lJ65JW/hptW4cKY3iCFTPFtHcNcJEjYOeYlOWOn9JDoUpon6v8euc3KUFUfAW7M/RQbkflxbTazIhTrE="
-
-  file: ${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET}.tar.gz
+  file_glob: true
+  file: ${PROJECT_NAME}-${TRAVIS_TAG}-*.tar.gz
   # don't delete the artifacts from previous phases
   skip_cleanup: true
   # deploy when a new tag is pushed

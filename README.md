@@ -64,7 +64,7 @@ Ergo looks for a `.ergo` file inside the current directory. It must contain the 
 Ergo comes with a setup command that can configure it for you. The current systems supported are:
 
  - osx
- - linux-gnome
+ - gnome (tested on Linux and FreeBSD)
  - windows
 
 ```bash
