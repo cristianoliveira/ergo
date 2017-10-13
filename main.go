@@ -65,6 +65,7 @@ func main() {
 		log.Printf("Could not load services: %v\n", err)
 	}
 	config.Services = services
+	config.ConfigFile = *configFile
 
 	switch os.Args[1] {
 	case "list":
