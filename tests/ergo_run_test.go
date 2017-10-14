@@ -23,6 +23,36 @@ func ergo(args ...string) *exec.Cmd {
 	return exec.Command(filepath.Join("..", "bin", "ergo"), args...)
 }
 
+type config struct {
+	filePath string
+}
+
+func (c config) clean() error {
+	return os.Remove(c.filePath)
+}
+
+func newConfigFromFile(configFile string) (config, error) {
+	c := config{}
+	file, err := ioutil.TempFile(os.TempDir(), "ergoconfig")
+	if err != nil {
+		return c, fmt.Errorf("Unable to create tmpfile: %v", err)
+	}
+	defer file.Close()
+
+	fileContent, err := ioutil.ReadFile(configFile)
+	if err != nil {
+		return c, fmt.Errorf("unable to read configuration content: %v", err)
+	}
+
+	_, err = file.Write(fileContent)
+	if err != nil {
+		return c, fmt.Errorf("Unable to write configuration content to temp file: %v", err)
+	}
+
+	c.filePath = file.Name()
+	return c, nil
+}
+
 func TestListApps(t *testing.T) {
 
 	t.Run("it lists the apps", func(tt *testing.T) {
@@ -110,14 +140,13 @@ func TestAddService(t *testing.T) {
 	t.Run("it adds new service if not present", func(tt *testing.T) {
 		appsOutput := fmt.Sprintf("%s\n", "Service added successfully!")
 
-		fileContent, err := ioutil.ReadFile("./.ergo")
-
-		if err == nil {
-			//we clean after the test. Otherwise the next test will fail
-			defer ioutil.WriteFile("./.ergo", fileContent, 0755)
+		c, err := newConfigFromFile("./.ergo")
+		if err != nil {
+			tt.Fatalf("Unable to copy config file: %v", err)
 		}
+		defer c.clean()
 
-		cmd := ergo("add", "new.service", "http://localhost:8083")
+		cmd := ergo("add", "-config", c.filePath, "new.service", "http://localhost:8083")
 		bs, err := cmd.Output()
 		if err != nil {
 			log.Fatal(err)
@@ -163,7 +192,19 @@ func getOS() *string {
 	return &runOS
 }
 
-func setupErgo() error {
+func setupErgoWithTempConfig(configFilePath string) (config, error) {
+
+	c, err := newConfigFromFile(configFilePath)
+	if err != nil {
+		c.clean()
+		return c, err
+	}
+
+	err = setupErgo(c.filePath)
+	return c, err
+}
+
+func setupErgo(configFilePath string) error {
 	var err error
 	runOS := getOS()
 
@@ -206,10 +247,10 @@ func setupErgo() error {
 
 	if runOS != nil {
 		log.Println("starting setup " + *runOS)
-		cmd := ergo("setup", *runOS)
+		cmd := ergo("setup", "-config", configFilePath, *runOS)
 		_, err := cmd.Output()
 		if err != nil {
-			return err
+			return fmt.Errorf("Unable to run ergo setup: %v", err)
 		}
 	}
 	return nil
@@ -324,7 +365,7 @@ func TestSetupLinuxGnome(t *testing.T) {
 	if *getOS() != "linux-gnome" {
 		t.Skip("Not running linux-gnome setup specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 	if err != nil {
 		if err.Error() != "exit status 1" {
 			t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
@@ -358,7 +399,7 @@ func TestSetupOSX(t *testing.T) {
 	if *getOS() != "osx" {
 		t.Skip("Not running osx setup specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 	if err != nil {
 		t.Skipf("Please fix this for osx")
 		//t.Fatalf("Could not perform setup for osx. Got %s", err.Error())
@@ -381,7 +422,7 @@ func TestSetupWindows(t *testing.T) {
 	if *getOS() != "windows" {
 		t.Skip("Not running windows setup specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 	if err != nil {
 		t.Fatalf("Could not perform setup for windows. Got %s", err.Error())
 	}
@@ -433,7 +474,7 @@ func TestRunWindows(t *testing.T) {
 	if *getOS() != "windows" {
 		t.Skip("Not running windows run specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 
 	if err != nil {
 		t.Fatalf("Could not perform setup for windows. Got %s", err.Error())
@@ -444,13 +485,9 @@ func TestRunWindows(t *testing.T) {
 	startTestWebServer()
 
 	cmd := ergo("run")
-	defer func() {
-		if cmd == nil {
-			os.Exit(1)
-			return
-		}
 
-		if cmd.Process != nil {
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
 			cmd.Process.Kill()
 		}
 	}()
@@ -479,7 +516,7 @@ func TestRunLinuxGnome(t *testing.T) {
 	if *getOS() != "linux-gnome" {
 		t.Skip("Not running linux-gnome run specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 	//exit status 1 means that gsettings was not found. So if linux is not really gnome, this will fails otherwise
 	if err != nil && err.Error() != "exit status 1" {
 		t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
@@ -490,13 +527,13 @@ func TestRunLinuxGnome(t *testing.T) {
 	startTestWebServer()
 
 	cmd := ergo("run")
-	if cmd != nil {
-		defer func() {
-			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
-				cmd.Process.Kill()
-			}
-		}()
-	}
+
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+	}()
+
 	go func() {
 		cmd.Run()
 	}()
@@ -518,7 +555,7 @@ func TestRunOSX(t *testing.T) {
 	if *getOS() != "osx" {
 		t.Skip("Not running osx run specific tests")
 	}
-	err := setupErgo()
+	err := setupErgo("./.ergo")
 	if err != nil {
 		t.Skip("Please fix this ... mac people")
 	}
@@ -528,13 +565,13 @@ func TestRunOSX(t *testing.T) {
 	startTestWebServer()
 
 	cmd := ergo("run")
-	if cmd != nil {
-		defer func() {
-			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
-				cmd.Process.Kill()
-			}
-		}()
-	}
+
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+	}()
+
 	go func() {
 		cmd.Run()
 	}()
@@ -556,24 +593,23 @@ func TestConfigDynamicWindows(t *testing.T) {
 	if *getOS() != "windows" {
 		t.Skip("Not running windows run specific tests")
 	}
-	err := setupErgo()
+
+	c, err := setupErgoWithTempConfig("./.ergo")
 
 	if err != nil {
 		t.Fatalf("Could not perform setup for windows. Got %s", err.Error())
 	}
 
+	defer c.clean()
 	defer cleanSetup()
+
 	//start a web server that will initialy have no mapping in our proxy
 	startDynamicTestWebServer()
 
-	cmd := ergo("run")
-	defer func() {
-		if cmd == nil {
-			os.Exit(1)
-			return
-		}
+	cmd := ergo("run", "-config", c.filePath)
 
-		if cmd.Process != nil {
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
 			cmd.Process.Kill()
 		}
 	}()
@@ -595,15 +631,7 @@ func TestConfigDynamicWindows(t *testing.T) {
 		t.Fatal("Expected error while requesting http://dynamic.dev, Got nil\r\n")
 	}
 
-	//make sure that we rewrite the config with the original values
-	fileContent, err := ioutil.ReadFile("./.ergo")
-
-	if err == nil {
-		//we clean after the test. Otherwise the next test will fail
-		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
-	}
-
-	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(c.filePath, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		t.Fatal("Could not write on the config file")
 	}
@@ -633,24 +661,24 @@ func TestConfigDynamicLinuxGnome(t *testing.T) {
 	if *getOS() != "linux-gnome" {
 		t.Skip("Not running linux-gnome run specific tests")
 	}
-	err := setupErgo()
-	//exit status 1 means that gsettings was not found. So if linux is not really gnome, this will fails otherwise
-	if err != nil && err.Error() != "exit status 1" {
-		t.Fatalf("Could not perform setup for linux-gnome. Got %s", err.Error())
-	}
 
+	c, err := setupErgoWithTempConfig("./.ergo")
+	if err != nil && err.Error() != "exit status 1" {
+		t.Fatalf("Could not perform setup for linux-gnome: %v", err)
+	}
+	defer c.clean()
 	defer cleanSetup()
 
 	startDynamicTestWebServer()
 
-	cmd := ergo("run")
-	if cmd != nil {
-		defer func() {
-			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
-				cmd.Process.Kill()
-			}
-		}()
-	}
+	cmd := ergo("run", "-config", c.filePath)
+
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+	}()
+
 	go func() {
 		cmd.Run()
 	}()
@@ -665,18 +693,10 @@ func TestConfigDynamicLinuxGnome(t *testing.T) {
 	}
 
 	if rez == "ergo test response" {
-		t.Fatalf("Expected diffrent response while asking for http://dynamic.dev, Got %s\r\n", rez)
+		t.Fatalf("Expected different response while asking for http://dynamic.dev, Got %s\r\n", rez)
 	}
 
-	//make sure that we rewrite the config with the original values
-	fileContent, err := ioutil.ReadFile("./.ergo")
-
-	if err == nil {
-		//we clean after the test. Otherwise the next test will fail
-		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
-	}
-
-	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(c.filePath, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		t.Fatal("Could not write on the config file")
 	}
@@ -705,23 +725,25 @@ func TestConfigDynamicOSX(t *testing.T) {
 	if *getOS() != "osx" {
 		t.Skip("Not running osx run specific tests")
 	}
-	err := setupErgo()
+
+	c, err := setupErgoWithTempConfig("./.ergo")
+
 	if err != nil {
 		t.Skip("Please fix this ... mac people")
 	}
-
+	defer c.clean()
 	defer cleanSetup()
 
 	startDynamicTestWebServer()
 
-	cmd := ergo("run")
-	if cmd != nil {
-		defer func() {
-			if cmd != nil && cmd.ProcessState != nil && !cmd.ProcessState.Exited() {
-				cmd.Process.Kill()
-			}
-		}()
-	}
+	cmd := ergo("run", "-config", c.filePath)
+
+	defer func() {
+		if cmd != nil && cmd.Process != nil {
+			cmd.Process.Kill()
+		}
+	}()
+
 	go func() {
 		cmd.Run()
 	}()
@@ -736,18 +758,10 @@ func TestConfigDynamicOSX(t *testing.T) {
 	}
 
 	if rez == "ergo test response" {
-		t.Fatalf("Expected diffrent response while asking for http://dynamic.dev, Got %s\r\n", rez)
+		t.Fatalf("Expected different response while asking for http://dynamic.dev, Got %s\r\n", rez)
 	}
 
-	//make sure that we rewrite the config with the original values
-	fileContent, err := ioutil.ReadFile("./.ergo")
-
-	if err == nil {
-		//we clean after the test. Otherwise the next test will fail
-		defer ioutil.WriteFile("./.ergo", fileContent, 0755)
-	}
-
-	f, err := os.OpenFile("./.ergo", os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(c.filePath, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		t.Fatal("Could not write on the config file")
 	}

@@ -23,17 +23,18 @@ Usage:
   ergo list
   ergo list-names
   ergo url <name>
-  ergo setup [linux-gnome|osx|windows]
-  ergo add <service-name> <host:port>
+  ergo setup [options] [linux-gnome|osx|windows] [-remove]
+  ergo add [options] <service-name> <host:port> 
 
 Options:
   -h      Shows this message.
   -v      Shows ergo's version.
+  -config     Set the config file to the proxy.
+
 
 run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
-  -config     Set the config file to the proxy.
 
 setup:
   -remove     Set remove proxy configurations.
@@ -75,14 +76,14 @@ func main() {
 		commands.ListNames(config)
 
 	case "setup":
-		if len(os.Args) <= 2 {
+		if len(flag.Args()) < 1 {
 			fmt.Println(USAGE)
 			os.Exit(0)
 		}
 
-		system := os.Args[2]
+		system := command.Args()[0]
 		setupRemove := command.Bool("remove", false, "Set remove proxy configurations.")
-		command.Parse(os.Args[3:])
+		command.Parse(command.Args()[1:])
 
 		commands.Setup(system, *setupRemove, config)
 
@@ -101,6 +102,7 @@ func main() {
 
 		command.Parse(os.Args[2:])
 		commands.Run(config)
+
 	case "add":
 		if len(os.Args) <= 3 {
 			fmt.Println(USAGE)
