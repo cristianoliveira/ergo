@@ -24,7 +24,7 @@ Usage:
   ergo list-names
   ergo url <name>
   ergo setup [options] [linux-gnome|osx|windows] [-remove]
-  ergo add [options] <service-name> <host:port> 
+  ergo add [options] <service-name> <host:port>
 
 Options:
   -h      Shows this message.
@@ -40,22 +40,7 @@ setup:
   -remove     Set remove proxy configurations.
 `
 
-func main() {
-	help := flag.Bool("h", false, "Shows ergo's help.")
-	version := flag.Bool("v", false, "Shows ergo's version.")
-
-	flag.Parse()
-
-	if *help || len(os.Args) == 1 {
-		fmt.Println(USAGE)
-		os.Exit(0)
-	}
-
-	if *version {
-		fmt.Println(VERSION)
-		os.Exit(0)
-	}
-
+func command() func() {
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
@@ -70,52 +55,81 @@ func main() {
 
 	switch os.Args[1] {
 	case "list":
-		commands.List(config)
+		return func() {
+			commands.List(config)
+		}
 
 	case "list-names":
-		commands.ListNames(config)
+		return func() {
+			commands.ListNames(config)
+		}
 
 	case "setup":
-		if len(flag.Args()) < 1 {
-			fmt.Println(USAGE)
-			os.Exit(0)
+		if len(os.Args) <= 2 {
+			return nil
 		}
 
 		system := command.Args()[0]
 		setupRemove := command.Bool("remove", false, "Set remove proxy configurations.")
 		command.Parse(command.Args()[1:])
 
-		commands.Setup(system, *setupRemove, config)
+		return func() {
+			commands.Setup(system, *setupRemove, config)
+		}
 
 	case "url":
 		if len(os.Args) != 3 {
-			fmt.Println(USAGE)
-			os.Exit(0)
+			return nil
 		}
 
 		name := os.Args[2]
-		commands.URL(name, config)
+		return func() {
+			commands.URL(name, config)
+		}
 
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
 		command.Parse(os.Args[2:])
-		commands.Run(config)
 
+		return func() {
+			commands.Run(config)
+		}
 	case "add":
 		if len(os.Args) <= 3 {
-			fmt.Println(USAGE)
-			os.Exit(0)
+			return nil
 		}
 
 		name := os.Args[2]
 		url := os.Args[3]
 		service := proxy.NewService(name, url)
 
-		commands.AddService(config, service, *configFile)
+		return func() {
+			commands.AddService(config, service, *configFile)
+		}
+	}
 
-	default:
+	return nil
+}
+
+func main() {
+	help := flag.Bool("h", false, "Shows ergo's help.")
+	version := flag.Bool("v", false, "Shows ergo's version.")
+
+	flag.Parse()
+
+	if *version {
+		fmt.Println(VERSION)
+		return
+	}
+
+	cmd := command()
+	showUsage := *help || len(os.Args) == 1 || cmd == nil
+
+	if showUsage {
 		fmt.Println(USAGE)
+	} else {
+		cmd()
 	}
 }
