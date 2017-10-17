@@ -32,6 +32,9 @@ script:
 before_deploy:
     - sh ci/before_deploy.sh
 
+after_success:
+  - sh ci/coverage.sh
+
 deploy:
   provider: releases
   # TODO Regenerate this api_key for your project, this one won't work for you. Here's how:
