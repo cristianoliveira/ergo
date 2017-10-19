@@ -38,7 +38,7 @@ brew install ergo
 
 ### Linux
 ```
-curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
+curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | bash
 ```
 
 ### Windows
