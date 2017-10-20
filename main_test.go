@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"testing"
 )
 
@@ -12,6 +13,28 @@ func TestMain(t *testing.T) {
 
 		main()
 		// Output: USAGE
+	})
+}
+
+// TestMissingCommand will cause the main function to return a non-zero exit code
+// so we need to do some wrapping to make the test not fail.
+// For more info check ou to uset: https://talks.golang.org/2014/testing.slide#23
+func TestMissingCommand(t *testing.T) {
+	t.Run("missing a command so it shows usage", func(tt *testing.T) {
+		if os.Getenv("TEST_MISSING_COMMAND") == "1" {
+			args := []string{"ergo"}
+			os.Args = args
+
+			main()
+			// Output: USAGE and exit with an error code
+		}
+		cmd := exec.Command(os.Args[0], "-test.run=TestMissingCommand")
+		cmd.Env = append(os.Environ(), "TEST_MISSING_COMMAND=1")
+		err := cmd.Run()
+		if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+			return
+		}
+		t.Fatalf("process ran with err %v, want exit status 1", err)
 	})
 }
 

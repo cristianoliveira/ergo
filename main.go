@@ -41,6 +41,11 @@ setup:
 `
 
 func command() func() {
+	// Fail fast if we didn't receive a command argument
+	if len(os.Args) == 1 {
+		return nil
+	}
+
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
@@ -124,11 +129,16 @@ func main() {
 		return
 	}
 
-	cmd := command()
-	showUsage := *help || len(os.Args) == 1 || cmd == nil
-
-	if showUsage {
+	if *help {
 		fmt.Println(USAGE)
+		return
+	}
+
+	cmd := command()
+
+	if cmd == nil {
+		fmt.Println(USAGE)
+		os.Exit(1)
 	} else {
 		cmd()
 	}
