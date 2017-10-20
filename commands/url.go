@@ -25,6 +25,8 @@ func URL(name string, config *proxy.Config) {
 			}
 
 			fmt.Println(localURL)
+
+			return
 		}
 	}
 }
