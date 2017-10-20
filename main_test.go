@@ -62,6 +62,7 @@ func TestMissingCommand(t *testing.T) {
 		if cmd != nil {
 			t.Errorf("Expected cmd to not be nil")
 		}
+
 		// Output: USAGE and exit with an error code
 	})
 }
