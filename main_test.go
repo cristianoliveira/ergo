@@ -30,6 +30,7 @@ func TestMissingCommand(t *testing.T) {
 			main()
 			// Output: USAGE and exit with an error code
 		}
+
 		cmd := exec.Command(testExec, "-test.run=TestMissingCommand")
 		cmd.Env = append(os.Environ(), "TEST_MISSING_COMMAND=1")
 		err := cmd.Run()
