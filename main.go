@@ -31,7 +31,6 @@ Options:
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
 
-
 run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
