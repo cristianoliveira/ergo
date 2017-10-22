@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+var testExec = os.Args[0]
+
 func TestMain(t *testing.T) {
 	t.Run("it shows usage", func(tt *testing.T) {
 		args := []string{"ergo", "-h"}
@@ -28,7 +30,7 @@ func TestMissingCommand(t *testing.T) {
 			main()
 			// Output: USAGE and exit with an error code
 		}
-		cmd := exec.Command(os.Args[0], "-test.run=TestMissingCommand")
+		cmd := exec.Command(testExec, "-test.run=TestMissingCommand")
 		cmd.Env = append(os.Environ(), "TEST_MISSING_COMMAND=1")
 		err := cmd.Run()
 		if e, ok := err.(*exec.ExitError); ok && !e.Success() {
