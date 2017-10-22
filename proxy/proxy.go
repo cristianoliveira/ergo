@@ -121,12 +121,8 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	}
 }
 
-//ServeProxy listens & serves the HTTP proxy.
-func ServeProxy(config *Config) error {
-
-	pollConfigChange(config)
-
-	http.HandleFunc("/proxy.pac", func(w http.ResponseWriter, r *http.Request) {
+func proxy(config *Config) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		content := `
 		function FindProxyForURL (url, host) {
 			if (dnsDomainIs(host, '` + config.Domain + `')) {
@@ -138,14 +134,26 @@ func ServeProxy(config *Config) error {
 		`
 		w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
 		w.Write([]byte(content))
-	})
+	}
+}
 
-	http.HandleFunc("/_ergo/list", func(w http.ResponseWriter, r *http.Request) {
+func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		for _, s := range config.Services {
 			localURL := `http://` + s.Name + config.Domain
 			fmt.Fprintf(w, "- %s -> %s \n", localURL, s.URL)
 		}
-	})
+	}
+}
+
+//ServeProxy listens & serves the HTTP proxy.
+func ServeProxy(config *Config) error {
+
+	pollConfigChange(config)
+
+	http.HandleFunc("/proxy.pac", proxy(config))
+
+	http.HandleFunc("/_ergo/list", list(config))
 
 	http.Handle("/", NewErgoProxy(config))
 
