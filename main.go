@@ -46,6 +46,24 @@ func command() func() {
 		return nil
 	}
 
+	f := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	help := f.Bool("h", false, "Shows ergo's help.")
+	version := f.Bool("v", false, "Shows ergo's version.")
+
+	f.Parse(os.Args[1:])
+
+	fmt.Println(os.Args, *version)
+
+	if *version {
+		return func() {
+			fmt.Println("version:", VERSION)
+		}
+	}
+
+	if *help {
+		return nil
+	}
+
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
@@ -119,27 +137,14 @@ func command() func() {
 }
 
 func main() {
-	help := flag.Bool("h", false, "Shows ergo's help.")
-	version := flag.Bool("v", false, "Shows ergo's version.")
-
-	flag.Parse()
-
-	if *version {
-		fmt.Println(VERSION)
-		return
-	}
-
-	if *help {
-		fmt.Println(USAGE)
-		return
-	}
-
 	cmd := command()
 
 	if cmd == nil {
 		fmt.Println(USAGE)
 		os.Exit(1)
+
 	} else {
 		cmd()
+
 	}
 }

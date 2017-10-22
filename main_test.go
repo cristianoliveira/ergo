@@ -2,39 +2,52 @@ package main
 
 import (
 	"os"
-	"os/exec"
 	"testing"
 )
 
-func TestMain(t *testing.T) {
-	t.Run("it shows usage", func(tt *testing.T) {
-		args := []string{"ergo", "-h"}
-		os.Args = args
+func TestShowingUsage(t *testing.T) {
+	t.Run("it shows usage when missing command", func(tt *testing.T) {
+		os.Args = []string{"ergo"}
 
-		main()
+		cmd := command()
+		if cmd != nil {
+			t.Errorf("Expected cmd to be nil")
+		}
+		// Output: USAGE
+	})
+
+	t.Run("it shows usage when pass h flag", func(tt *testing.T) {
+		os.Args = []string{"ergo", "-h"}
+
+		cmd := command()
+		if cmd != nil {
+			t.Errorf("Expected cmd to be nil")
+		}
+		// Output: USAGE
+	})
+
+	t.Run("it shows usage when unknown command", func(tt *testing.T) {
+		os.Args = []string{"ergo", "foobar"}
+
+		cmd := command()
+		if cmd != nil {
+			t.Errorf("Expected cmd to be nil")
+		}
 		// Output: USAGE
 	})
 }
 
-// TestMissingCommand will cause the main function to return a non-zero exit code
-// so we need to do some wrapping to make the test not fail.
-// For more info check ou to uset: https://talks.golang.org/2014/testing.slide#23
-func TestMissingCommand(t *testing.T) {
-	t.Run("missing a command so it shows usage", func(tt *testing.T) {
-		if os.Getenv("TEST_MISSING_COMMAND") == "1" {
-			args := []string{"ergo"}
-			os.Args = args
+func TestShowingVersion(t *testing.T) {
+	t.Run("it shows usage when missing command", func(tt *testing.T) {
+		os.Args = []string{"ergo", "-v"}
 
-			main()
-			// Output: USAGE and exit with an error code
+		cmd := command()
+		if cmd == nil {
+			t.Errorf("Expected cmd to not be nil")
 		}
-		cmd := exec.Command(os.Args[0], "-test.run=TestMissingCommand")
-		cmd.Env = append(os.Environ(), "TEST_MISSING_COMMAND=1")
-		err := cmd.Run()
-		if e, ok := err.(*exec.ExitError); ok && !e.Success() {
-			return
-		}
-		t.Fatalf("process ran with err %v, want exit status 1", err)
+
+		cmd()
+		// Output: USAGE
 	})
 }
 
