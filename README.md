@@ -42,7 +42,14 @@ curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.s
 ```
 
 ### Windows
-You can find the Windows executables in [release](https://github.com/cristianoliveira/ergo/releases).
+
+From powershell run:
+
+```
+Invoke-WebRequest https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.ps1 -out ./install.ps1; ./install.ps1
+```
+
+_You can also find the Windows executables in [release](https://github.com/cristianoliveira/ergo/releases)._
 
 ***Disclaimer:***
 I use Unix-based systems on a daily basis, so I am not able to test each build alone. :(
