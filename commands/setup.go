@@ -10,6 +10,8 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
+var ergoCmd = exec.Command
+
 // Setup command tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
 //   - OSX
@@ -23,8 +25,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 	fmt.Println("Current detected system: " + runtime.GOOS)
 	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
 	script := ""
-	cmd := exec.Command("/bin/sh")
-
+	cmd := ergoCmd("/bin/bash")
 	switch system {
 	case "linux-gnome":
 		if remove {
@@ -65,9 +66,9 @@ func Setup(system string, remove bool, config *proxy.Config) {
 
 	case "windows":
 		if remove {
-			cmd = exec.Command("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/f")
+			cmd = ergoCmd("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/f")
 		} else {
-			cmd = exec.Command("reg", "add", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/t", "REG_SZ", "/d", proxyURL, "/f")
+			cmd = ergoCmd("reg", "add", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/t", "REG_SZ", "/d", proxyURL, "/f")
 		}
 		if err := cmd.Run(); err != nil {
 			log.Fatal(err)
