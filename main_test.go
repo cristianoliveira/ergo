@@ -1,15 +1,14 @@
 package main
 
 import (
-	"os"
 	"testing"
 )
 
 func TestShowingUsage(t *testing.T) {
 	t.Run("it shows usage when missing command", func(tt *testing.T) {
-		os.Args = []string{"ergo"}
+		args := []string{"ergo"}
 
-		cmd := command()
+		cmd := command(args)
 		if cmd != nil {
 			t.Errorf("Expected cmd to be nil")
 		}
@@ -17,9 +16,9 @@ func TestShowingUsage(t *testing.T) {
 	})
 
 	t.Run("it shows usage when pass h flag", func(tt *testing.T) {
-		os.Args = []string{"ergo", "-h"}
+		args := []string{"ergo", "-h"}
 
-		cmd := command()
+		cmd := command(args)
 		if cmd != nil {
 			t.Errorf("Expected cmd to be nil")
 		}
@@ -27,9 +26,9 @@ func TestShowingUsage(t *testing.T) {
 	})
 
 	t.Run("it shows usage when unknown command", func(tt *testing.T) {
-		os.Args = []string{"ergo", "foobar"}
+		args := []string{"ergo", "foobar"}
 
-		cmd := command()
+		cmd := command(args)
 		if cmd != nil {
 			t.Errorf("Expected cmd to be nil")
 		}
@@ -39,9 +38,9 @@ func TestShowingUsage(t *testing.T) {
 
 func TestShowingVersion(t *testing.T) {
 	t.Run("it shows usage when missing command", func(tt *testing.T) {
-		os.Args = []string{"ergo", "-v"}
+		args := []string{"ergo", "-v"}
 
-		cmd := command()
+		cmd := command(args)
 		if cmd == nil {
 			t.Errorf("Expected cmd to not be nil")
 		}
@@ -51,12 +50,27 @@ func TestShowingVersion(t *testing.T) {
 	})
 }
 
+// TestMissingCommand will cause the main function to return a non-zero exit code
+// so we need to do some wrapping to make the test not fail.
+// For more info check ou to uset: https://talks.golang.org/2014/testing.slide#23
+func TestMissingCommand(t *testing.T) {
+	t.Run("missing a command so it shows usage", func(tt *testing.T) {
+		args := []string{"ergo"}
+
+		cmd := command(args)
+
+		if cmd != nil {
+			t.Errorf("Expected cmd to not be nil")
+		}
+		// Output: USAGE and exit with an error code
+	})
+}
+
 func TestListCommand(t *testing.T) {
 	t.Run("it is list command", func(tt *testing.T) {
 		args := []string{"ergo", "list"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result to not be nil")
 		}
@@ -68,9 +82,8 @@ func TestListCommand(t *testing.T) {
 func TestListNamesCommand(t *testing.T) {
 	t.Run("it is list-names command", func(tt *testing.T) {
 		args := []string{"ergo", "list-names"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result to not be nil")
 		}
@@ -82,9 +95,8 @@ func TestListNamesCommand(t *testing.T) {
 func TestSetupCommand(t *testing.T) {
 	t.Run("it shows usage", func(tt *testing.T) {
 		args := []string{"ergo", "setup"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result != nil {
 			t.Errorf("Expected result to be nil")
 		}
@@ -92,9 +104,8 @@ func TestSetupCommand(t *testing.T) {
 
 	t.Run("it is setup command", func(tt *testing.T) {
 		args := []string{"ergo", "setup", "osx"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result not to be nil")
 		}
@@ -104,9 +115,8 @@ func TestSetupCommand(t *testing.T) {
 func TestUrlCommand(t *testing.T) {
 	t.Run("it shows usage", func(tt *testing.T) {
 		args := []string{"ergo", "url"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result != nil {
 			t.Errorf("Expected result to be nil")
 		}
@@ -114,9 +124,8 @@ func TestUrlCommand(t *testing.T) {
 
 	t.Run("it is url command", func(tt *testing.T) {
 		args := []string{"ergo", "url", "foo"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result not to be nil")
 		}
@@ -128,9 +137,8 @@ func TestUrlCommand(t *testing.T) {
 func TestRunCommand(t *testing.T) {
 	t.Run("it is url command", func(tt *testing.T) {
 		args := []string{"ergo", "run"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result not to be nil")
 		}
@@ -140,9 +148,8 @@ func TestRunCommand(t *testing.T) {
 func TestAddCommand(t *testing.T) {
 	t.Run("it shows usage", func(tt *testing.T) {
 		args := []string{"ergo", "add"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result != nil {
 			t.Errorf("Expected result to be nil")
 		}
@@ -150,9 +157,8 @@ func TestAddCommand(t *testing.T) {
 
 	t.Run("it is url command", func(tt *testing.T) {
 		args := []string{"ergo", "add", "foo", "bar"}
-		os.Args = args
 
-		result := command()
+		result := command(args)
 		if result == nil {
 			t.Errorf("Expected result not to be nil")
 		}

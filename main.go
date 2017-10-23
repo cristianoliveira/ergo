@@ -40,19 +40,19 @@ setup:
   -remove     Set remove proxy configurations.
 `
 
-func command() func() {
+func command(args []string) func() {
 	// Fail fast if we didn't receive a command argument
-	if len(os.Args) == 1 {
+	if len(args) == 1 {
 		return nil
 	}
 
-	f := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	f := flag.NewFlagSet(args[0], flag.ContinueOnError)
 	help := f.Bool("h", false, "Shows ergo's help.")
 	version := f.Bool("v", false, "Shows ergo's version.")
 
-	f.Parse(os.Args[1:])
+	f.Parse(args[1:])
 
-	fmt.Println(os.Args, *version)
+	fmt.Println(args, *version)
 
 	if *version {
 		return func() {
@@ -65,9 +65,9 @@ func command() func() {
 	}
 
 	config := proxy.NewConfig()
-	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+	command := flag.NewFlagSet(args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
-	command.Parse(os.Args[2:])
+	command.Parse(args[2:])
 
 	services, err := proxy.LoadServices(*configFile)
 	if err != nil {
@@ -76,7 +76,7 @@ func command() func() {
 	config.Services = services
 	config.ConfigFile = *configFile
 
-	switch os.Args[1] {
+	switch args[1] {
 	case "list":
 		return func() {
 			commands.List(config)
@@ -88,7 +88,7 @@ func command() func() {
 		}
 
 	case "setup":
-		if len(os.Args) <= 2 {
+		if len(args) <= 2 {
 			return nil
 		}
 
@@ -101,11 +101,11 @@ func command() func() {
 		}
 
 	case "url":
-		if len(os.Args) != 3 {
+		if len(args) != 3 {
 			return nil
 		}
 
-		name := os.Args[2]
+		name := args[2]
 		return func() {
 			commands.URL(name, config)
 		}
@@ -114,18 +114,18 @@ func command() func() {
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
-		command.Parse(os.Args[2:])
+		command.Parse(args[2:])
 
 		return func() {
 			commands.Run(config)
 		}
 	case "add":
-		if len(os.Args) <= 3 {
+		if len(args) <= 3 {
 			return nil
 		}
 
-		name := os.Args[2]
-		url := os.Args[3]
+		name := args[2]
+		url := args[3]
 		service := proxy.NewService(name, url)
 
 		return func() {
@@ -137,12 +137,11 @@ func command() func() {
 }
 
 func main() {
-	cmd := command()
+	cmd := command(os.Args)
 
 	if cmd == nil {
 		fmt.Println(USAGE)
 		os.Exit(1)
-
 	} else {
 		cmd()
 
