@@ -6,7 +6,7 @@ ERROR_COLOR=\033[31m
 
 WARN_COLOR=\33[33m
 
-.PHONY: all start build test test-integration deps help fmt vet lint tools 
+.PHONY: all start build test test-integration coverage deps help fmt vet lint tools
 
 VERSION=`cat .version`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
@@ -14,7 +14,7 @@ LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
 help:
 	@(echo "${WARN_COLOR}Usage:${NO_COLOR}")
 	@(echo "${OK_COLOR}make all${NO_COLOR}                      Run the tests and build the executable")
-	@(echo "${OK_COLOR}make help${NO_COLOR}                     Show this help") 
+	@(echo "${OK_COLOR}make help${NO_COLOR}                     Show this help")
 	@(echo "${OK_COLOR}make build-darwin-arm${NO_COLOR}         Builds the executable for osx arm")
 	@(echo "${OK_COLOR}make build-linux-arm${NO_COLOR}          Builds the executable for linux arm")
 	@(echo "${OK_COLOR}make build-windows-i386${NO_COLOR}       Builds the executable for windows")
@@ -53,7 +53,7 @@ start:
 tools:
 	@(go get github.com/golang/lint)
 
-fmt: 
+fmt:
 	@(echo "${OK_COLOR}Running fmt ...${NO_COLOR}")
 	@([ $$(gofmt -l . | wc -l) != 0 ] && \
 	echo "${WARN_COLOR}The following files are not correctly formated:${NO_COLOR}" && \
@@ -71,11 +71,14 @@ lint: tools
 	echo "${ERROR_COLOR}" && golint ./... && \
 	echo "${NO_COLOR}"  && exit 1 || exit 0)
 
+coverage:
+	@sh ./ci/coverage.sh
+
 test: fmt vet lint
 	@(go test -v ./...)
 
 test-integration: build
-	go test -tags=integration -v ./... 
+	go test -tags=integration -v ./...
 
 watch:
 	funzzy watch
