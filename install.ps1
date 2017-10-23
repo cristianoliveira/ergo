@@ -19,12 +19,14 @@ function Test-RegistryValue {
 }
     
 
-Write-Host "Ergo will be installed to: $installDir"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/cristianoliveira/ergo/master/.version" -OutFile .version
 
 $v = Get-Content .version | Out-String
 $v = $v.Trim()
+Write-Host "Ergo $v will be installed to: $installDir"
 
 Invoke-WebRequest -Uri "https://github.com/cristianoliveira/ergo/releases/download/$v/ergo.exe" -OutFile $downloadTo
+
 
 If(!(Test-Path $installDir))
 {
