@@ -116,11 +116,13 @@ func LoadServices(filepath string) ([]Service, error) {
 //AddService adds new service to the filepath
 func AddService(filepath string, service Service) error {
 	file, e := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	defer file.Close()
+
 	if e != nil {
-		fmt.Printf("File error: %v\n", e)
-		os.Exit(1)
+		log.Printf("File error: %v\n", e)
+		return e
 	}
+
+	defer file.Close()
 
 	serviceStr := service.Name + " " + service.URL + "\n"
 	_, err := file.WriteString(serviceStr)
