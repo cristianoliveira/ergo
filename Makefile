@@ -45,13 +45,16 @@ bump-version:
 	cat .version
 
 build: bump-version
-	@go build ${LDFLAGS_f1} -o bin/ergo
+	go build ${LDFLAGS_f1} -o bin/ergo && \
+	[ ! -z "${TARGET_FREEBSD}" ] && \
+	GOOS=freebsd GOARCH=amd64 go build ${LDFLAGS_f1} -o bin/freebsd/ergo || \
+	true
 
 start:
 	@go run main.go run
 
 tools:
-	@(go get github.com/golang/lint)
+	@(go get -u -v github.com/golang/lint/golint)
 
 fmt: 
 	@(echo "${OK_COLOR}Running fmt ...${NO_COLOR}")

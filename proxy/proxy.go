@@ -43,6 +43,7 @@ func formatRequest(r *http.Request) string {
 }
 
 func pollConfigChange(config *Config) {
+
 	ticker := time.NewTicker(pollIntervall * time.Millisecond)
 
 	quit = make(chan struct{})
@@ -51,14 +52,18 @@ func pollConfigChange(config *Config) {
 		for {
 			select {
 			case <-ticker.C:
+
 				info, err := os.Stat(config.ConfigFile)
+
 				if err != nil {
 					log.Printf("Error reading config file: %s\r\n", err.Error())
 					continue
 				}
 
 				if info.ModTime().Before(modTime) || info.Size() != size {
+
 					services, err := LoadServices(config.ConfigFile)
+
 					if err != nil {
 						log.Printf("Error reading the modified config file: %s\r\n", err.Error())
 						continue
@@ -69,6 +74,7 @@ func pollConfigChange(config *Config) {
 					default:
 					}
 					configChan <- services
+
 				}
 
 			case <-quit:

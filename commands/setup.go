@@ -13,7 +13,7 @@ import (
 // Setup command tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
 //   - OSX
-//   - Linux-gnome
+//   - Gnome (tested on Linux and FreeBSD)
 //   - Windows
 //
 // Usage:
@@ -26,7 +26,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 	cmd := exec.Command("/bin/sh")
 
 	switch system {
-	case "linux-gnome":
+	case "gnome":
 		if remove {
 			script = `
 				gsettings set org.gnome.system.proxy mode 'none'
@@ -78,7 +78,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 		fmt.Println(`
 List of supported system
 
--linux-gnome
+-gnome (tested on linux and freebsd)
 -osx
 -windows
 

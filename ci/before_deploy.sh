@@ -11,3 +11,18 @@ cd staging
 
 # release tarball will look like 'rust-everywhere-v1.2.3-x86_64-unknown-linux-gnu.tar.gz'
 tar czf ../${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET}.tar.gz *
+
+# if we also have freebsd compiled
+[ -f ../bin/freebsd/ergo ] && {
+	cd ..
+	
+	mkdir staging-freebsd
+	
+	cp bin/freebsd/ergo staging-freebsd
+
+	cd staging-freebsd
+
+	tar czf ../${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET_FREEBSD}.tar.gz *
+} || {
+	echo skipping freebsd
+}
