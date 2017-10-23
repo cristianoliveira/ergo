@@ -2,25 +2,35 @@
 
 VERSION_URL="https://raw.githubusercontent.com/cristianoliveira/ergo/master/.version"
 DOWNLOAD_URL="https://github.com/cristianoliveira/ergo/releases/download"
-declare -A SUPPORTED_PLATFORMS
-SUPPORTED_PLATFORMS=(["x86_64"]="linux-amd64")
 DEST_FOLDER="/usr/local/bin"
 PROGNAME=`basename "$0"`
 
-function die () { 
+die () { 
 echo "$PROGNAME: [FATAL] $1" >&2; exit ${2:-1}  ; 
 }
 
-function install(){
+getplatform(){
+    platform=$(uname -m)
+    case $platform in
+    x86_64)
+        echo "linux-amd64"
+        ;;
+    *)
+        die "$platform is not yet supported"
+        ;;
+    esac
+}
+
+install(){
     echo "Using /tmp to store downloaded file"
     cd /tmp
-
+    local platform=$(getplatform)
     echo "Downloading version $latest_version from repo"
-    wget -q "$DOWNLOAD_URL/$latest_version/ergo-$latest_version-${SUPPORTED_PLATFORMS[$platform]}.tar.gz"
+    wget -q "$DOWNLOAD_URL/$latest_version/ergo-$latest_version-$platform.tar.gz"
     [ $? -ne 0 ] && die "unable to download package"
 
     echo "Extracting package"
-    tar -xf ergo-$latest_version-${SUPPORTED_PLATFORMS[$platform]}.tar.gz 
+    tar -xf ergo-$latest_version-$platform.tar.gz 
     [ $? -ne 0 ] && die "unable to extract ergo from package"
 
     echo "Copying ergo to $DEST_FOLDER. May require sudo password."
@@ -32,17 +42,15 @@ function install(){
     [ $? -ne 0 ] && die "unable to copy ergo to destination folder"
 
     echo "Application was successfully installed."
-    echo "For uninstalling execute: rm $DEST_FOLDER/ergo"
+    echo "For uninstalling execute: rm ${DEST_FOLDER}ergo"
 }
 
-function show_help(){
+show_help(){
     echo "Usage: $PROGNAME [-d destination_directory]"
 }
 
-function main(){
-    platform=$(uname -m)
-    [ ${SUPPORTED_PLATFORMS[$platform]} ] || die "$platform is not yet supported"
-    
+main(){
+ 
     latest_version=$(wget -q -O - "$VERSION_URL")
     [ $? -ne 0 ] && die "unable to retrieve latest version information"
 
