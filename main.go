@@ -51,6 +51,7 @@ func command() func() {
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
+	domain := command.String("domain", ".dev", "Set the doamin for the proxy service")
 	command.Parse(os.Args[2:])
 
 	services, err := proxy.LoadServices(*configFile)
@@ -59,6 +60,7 @@ func command() func() {
 	}
 	config.Services = services
 	config.ConfigFile = *configFile
+	config.Domain = *domain
 
 	switch os.Args[1] {
 	case "list":
