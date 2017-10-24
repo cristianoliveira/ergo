@@ -32,7 +32,7 @@ Options:
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
   -domain     Set a custom domain for services.
-
+  
 run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
@@ -116,9 +116,9 @@ func command(args []string) func() {
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
-
-		command.Parse(args[2:])
-		if !strings.HasPrefix(config.Domain, ".") {
+    command.Parse(args[2:])
+		
+    if !strings.HasPrefix(config.Domain, ".") {
 			return nil
 		}
 
