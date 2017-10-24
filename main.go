@@ -30,6 +30,7 @@ Options:
   -h      Shows this message.
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
+  -domain     Set the domain the proxy is running.
 
 
 run:
