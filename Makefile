@@ -29,7 +29,7 @@ help:
 	@(echo "${OK_COLOR}make clean${NO_COLOR}                    Remove the compiled executables")
 	@(echo "${OK_COLOR}make deps${NO_COLOR}                     Get the dependencies needed to build the project")
 
-all: deps bump-version test build test-integration
+all: deps test build test-integration bump-version
 
 build-darwin-arm:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/darwin/ergo
