@@ -33,7 +33,6 @@ Options:
   -config     Set the config file to the proxy.
   -domain     Set a custom domain for services.
 
-
 run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
@@ -151,6 +150,5 @@ func main() {
 		os.Exit(1)
 	} else {
 		cmd()
-
 	}
 }
