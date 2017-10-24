@@ -31,7 +31,7 @@ Options:
   -h      Shows this message.
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
-  -domain     Set the domain the proxy is running.
+  -domain     Set a custom domain for services.
 
 
 run:
@@ -51,7 +51,7 @@ func command() func() {
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
-	domain := command.String("domain", ".dev", "Set the doamin for the proxy service")
+	domain := command.String("domain", ".dev", "Set a custom domain for services")
 	command.Parse(os.Args[2:])
 
 	services, err := proxy.LoadServices(*configFile)
