@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cristianoliveira/ergo/commands"
 	"github.com/cristianoliveira/ergo/proxy"
@@ -98,6 +99,9 @@ func command() func() {
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
 		command.Parse(os.Args[2:])
+		if !strings.HasPrefix(config.Domain, ".") {
+			return nil
+		}
 
 		return func() {
 			commands.Run(config)
