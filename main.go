@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cristianoliveira/ergo/commands"
 	"github.com/cristianoliveira/ergo/proxy"
@@ -30,6 +31,7 @@ Options:
   -h      Shows this message.
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
+  -domain     Set a custom domain for services.
 
 
 run:
@@ -49,6 +51,7 @@ func command() func() {
 	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 	configFile := command.String("config", "./.ergo", "Set the services file")
+	domain := command.String("domain", ".dev", "Set a custom domain for services")
 	command.Parse(os.Args[2:])
 
 	services, err := proxy.LoadServices(*configFile)
@@ -57,6 +60,7 @@ func command() func() {
 	}
 	config.Services = services
 	config.ConfigFile = *configFile
+	config.Domain = *domain
 
 	switch os.Args[1] {
 	case "list":
@@ -97,6 +101,9 @@ func command() func() {
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
 		command.Parse(os.Args[2:])
+		if !strings.HasPrefix(config.Domain, ".") {
+			return nil
+		}
 
 		return func() {
 			commands.Run(config)
