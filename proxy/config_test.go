@@ -6,13 +6,7 @@ import (
 )
 
 func TestWhenHasErgoFile(t *testing.T) {
-	config := NewConfig()
-	services, err := LoadServices("../.ergo")
-	if err != nil {
-		t.Fatal("could not load requied configuration file for tests")
-	}
-
-	config.Services = services
+	config := NewConfig("../.ergo.toml")
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
 		expected := 6

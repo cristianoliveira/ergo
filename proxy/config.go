@@ -1,12 +1,13 @@
 package proxy
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"regexp"
 	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
 var (
@@ -28,8 +29,15 @@ type Config struct {
 	Domain     string
 	URLPattern string
 	Verbose    bool
-	Services   []Service
+	Services   []Service `toml:"Services"`
 	ConfigFile string
+}
+
+func (c *Config) loadConfigFile(filename string) {
+	if _, err := toml.DecodeFile(filename, &c); err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 //GetService gets the service for the given host.
@@ -52,13 +60,16 @@ func (c *Config) GetService(host string) *Service {
 }
 
 //NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
+func NewConfig(configFile string) *Config {
+	config := &Config{
 		Port:       "2000",
 		Domain:     ".dev",
 		URLPattern: `.*\.dev$`,
 		Services:   nil,
 	}
+	config.loadConfigFile(configFile)
+
+	return config
 }
 
 //NewService gets the new service.
@@ -72,45 +83,8 @@ func NewService(name, url string) Service {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func LoadServices(filepath string) ([]Service, error) {
-
-	info, err := os.Stat(filepath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	size = info.Size()
-	modTime = info.ModTime()
-
-	file, e := os.Open(filepath)
-
-	if e != nil {
-		return nil, fmt.Errorf("file error: %v", e)
-	}
-
-	defer file.Close()
-
-	log.Println("Just received ", filepath)
-
-	services := []Service{}
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		declaration := regexp.MustCompile(`(\S+)`)
-		config := declaration.FindAllString(line, -1)
-		if config == nil {
-			continue
-		}
-		if len(config) != 2 {
-			return nil, fmt.Errorf("file error: invalid format `%v` expected `{NAME} {URL}`", line)
-		}
-		name, url := config[0], config[1]
-		services = append(services, Service{Name: name, URL: url})
-	}
-
-	return services, nil
+	config := NewConfig(filepath)
+	return config.Services, nil
 }
 
 //AddService adds new service to the filepath

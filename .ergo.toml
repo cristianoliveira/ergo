@@ -1,0 +1,10 @@
+Port = "8080"
+Domain = ".dev"
+Verbose = false
+
+[[Services]]
+    Name = "foo"
+    URL  = "http://localhost:3000"
+[[Services]]
+    Name = "bla"
+    URL  = "http://localhost:5000"

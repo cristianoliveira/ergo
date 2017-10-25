@@ -17,12 +17,7 @@ import (
 )
 
 func TestWhenHasCollectionFile(t *testing.T) {
-	config := NewConfig()
-	services, err := LoadServices("../.ergo")
-	if err != nil {
-		t.Fatal("could not load requied configuration file for tests")
-	}
-	config.Services = services
+	config := NewConfig("../.ergo.toml")
 	proxy := NewErgoProxy(config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {
