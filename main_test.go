@@ -180,7 +180,7 @@ func TestRemoveCommand(t *testing.T) {
 		os.Args = args
 
 		result := command()
-		if result != nil {
+		if result == nil {
 			t.Errorf("Expected result not to be nil")
 		}
 
