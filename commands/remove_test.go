@@ -1,11 +1,11 @@
 package commands
 
 import (
-	"testing"
-	"os"
-	"io"
 	"bytes"
+	"io"
+	"os"
 	"strings"
+	"testing"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
@@ -16,7 +16,6 @@ func TestRemoveOK(t *testing.T) {
 	})
 
 	service := proxy.Service{Name: "test.dev"}
-
 
 	old := os.Stdout
 	r, w, _ := os.Pipe()
@@ -50,7 +49,6 @@ func TestRemoveFailIfNotExists(t *testing.T) {
 
 	service := proxy.Service{Name: "doesntexist.dev"}
 
-
 	old := os.Stdout
 	r, w, _ := os.Pipe()
 	os.Stdout = w
@@ -82,7 +80,6 @@ func TestRemoveOKUrl(t *testing.T) {
 	})
 
 	service := proxy.Service{URL: "localhost:999"}
-
 
 	old := os.Stdout
 	r, w, _ := os.Pipe()

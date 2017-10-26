@@ -123,7 +123,7 @@ func command() func() {
 	case "remove":
 		if len(os.Args) <= 2 {
 			return func() {
-			 fmt.Println("Usage: ergo remove <name|url>")
+				fmt.Println("Usage: ergo remove <name|url>")
 			}
 		}
 

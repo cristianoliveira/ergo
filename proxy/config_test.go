@@ -94,7 +94,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 	})
 
-	t.Run("It removes a service", func (tt *testing.T) {
+	t.Run("It removes a service", func(tt *testing.T) {
 		fileContent, err := ioutil.ReadFile("../ergo")
 
 		if err != nil {

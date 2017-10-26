@@ -175,7 +175,7 @@ func TestAddCommand(t *testing.T) {
 }
 
 func TestRemoveCommand(t *testing.T) {
-	t.Run("it shows usage", func (tt *testing.T) {
+	t.Run("it shows usage", func(tt *testing.T) {
 		args := []string{"ergo", "remove"}
 		os.Args = args
 

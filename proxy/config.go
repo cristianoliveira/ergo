@@ -3,12 +3,12 @@ package proxy
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
-	"time"
-	"io/ioutil"
 	"strings"
+	"time"
 )
 
 var (
@@ -141,7 +141,6 @@ func RemoveService(filepath string, service Service) error {
 	}
 
 	serviceStr := service.Name + " " + service.URL + "\n"
-	
 
 	if !strings.Contains(string(file), serviceStr) {
 		r := string(file)
