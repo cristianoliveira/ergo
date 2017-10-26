@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -47,13 +48,16 @@ func command() func() {
 		return nil
 	}
 
+	config := proxy.NewConfig()
 	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-	configFile := command.String("config", "./.ergo.toml", "Set the config file")
-	config := proxy.NewConfig(*configFile)
+	configFile := command.String("config", "./.ergo", "Set the services file")
 	domain := command.String("domain", ".dev", "Set a custom domain for services")
 	command.Parse(os.Args[2:])
 
-	services := config.Services
+	services, err := proxy.LoadServices(*configFile)
+	if err != nil {
+		log.Printf("Could not load services: %v\n", err)
+	}
 	config.Services = services
 	config.ConfigFile = *configFile
 	config.Domain = *domain

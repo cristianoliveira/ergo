@@ -58,12 +58,17 @@ func pollConfigChange(config *Config) {
 				}
 
 				if info.ModTime().Before(modTime) || info.Size() != size {
+					services, err := LoadServices(config.ConfigFile)
+					if err != nil {
+						log.Printf("Error reading the modified config file: %s\r\n", err.Error())
+						continue
+					}
 					//clear the data if there is any
 					select {
 					case <-configChan:
 					default:
 					}
-					configChan <- config.Services
+					configChan <- services
 				}
 
 			case <-quit:
