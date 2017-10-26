@@ -1,11 +1,8 @@
 package main
 
 import (
-	"bytes"
-	"io"
 	"os"
 	"os/exec"
-	"strings"
 	"testing"
 )
 
@@ -183,32 +180,8 @@ func TestRemoveCommand(t *testing.T) {
 		os.Args = args
 
 		result := command()
-		if result == nil {
-			t.Errorf("Expected result not to be nil")
-		}
-
-		old := os.Stdout
-		r, w, _ := os.Pipe()
-		os.Stdout = w
-
-		outC := make(chan string)
-		var buf bytes.Buffer
-
-		go func() {
-			io.Copy(&buf, r)
-			outC <- buf.String()
-		}()
-
-		result()
-
-		w.Close()
-
-		os.Stdout = old
-
-		out := <-outC
-
-		if !strings.Contains(out, "Usage: ergo remove <name|url>") {
-			t.Fatalf("Expected Remove to show usage. Got %s", out)
+		if result != nil {
+			t.Errorf("Expected result to be nil")
 		}
 	})
 }
