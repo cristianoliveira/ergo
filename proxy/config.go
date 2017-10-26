@@ -7,6 +7,8 @@ import (
 	"os"
 	"regexp"
 	"time"
+	"io/ioutil"
+	"strings"
 )
 
 var (
@@ -127,4 +129,27 @@ func AddService(filepath string, service Service) error {
 	serviceStr := service.Name + " " + service.URL + "\n"
 	_, err := file.WriteString(serviceStr)
 	return err
+}
+
+// RemoveService remves a service from the filepath
+func RemoveService(filepath string, service Service) error {
+	file, err := ioutil.ReadFile(filepath)
+
+	if err != nil {
+		log.Println("File error: %v\n", err)
+		return err
+	}
+
+	serviceStr := service.Name + " " + service.URL + "\n"
+	
+
+	if !strings.Contains(string(file), serviceStr) {
+		r := string(file)
+		r = strings.Replace(r, serviceStr, "", -1)
+		file = []byte(r)
+	}
+
+	ioutil.WriteFile(filepath, file, 0755)
+
+	return nil
 }

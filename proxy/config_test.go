@@ -94,6 +94,32 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 	})
 
+	t.Run("It removes a service", func (tt *testing.T) {
+		fileContent, err := ioutil.ReadFile("../ergo")
+
+		if err != nil {
+			tt.Skipf("Could not load initial .ergo file")
+		}
+
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
+
+		service := NewService("testservice", "http://localhost:8080")
+
+		if err := RemoveService("../.ergo", service); err != nil {
+			tt.Errorf("Expected service to be removed")
+		}
+
+		newFileContent, err := ioutil.ReadFile("../ergo")
+		if err != nil {
+			tt.Skip("Could not load initial .ergo file")
+		}
+
+		if !(len(fileContent) > len(newFileContent)) {
+			tt.Errorf("Expected service to be removed")
+		}
+	})
+
 	t.Run("It returns an error if there's an invalid declaration", func(tt *testing.T) {
 		fileContent, err := ioutil.ReadFile("../.ergo")
 

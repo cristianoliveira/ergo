@@ -173,3 +173,17 @@ func TestAddCommand(t *testing.T) {
 		result()
 	})
 }
+
+func TestRemoveCommand(t *testing.T) {
+	t.Run("it shows usage", func (tt *testing.T) {
+		args := []string{"ergo", "remove"}
+		os.Args = args
+
+		result := command()
+		if result != nil {
+			t.Errorf("Expected result not to be nil")
+		}
+
+		result()
+	})
+}

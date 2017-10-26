@@ -120,6 +120,20 @@ func command() func() {
 		return func() {
 			commands.AddService(config, service, *configFile)
 		}
+	case "remove":
+		if len(os.Args) <= 2 {
+			return func() {
+			 fmt.Println("Usage: ergo remove <name|url>")
+			}
+		}
+
+		nameOrUrl := os.Args[2]
+
+		service := proxy.NewService(nameOrUrl, nameOrUrl)
+
+		return func() {
+			commands.RemoveService(config, service, *configFile)
+		}
 	}
 
 	return nil
