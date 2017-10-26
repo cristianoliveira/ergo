@@ -7,7 +7,8 @@ import (
 )
 
 // RemoveService removes a service from the configuration and tells the proxy to
-// remove it from the configFile
+// remove it from the configFile.
+// USAGE: ergo remove myservicename
 func RemoveService(config *proxy.Config, service proxy.Service, configFile string) {
 
 	var oldService *proxy.Service

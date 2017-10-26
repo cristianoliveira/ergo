@@ -25,7 +25,8 @@ Usage:
   ergo list-names
   ergo url <name>
   ergo setup [options] [linux-gnome|osx|windows] [-remove]
-  ergo add [options] <service-name> <host:port>
+	ergo add [options] <service-name> <host:port>
+	ergo remove [options] <service-name|host:port>
 
 Options:
   -h      Shows this message.
@@ -122,9 +123,7 @@ func command() func() {
 		}
 	case "remove":
 		if len(os.Args) <= 2 {
-			return func() {
-				fmt.Println("Usage: ergo remove <name|url>")
-			}
+			return nil
 		}
 
 		nameOrUrl := os.Args[2]

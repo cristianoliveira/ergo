@@ -130,7 +130,7 @@ func AddService(filepath string, service Service) error {
 	return err
 }
 
-// RemoveService remves a service from the filepath
+// RemoveService removes a service from the filepath
 func RemoveService(filepath string, service Service) error {
 	file, err := ioutil.ReadFile(filepath)
 

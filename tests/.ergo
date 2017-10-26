@@ -3,4 +3,5 @@ bla http://localhost:5000
 withspaces       http://localhost:8080
 one.domain       http://localhost:8081
 two.domain       http://localhost:8082
+servicetoberemoved http://localhost:8083
 redis://redislocal       redis://localhost:6543
