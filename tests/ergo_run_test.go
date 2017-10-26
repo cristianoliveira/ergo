@@ -603,7 +603,7 @@ func TestConfigDynamicWindows(t *testing.T) {
 	defer c.clean()
 	defer cleanSetup()
 
-	//start a web server that will initialy have no mapping in our proxy
+	//start a web server that will initially have no mapping in our proxy
 	startDynamicTestWebServer()
 
 	cmd := ergo("run", "-config", c.filePath)
