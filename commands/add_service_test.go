@@ -12,7 +12,7 @@ import (
 
 func TestAddServiceAllreadyThere(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	service := proxy.Service{Name: "test.dev"}
@@ -44,7 +44,7 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 
 func TestAddServiceAddOK(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	service := proxy.Service{
@@ -80,7 +80,7 @@ func TestAddServiceAddOK(t *testing.T) {
 func TestAddServiceFileNOK(t *testing.T) {
 
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	config.ConfigFile = "anyfilethatdoesnotexist.here"

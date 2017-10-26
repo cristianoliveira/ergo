@@ -13,7 +13,7 @@ import (
 func TestList(t *testing.T) {
 
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	old := os.Stdout

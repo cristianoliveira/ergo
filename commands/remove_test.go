@@ -12,7 +12,7 @@ import (
 
 func TestRemoveOK(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:999"},
+		{Name: "test.dev", URL: "localhost:999"},
 	})
 
 	service := proxy.Service{Name: "test.dev"}
@@ -44,7 +44,7 @@ func TestRemoveOK(t *testing.T) {
 
 func TestRemoveFailIfNotExists(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:999"},
+		{Name: "test.dev", URL: "localhost:999"},
 	})
 
 	service := proxy.Service{Name: "doesntexist.dev"}
@@ -76,7 +76,7 @@ func TestRemoveFailIfNotExists(t *testing.T) {
 
 func TestRemoveOKUrl(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:999"},
+		{Name: "test.dev", URL: "localhost:999"},
 	})
 
 	service := proxy.Service{URL: "localhost:999"}
