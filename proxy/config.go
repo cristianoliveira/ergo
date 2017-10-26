@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -136,17 +135,13 @@ func RemoveService(filepath string, service Service) error {
 	file, err := ioutil.ReadFile(filepath)
 
 	if err != nil {
-		log.Println("File error: %v\n", err)
+		log.Printf("File error: %v\n", err)
 		return err
 	}
 
-	serviceStr := service.Name + " " + service.URL + "\n"
+	serviceRegex := regexp.MustCompile(service.Name + "\\s+" + service.URL + "\n")
 
-	if !strings.Contains(string(file), serviceStr) {
-		r := string(file)
-		r = strings.Replace(r, serviceStr, "", -1)
-		file = []byte(r)
-	}
+	file = serviceRegex.ReplaceAll(file, []byte("\n"))
 
 	ioutil.WriteFile(filepath, file, 0755)
 

@@ -30,14 +30,14 @@ func RemoveService(config *proxy.Config, service proxy.Service, configFile strin
 	}
 
 	if len(services) > len(config.Services) {
-		fmt.Println("Failed to remove service %s", service.Name)
+		fmt.Printf("Failed to remove service %s", service.Name)
 		return
 	}
 
 	config.Services = services
 	err := proxy.RemoveService(configFile, *oldService)
 	if err != nil {
-		fmt.Println("Failed to remove service %s", service.Name)
+		fmt.Printf("Failed to remove service %s", service.Name)
 		return
 	}
 

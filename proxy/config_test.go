@@ -107,7 +107,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		service := NewService("testservice", "http://localhost:8080")
 
 		if err := RemoveService("../.ergo", service); err != nil {
-			tt.Errorf("Expected service to be removed")
+			tt.Errorf("Expected no error while removing service. Got %v\n", err)
 		}
 
 		newFileContent, err := ioutil.ReadFile("../ergo")
