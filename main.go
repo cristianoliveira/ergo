@@ -26,6 +26,7 @@ Usage:
   ergo url <name>
   ergo setup [options] [linux-gnome|osx|windows] [-remove]
   ergo add [options] <service-name> <host:port>
+  ergo remove [options] <service-name|host:port>
 
 Options:
   -h      Shows this message.
@@ -119,6 +120,18 @@ func command() func() {
 
 		return func() {
 			commands.AddService(config, service, *configFile)
+		}
+	case "remove":
+		if len(os.Args) <= 2 {
+			return nil
+		}
+
+		nameOrUrl := os.Args[2]
+
+		service := proxy.NewService(nameOrUrl, nameOrUrl)
+
+		return func() {
+			commands.RemoveService(config, service, *configFile)
 		}
 	}
 

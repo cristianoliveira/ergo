@@ -1,6 +1,7 @@
 package proxy
 
 import (
+	"bytes"
 	"io/ioutil"
 	"testing"
 )
@@ -92,6 +93,53 @@ func TestWhenHasErgoFile(t *testing.T) {
 			tt.Errorf("Expected service to be added")
 		}
 
+	})
+
+	t.Run("It removes a service", func(tt *testing.T) {
+		fileContent, err := ioutil.ReadFile("../ergo")
+
+		if err != nil {
+			tt.Skipf("Could not load initial .ergo file")
+		}
+
+		//we clean after the test. Otherwise the next test will fail
+		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
+
+		service := NewService("servicetoberemoved", "http://localhost:8083")
+
+		if err := RemoveService("../.ergo", service); err != nil {
+			tt.Errorf("Expected no error while removing service. Got %v\n", err)
+		}
+
+		newFileContent, err := ioutil.ReadFile("../ergo")
+		if err != nil {
+			tt.Skip("Could not load initial .ergo file")
+		}
+
+		if !(len(fileContent) > len(newFileContent)) {
+			tt.Errorf("Expected service to be removed")
+		}
+
+		expected := []byte(`foo http://localhost:3000
+		bla http://localhost:5000
+		withspaces       http://localhost:8080
+		one.domain       http://localhost:8081
+		two.domain       http://localhost:8082
+		redis://redislocal       redis://localhost:6543
+		`)
+
+		if !bytes.Equal(expected, newFileContent) {
+			tt.Errorf("Expected only to remove servicetoberemoved. Got %s\n", newFileContent)
+		}
+	})
+
+	t.Run("It fails to remove service with invalid path", func(tt *testing.T) {
+
+		service := NewService("testservice", "http://localhost:8080")
+
+		if err := RemoveService("foobarinvalid", service); err == nil {
+			tt.Errorf("Expected failure to read invalid path.\n")
+		}
 	})
 
 	t.Run("It returns an error if there's an invalid declaration", func(tt *testing.T) {

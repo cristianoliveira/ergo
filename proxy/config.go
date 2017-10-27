@@ -3,6 +3,7 @@ package proxy
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
@@ -127,4 +128,22 @@ func AddService(filepath string, service Service) error {
 	serviceStr := service.Name + " " + service.URL + "\n"
 	_, err := file.WriteString(serviceStr)
 	return err
+}
+
+// RemoveService removes a service from the filepath
+func RemoveService(filepath string, service Service) error {
+	file, err := ioutil.ReadFile(filepath)
+
+	if err != nil {
+		log.Printf("File error: %v\n", err)
+		return err
+	}
+
+	serviceRegex := regexp.MustCompile(service.Name + "\\s+" + service.URL + "\n")
+
+	file = serviceRegex.ReplaceAll(file, []byte("\n"))
+
+	ioutil.WriteFile(filepath, file, 0755)
+
+	return nil
 }

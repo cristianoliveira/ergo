@@ -18,7 +18,7 @@ _Please be aware that this project is written in golang, so you need golang if y
 Open your terminal, cd to your project directory and then run:
 ```
 make tools
-make dep
+make deps
 ```
 
 *on Windows:
