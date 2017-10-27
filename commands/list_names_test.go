@@ -3,7 +3,6 @@ package commands
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -13,34 +12,9 @@ import (
 
 func TestListNames(t *testing.T) {
 
-	tmpfile, err := ioutil.TempFile("", "testaddservice")
-	if err != nil {
-		t.Fatalf("Error creating tempfile: %s", err.Error())
-	}
-
-	defer os.Remove(tmpfile.Name())
-
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
-		t.Fatalf("Error writing to temporary file: %s", err.Error())
-	}
-
-	if err = tmpfile.Close(); err != nil {
-		t.Fatalf("Error closing temp file: %s", err.Error())
-	}
-
-	if err != nil {
-		t.Fatalf("No error expected while initializing config file. Got %s.", err.Error())
-	}
-	config := proxy.Config{}
-	config.ConfigFile = tmpfile.Name()
-	config.Services, err = proxy.LoadServices(config.ConfigFile)
-
-	if err != nil {
-		t.Fatalf("No error expected while loading services from config file. Got %s.", err.Error())
-	}
-
-	service := proxy.Service{}
-	service.Name = config.Services[0].Name
+	config := buildConfig([]proxy.Service{
+		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+	})
 
 	old := os.Stdout
 	r, w, _ := os.Pipe()
