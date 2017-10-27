@@ -8,7 +8,7 @@ WARN_COLOR=\33[33m
 
 .PHONY: all start build test test-integration coverage deps help fmt vet lint tools
 
-VERSION=`cat .version`
+VERSION=`git describe --tag --always`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
 
 help:

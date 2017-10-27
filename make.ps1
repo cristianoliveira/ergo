@@ -83,7 +83,7 @@ function bumpVersion {
 }
 function build(){
     bumpVersion
-    go build -ldflags "-w -s -X main.VERSION=$(Get-Content .\.version)" -o bin/ergo.exe
+    go build -ldflags "-w -s -X main.VERSION=$(git describe --tag --always)" -o bin/ergo.exe
 }
 
 if($build_darwin_arm) {
