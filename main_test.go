@@ -184,4 +184,14 @@ func TestRemoveCommand(t *testing.T) {
 			t.Errorf("Expected result to be nil")
 		}
 	})
+
+	t.Run("it returns a command", func(tt *testing.T) {
+		args := []string{"ergo", "remove", "test"}
+		os.Args = args
+
+		result := command()
+		if result == nil {
+			t.Errorf("Expected result to be a command, instead got nil")
+		}
+	})
 }
