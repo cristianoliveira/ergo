@@ -12,7 +12,7 @@ import (
 )
 
 //VERSION of ergo.
-var VERSION string
+var VERSION = "unofficial build"
 
 //USAGE details the usage for ergo proxy.
 const USAGE = `
