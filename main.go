@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -28,7 +29,6 @@ Usage:
   ergo url <name>
   ergo setup [options] [linux-gnome|osx|windows] [-remove]
   ergo add [options] <service-name> <host:port>
-  ergo remove [options] <service-name|host:port>
 
 Options:
   -h      Shows this message.
@@ -123,18 +123,18 @@ func command() func() {
 		return func() {
 			commands.AddService(config, service, *configFile)
 		}
-	case "remove":
-		if len(os.Args) <= 2 {
-			return nil
+	case "-v":
+		version, err := ioutil.ReadFile(".version")
+
+		if err != nil {
+			fmt.Print(err)
+			os.Exit(0)
 		}
 
-		nameOrUrl := os.Args[2]
+		VERSION = string(version)
 
-		service := proxy.NewService(nameOrUrl, nameOrUrl)
+		fmt.Print(VERSION)
 
-		return func() {
-			commands.RemoveService(config, service, *configFile)
-		}
 	}
 
 	return nil
