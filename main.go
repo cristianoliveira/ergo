@@ -11,8 +11,10 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-//VERSION of ergo.
-var VERSION string
+// VERSION of ergo
+// When ergo is build without a proper tag/release it is named as `unofficial version`.
+// For instance, installing through `go get github.com/cristianoliveira/ergo` or `go build`.
+var VERSION = "unofficial version"
 
 //USAGE details the usage for ergo proxy.
 const USAGE = `
