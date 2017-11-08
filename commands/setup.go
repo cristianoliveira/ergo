@@ -24,7 +24,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 	fmt.Println("Current detected system: " + runtime.GOOS)
 	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
 
-	c := configurator(system)
+	c := setup.GetCofigurator(system)
 
 	if c != nil {
 
@@ -46,18 +46,5 @@ List of supported systems:
 
 For more support please open an issue on: https://github.com/cristianoliveira/ergo
 		`)
-	}
-}
-
-func configurator(system string) setup.Configurator {
-	switch system {
-	case "windows":
-		return &setup.WindowsConfigurator{}
-	case "osx":
-		return &setup.OSXConfigurator{}
-	case "linux-gnome":
-		return &setup.LinuxConfigurator{}
-	default:
-		return nil
 	}
 }
