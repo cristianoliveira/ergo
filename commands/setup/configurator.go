@@ -6,7 +6,8 @@ type Configurator interface {
 	SetDown() error
 }
 
-func GetCofigurator(system string) Configurator {
+// GetConfigurator gets the right configurator strategy for a given system
+func GetConfigurator(system string) Configurator {
 	switch system {
 	case "windows":
 		return &WindowsConfigurator{}
