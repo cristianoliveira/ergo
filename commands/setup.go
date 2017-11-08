@@ -24,7 +24,7 @@ func Setup(system string, remove bool, config *proxy.Config) {
 	fmt.Println("Current detected system: " + runtime.GOOS)
 	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
 
-	c := setup.GetCofigurator(system)
+	c := setup.GetConfigurator(system)
 
 	if c != nil {
 

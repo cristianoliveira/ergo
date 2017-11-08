@@ -93,8 +93,8 @@ func command() func() {
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+		command.Parse(args[2:])
 
-		command.Parse(os.Args[2:])
 		if !strings.HasPrefix(config.Domain, ".") {
 			return nil
 		}
