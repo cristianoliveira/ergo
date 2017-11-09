@@ -120,17 +120,27 @@ func command() func() {
 		url := os.Args[3]
 		service := proxy.NewService(name, url)
 
+		command = flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+		command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
+		command.Parse(os.Args[4:])
+
+		services, err := proxy.LoadServices(config.ConfigFile)
+		if err != nil {
+			log.Printf("Could not load services: %v\n", err)
+		}
+		config.Services = services
+
 		return func() {
-			commands.AddService(config, service, *configFile)
+			commands.AddService(config, service)
 		}
 	case "remove":
 		if len(os.Args) <= 2 {
 			return nil
 		}
 
-		nameOrUrl := os.Args[2]
+		nameOrURL := os.Args[2]
 
-		service := proxy.NewService(nameOrUrl, nameOrUrl)
+		service := proxy.NewService(nameOrURL, nameOrURL)
 
 		return func() {
 			commands.RemoveService(config, service, *configFile)
