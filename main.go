@@ -36,7 +36,6 @@ Options:
   -config     Set the config file to the proxy.
   -domain     Set a custom domain for services.
 
-
 run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
@@ -45,27 +44,43 @@ setup:
   -remove     Set remove proxy configurations.
 `
 
-func command() func() {
+func command(args []string) func() {
 	// Fail fast if we didn't receive a command argument
-	if len(os.Args) == 1 {
+	if len(args) == 1 {
+		return nil
+	}
+
+	f := flag.NewFlagSet(args[0], flag.ContinueOnError)
+	help := f.Bool("h", false, "Shows ergo's help.")
+	version := f.Bool("v", false, "Shows ergo's version.")
+
+	f.Parse(args[1:])
+
+	fmt.Println(args, *version)
+
+	if *version {
+		return func() {
+			fmt.Println("version:", VERSION)
+		}
+	}
+
+	if *help {
 		return nil
 	}
 
 	config := proxy.NewConfig()
-	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-	configFile := command.String("config", "./.ergo", "Set the services file")
-	domain := command.String("domain", ".dev", "Set a custom domain for services")
-	command.Parse(os.Args[2:])
+	command := flag.NewFlagSet(args[0], flag.ExitOnError)
+	config.ConfigFile = *command.String("config", "./.ergo", "Set the services file")
+	config.Domain = *command.String("domain", ".dev", "Set a custom domain for services")
+	command.Parse(args[1:])
 
-	services, err := proxy.LoadServices(*configFile)
+	services, err := proxy.LoadServices(config.ConfigFile)
 	if err != nil {
 		log.Printf("Could not load services: %v\n", err)
 	}
 	config.Services = services
-	config.ConfigFile = *configFile
-	config.Domain = *domain
 
-	switch os.Args[1] {
+	switch args[1] {
 	case "list":
 		return func() {
 			commands.List(config)
@@ -77,7 +92,7 @@ func command() func() {
 		}
 
 	case "setup":
-		if len(os.Args) <= 2 {
+		if len(args) <= 2 {
 			return nil
 		}
 
@@ -90,11 +105,11 @@ func command() func() {
 		}
 
 	case "url":
-		if len(os.Args) != 3 {
+		if len(args) != 3 {
 			return nil
 		}
 
-		name := os.Args[2]
+		name := args[2]
 		return func() {
 			commands.URL(name, config)
 		}
@@ -102,8 +117,8 @@ func command() func() {
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+		command.Parse(args[1:])
 
-		command.Parse(os.Args[2:])
 		if !strings.HasPrefix(config.Domain, ".") {
 			return nil
 		}
@@ -112,16 +127,16 @@ func command() func() {
 			commands.Run(config)
 		}
 	case "add":
-		if len(os.Args) <= 3 {
+		if len(args) <= 3 {
 			return nil
 		}
 
-		name := os.Args[2]
-		url := os.Args[3]
+		name := args[2]
+		url := args[3]
 		service := proxy.NewService(name, url)
 
 		return func() {
-			commands.AddService(config, service, *configFile)
+			commands.AddService(config, service)
 		}
 	case "remove":
 		if len(os.Args) <= 2 {
@@ -141,22 +156,7 @@ func command() func() {
 }
 
 func main() {
-	help := flag.Bool("h", false, "Shows ergo's help.")
-	version := flag.Bool("v", false, "Shows ergo's version.")
-
-	flag.Parse()
-
-	if *version {
-		fmt.Println(VERSION)
-		return
-	}
-
-	if *help {
-		fmt.Println(USAGE)
-		return
-	}
-
-	cmd := command()
+	cmd := command(os.Args)
 
 	if cmd == nil {
 		fmt.Println(USAGE)

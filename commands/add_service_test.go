@@ -29,7 +29,7 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&config, service)
 
 	w.Close()
 
@@ -64,7 +64,7 @@ func TestAddServiceAddOK(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&config, service)
 
 	w.Close()
 
@@ -102,7 +102,7 @@ func TestAddServiceFileNOK(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&config, service)
 
 	w.Close()
 

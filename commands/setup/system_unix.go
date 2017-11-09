@@ -1,6 +1,6 @@
 // +build linux darwin
 
-package commands
+package setup
 
 //ShowInternetOptions is just a dummy for now
 //this is only used for Windows

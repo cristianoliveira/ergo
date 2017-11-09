@@ -91,6 +91,7 @@ func fakeCommandWindowsRemove(executable string, args ...string) *exec.Cmd {
 	cmd.Env = []string{"ME_WANT_HELP=1", "TEST_FOR_WINDOWS_REMOVE=1"}
 	return cmd
 }
+
 func TestMeWantHelp(t *testing.T) {
 	log.Println("ME_WANT_HELP", os.Getenv("ME_WANT_HELP"))
 	if os.Getenv("ME_WANT_HELP") != "1" {
