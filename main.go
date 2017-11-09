@@ -43,18 +43,17 @@ setup:
 
 func command() func() {
 	config := proxy.NewConfig()
-	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-	configFile := command.String("config", "./.ergo", "Set the services file")
-	domain := command.String("domain", ".dev", "Set a custom domain for services")
-	command.Parse(os.Args[2:])
 
-	services, err := proxy.LoadServices(*configFile)
+	command := flag.NewFlagSet(args[0], flag.ExitOnError)
+	config.ConfigFile = *command.String("config", "./.ergo", "Set the services file")
+	config.Domain = *command.String("domain", ".dev", "Set a custom domain for services")
+	command.Parse(args[1:])
+
+	services, err := proxy.LoadServices(config.ConfigFile)
 	if err != nil {
 		log.Printf("Could not load services: %v\n", err)
 	}
 	config.Services = services
-	config.ConfigFile = *configFile
-	config.Domain = *domain
 
 	switch os.Args[1] {
 	case "list":
@@ -93,7 +92,7 @@ func command() func() {
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
 		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
-		command.Parse(args[2:])
+		command.Parse(args[1:])
 
 		if !strings.HasPrefix(config.Domain, ".") {
 			return nil
@@ -112,7 +111,7 @@ func command() func() {
 		service := proxy.NewService(name, url)
 
 		return func() {
-			commands.AddService(config, service, *configFile)
+			commands.AddService(config, service)
 		}
 	}
 
