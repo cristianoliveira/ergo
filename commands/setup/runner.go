@@ -19,4 +19,5 @@ func (r DefaultRunner) Run(command string) error {
 	return exec.Command(args[0], args[1:]...).Run()
 }
 
-var runner Runner = &DefaultRunner{}
+// RunnerDefault run given commands
+var RunnerDefault Runner = &DefaultRunner{}

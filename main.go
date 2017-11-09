@@ -24,8 +24,8 @@ Usage:
   ergo list
   ergo list-names
   ergo url <name>
-  ergo setup [options] [linux-gnome|osx|windows] [-remove]
-  ergo add [options] <service-name> <host:port>
+  ergo setup [linux-gnome|osx|windows] [-remove] [options]
+  ergo add <service-name> <host:port> [options]
 
 Options:
   -h      Shows this message.
@@ -76,7 +76,7 @@ func command(args []string) func() {
 	}
 	config.Services = services
 
-	switch os.Args[1] {
+	switch args[1] {
 	case "list":
 		return func() {
 			commands.List(config)
@@ -88,7 +88,7 @@ func command(args []string) func() {
 		}
 
 	case "setup":
-		if len(os.Args) <= 2 {
+		if len(args) <= 2 {
 			return nil
 		}
 
@@ -101,11 +101,11 @@ func command(args []string) func() {
 		}
 
 	case "url":
-		if len(os.Args) != 3 {
+		if len(args) != 3 {
 			return nil
 		}
 
-		name := os.Args[2]
+		name := args[2]
 		return func() {
 			commands.URL(name, config)
 		}
@@ -150,20 +150,8 @@ func command(args []string) func() {
 }
 
 func main() {
-	help := flag.Bool("h", false, "Shows ergo's help.")
-	version := flag.Bool("v", false, "Shows ergo's version.")
-
-	flag.Parse()
-
-	if *version {
-		fmt.Println(VERSION)
-		return
-	}
-
-	cmd := command()
-	showUsage := *help || len(os.Args) == 1 || cmd == nil
-
-	if showUsage {
+	cmd := command(os.Args)
+	if cmd == nil {
 		fmt.Println(USAGE)
 	} else {
 		cmd()

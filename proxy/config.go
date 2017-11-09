@@ -118,7 +118,7 @@ func AddService(filepath string, service Service) error {
 	file, e := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	defer file.Close()
 	if e != nil {
-		return errors.New(fmt.Sprintf("File error: %v\n", e))
+		return fmt.Errorf("File error: %v", e)
 	}
 
 	serviceStr := service.Name + " " + service.URL + "\n"

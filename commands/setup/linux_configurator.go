@@ -8,8 +8,7 @@ func (c *LinuxConfigurator) SetUp(proxyURL string) error {
 	script := `gsettings set org.gnome.system.proxy mode 'auto' &&
 	gsettings set org.gnome.system.proxy autoconfig-url '` + proxyURL + `'`
 
-	return runner.Run(
-		`/bin/sh -c '` + script + `'`)
+	return RunnerDefault.Run(`/bin/sh -c '` + script + `'`)
 
 }
 
@@ -18,6 +17,5 @@ func (c *LinuxConfigurator) SetDown() error {
 	script := `gsettings set org.gnome.system.proxy mode 'none' &&
 	gsettings set org.gnome.system.proxy autoconfig-url ''`
 
-	return runner.Run(
-		`/bin/sh -c '` + script + `'`)
+	return RunnerDefault.Run(`/bin/sh -c '` + script + `'`)
 }

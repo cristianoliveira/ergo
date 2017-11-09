@@ -4,5 +4,3 @@ withspaces       http://localhost:8080
 one.domain       http://localhost:8081
 two.domain       http://localhost:8082
 redis://redislocal       redis://localhost:6543
--config /var/folders/2d/p3ky4snx345fz1k1582ghlkh0000gq/T/ergoconfig866694508
-newest.service http://localhost:8083
