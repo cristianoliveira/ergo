@@ -77,17 +77,19 @@ func TestAddServiceAddOK(t *testing.T) {
 	}
 }
 
-func TestAddServiceFileNOK(t *testing.T) {
-
+func TestAddServiceAddFileNotFound(t *testing.T) {
 	config := buildConfig([]proxy.Service{
 		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
 	})
 
-	config.ConfigFile = "anyfilethatdoesnotexist.here"
-
 	service := proxy.Service{
 		Name: "newtest.dev",
 		URL:  "http://localhost:3333",
+	}
+
+	newConfig := proxy.Config{
+		Services:   config.Services,
+		ConfigFile: "anyfilethatdoesnotexist.here",
 	}
 
 	old := os.Stdout
@@ -102,7 +104,7 @@ func TestAddServiceFileNOK(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service)
+	AddService(&newConfig, service)
 
 	w.Close()
 

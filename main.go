@@ -123,13 +123,23 @@ func command(args []string) func() {
 			commands.Run(config)
 		}
 	case "add":
-		if len(os.Args) <= 3 {
+		if len(args) <= 3 {
 			return nil
 		}
 
-		name := os.Args[2]
-		url := os.Args[3]
+		name := args[2]
+		url := args[3]
 		service := proxy.NewService(name, url)
+
+		command = flag.NewFlagSet(args[1], flag.ExitOnError)
+		command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
+		command.Parse(args[4:])
+
+		services, err := proxy.LoadServices(config.ConfigFile)
+		if err != nil {
+			log.Printf("Could not load services: %v\n", err)
+		}
+		config.Services = services
 
 		return func() {
 			commands.AddService(config, service)
