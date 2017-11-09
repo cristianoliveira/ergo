@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/cristianoliveira/ergo/commands"
+	"github.com/cristianoliveira/ergo/commands/setup"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -146,7 +146,7 @@ func TestAddService(t *testing.T) {
 		}
 		defer c.clean()
 
-		cmd := ergo("add", "-config", c.filePath, "new.service", "http://localhost:8083")
+		cmd := ergo("add", "newest.service", "http://localhost:8083", "-config", c.filePath)
 		bs, err := cmd.Output()
 		if err != nil {
 			log.Fatal(err)
@@ -295,7 +295,7 @@ func cleanSetup() error {
 		if err != nil {
 			return err
 		}
-		commands.InetRefresh()
+		setup.InetRefresh()
 	}
 	return nil
 }

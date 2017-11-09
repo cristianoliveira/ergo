@@ -41,13 +41,34 @@ setup:
   -remove     Set remove proxy configurations.
 `
 
-func command() func() {
+func command(args []string) func() {
+	// Fail fast if we didn't receive a command argument
+	if len(args) == 1 {
+		return nil
+	}
+
+	f := flag.NewFlagSet(args[0], flag.ContinueOnError)
+	help := f.Bool("h", false, "Shows ergo's help.")
+	version := f.Bool("v", false, "Shows ergo's version.")
+
+	f.Parse(args[1:])
+
+	if *version {
+		return func() {
+			fmt.Println("version:", VERSION)
+		}
+	}
+
+	if *help {
+		return nil
+	}
+
 	config := proxy.NewConfig()
 
-	command := flag.NewFlagSet(args[0], flag.ExitOnError)
+	command := flag.NewFlagSet(args[1], flag.ExitOnError)
 	config.ConfigFile = *command.String("config", "./.ergo", "Set the services file")
 	config.Domain = *command.String("domain", ".dev", "Set a custom domain for services")
-	command.Parse(args[1:])
+	command.Parse(args[2:])
 
 	services, err := proxy.LoadServices(config.ConfigFile)
 	if err != nil {
