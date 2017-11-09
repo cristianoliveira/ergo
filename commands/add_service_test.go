@@ -12,7 +12,7 @@ import (
 
 func TestAddServiceAllreadyThere(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:9999"},
+		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	service := proxy.Service{Name: "test.dev"}
@@ -29,7 +29,7 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&config, service)
 
 	w.Close()
 
@@ -44,7 +44,7 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 
 func TestAddServiceAddOK(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:9999"},
+		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
 	})
 
 	service := proxy.Service{
@@ -64,7 +64,7 @@ func TestAddServiceAddOK(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&config, service)
 
 	w.Close()
 
@@ -77,17 +77,19 @@ func TestAddServiceAddOK(t *testing.T) {
 	}
 }
 
-func TestAddServiceFileNOK(t *testing.T) {
-
+func TestAddServiceAddFileNotFound(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:9999"},
+		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
 	})
-
-	config.ConfigFile = "anyfilethatdoesnotexist.here"
 
 	service := proxy.Service{
 		Name: "newtest.dev",
 		URL:  "http://localhost:3333",
+	}
+
+	newConfig := proxy.Config{
+		Services:   config.Services,
+		ConfigFile: "anyfilethatdoesnotexist.here",
 	}
 
 	old := os.Stdout
@@ -102,7 +104,7 @@ func TestAddServiceFileNOK(t *testing.T) {
 		outC <- buf.String()
 	}()
 
-	AddService(&config, service, config.ConfigFile)
+	AddService(&newConfig, service)
 
 	w.Close()
 
@@ -110,7 +112,7 @@ func TestAddServiceFileNOK(t *testing.T) {
 
 	out := <-outC
 
-	if !strings.Contains(out, "Error while adding new service") {
-		t.Fatalf("Expected AddService to refuse to add an service in an unexisting file. Got %s.", out)
+	if !strings.Contains(out, "Error") {
+		t.Fatalf("Expected AddService add a service. Got %s.", out)
 	}
 }
