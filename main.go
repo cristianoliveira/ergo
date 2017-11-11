@@ -67,14 +67,10 @@ func command() func() {
 
 	switch os.Args[1] {
 	case "list":
-		return func() {
-			commands.List(config)
-		}
+		return execute(commands.ListCommand{}, config)
 
 	case "list-names":
-		return func() {
-			commands.ListNames(config)
-		}
+		return execute(commands.ListNameCommand{}, config)
 
 	case "setup":
 		if len(os.Args) <= 2 {
@@ -95,9 +91,8 @@ func command() func() {
 		}
 
 		name := os.Args[2]
-		return func() {
-			commands.URL(name, config)
-		}
+
+		return execute(commands.URLCommand{FilterName: name}, config)
 
 	case "run":
 		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
@@ -130,9 +125,8 @@ func command() func() {
 		}
 		config.Services = services
 
-		return func() {
-			commands.AddService(config, service)
-		}
+		return execute(commands.AddServiceCommand{Service: service}, config)
+
 	case "remove":
 		if len(os.Args) <= 2 {
 			return nil
@@ -148,6 +142,17 @@ func command() func() {
 	}
 
 	return nil
+}
+
+func execute(command commands.Command, config *proxy.Config) func() {
+	result, err := command.Execute(config)
+	return func() {
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(result)
+		}
+	}
 }
 
 func main() {

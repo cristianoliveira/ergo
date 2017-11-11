@@ -1,9 +1,6 @@
 package commands
 
 import (
-	"bytes"
-	"io"
-	"os"
 	"strings"
 	"testing"
 
@@ -16,25 +13,7 @@ func TestListNames(t *testing.T) {
 		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	ListNames(&config)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
+	out, _ := ListNameCommand{}.Execute(&config)
 
 	if !strings.Contains(out, "Ergo Proxy current list:") {
 		t.Fatalf("Expected ListNames to return something containing\"Ergo Proxy current list:\". Got %s.", out)

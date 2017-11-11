@@ -1,19 +1,24 @@
 package commands
 
 import (
-	"fmt"
+	"errors"
 	"regexp"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// URL command find and print the url for a given app name.
+// URLCommand find and print the url for a given app name.
 // Usage:
 // `ergo url foo`
-func URL(name string, config *proxy.Config) {
+type URLCommand struct {
+	FilterName string
+}
+
+// Execute apply the URLCommand
+func (c URLCommand) Execute(config *proxy.Config) (string, error) {
 	for _, s := range config.Services {
 
-		if name == s.Name {
+		if c.FilterName == s.Name {
 
 			localURL := s.Name + config.Domain
 
@@ -24,9 +29,9 @@ func URL(name string, config *proxy.Config) {
 				localURL = `http://` + localURL
 			}
 
-			fmt.Println(localURL)
-
-			return
+			return localURL, nil
 		}
 	}
+
+	return "", errors.New("Url not found")
 }
