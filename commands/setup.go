@@ -20,7 +20,6 @@ import (
 // `ergo setup osx`
 //
 func Setup(system string, remove bool, config *proxy.Config) {
-
 	fmt.Println("Current detected system: " + runtime.GOOS)
 
 	proxyURL := config.GetProxyPacURL()
