@@ -1,42 +1,38 @@
 package commands
 
 import (
-	"bytes"
-	"io"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-func TestURL(t *testing.T) {
-
+func TestURLCommand(t *testing.T) {
 	config := buildConfig([]proxy.Service{
 		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	t.Run("when found the service", func(tt *testing.T) {
+		command := URLCommand{FilterName: "test.dev"}
 
-	outC := make(chan string)
-	var buf bytes.Buffer
+		out, err := command.Execute(&config)
 
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
+		if err != nil {
+			t.Fatalf("Expected no error. Got: %s", err)
+		}
 
-	URL("test.dev", &config)
+		if !strings.Contains(out, "http://test.dev") {
+			t.Fatalf("Expected URL to return something containing\"http://test.dev\". Got %s.", out)
+		}
+	})
 
-	w.Close()
+	t.Run("when doesnt found the service", func(tt *testing.T) {
+		command := URLCommand{FilterName: "undefined"}
 
-	os.Stdout = old
+		_, err := command.Execute(&config)
 
-	out := <-outC
-
-	if !strings.Contains(out, "http://test.dev") {
-		t.Fatalf("Expected URL to return something containing\"http://test.dev\". Got %s.", out)
-	}
+		if err == nil {
+			t.Fatalf("Expected error. Got: %s", err)
+		}
+	})
 }

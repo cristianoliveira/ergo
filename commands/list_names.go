@@ -6,12 +6,18 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// ListNames command lists all configured apps names and its urls.
+// ListNameCommand lists all configured apps names and its urls.
 // Usage:
 // `ergo list-names`
-func ListNames(config *proxy.Config) {
-	fmt.Println("Ergo Proxy current list: ")
+type ListNameCommand struct{}
+
+// Execute apply the ListNameCommand
+func (c ListNameCommand) Execute(config *proxy.Config) (string, error) {
+	output := "Ergo Proxy current list:\n"
+
 	for _, s := range config.Services {
-		fmt.Printf(" - %s -> %s \n", s.Name, s.URL)
+		output = fmt.Sprintf("%s - %s -> %s \n", output, s.Name, s.URL)
 	}
+
+	return output, nil
 }

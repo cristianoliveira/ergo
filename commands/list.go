@@ -6,13 +6,20 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// List command lists all configured apps local url and its original urls.
+// ListCommand lists all configured apps local url and its original urls.
 // Usage:
 // `ergo list`
-func List(config *proxy.Config) {
-	fmt.Println("Ergo Proxy current list: ")
+type ListCommand struct{}
+
+// Execute apply the ListCommand
+func (c ListCommand) Execute(config *proxy.Config) (string, error) {
+	output := "Ergo Proxy current list:\n"
+
 	for _, s := range config.Services {
 		localURL := `http://` + s.Name + config.Domain
-		fmt.Printf(" - %s -> %s \n", localURL, s.URL)
+
+		output = fmt.Sprintf("%s - %s -> %s \n", output, localURL, s.URL)
 	}
+
+	return output, nil
 }

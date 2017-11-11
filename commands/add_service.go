@@ -1,25 +1,31 @@
 package commands
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// AddService Allows to add new services to existing configuration file
+// AddServiceCommand Allows to add new services to existing configuration file
 // Usage:
 // `ergo add service servicehost:port`
-func AddService(config *proxy.Config, service proxy.Service) {
-	oldService := config.GetService(service.Name + config.Domain)
+type AddServiceCommand struct {
+	Service proxy.Service
+}
+
+// Execute apply the AddServiceCommand
+func (c AddServiceCommand) Execute(config *proxy.Config) (string, error) {
+	oldService := config.GetService(c.Service.Name + config.Domain)
 	if oldService != nil {
-		fmt.Println("Service already present!")
-	} else {
-		config.Services = append(config.Services, service)
-		err := proxy.AddService(config.ConfigFile, service)
-		if err == nil {
-			fmt.Println("Service added successfully!")
-		} else {
-			fmt.Println("Error while adding new service!")
-		}
+		return "", errors.New("Service already present")
 	}
+
+	config.Services = append(config.Services, c.Service)
+
+	err := proxy.AddService(config.ConfigFile, c.Service)
+	if err != nil {
+		return "", err
+	}
+
+	return "Service added successfully", nil
 }

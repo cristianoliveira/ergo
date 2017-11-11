@@ -1,10 +1,6 @@
 package commands
 
 import (
-	"bytes"
-	"io"
-	"os"
-	"strings"
 	"testing"
 
 	"github.com/cristianoliveira/ergo/proxy"
@@ -17,28 +13,10 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 
 	service := proxy.Service{Name: "test.dev"}
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	AddService(&config, service)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Service already present") {
-		t.Fatalf("Expected AddService to refuse to add an existing service. Got %s.", out)
+	command := AddServiceCommand{Service: service}
+	result, err := command.Execute(&config)
+	if err == nil {
+		t.Fatalf("Expected to receive error. Result: %s", result)
 	}
 }
 
@@ -52,28 +30,14 @@ func TestAddServiceAddOK(t *testing.T) {
 		URL:  "http://localhost:3333",
 	}
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	command := AddServiceCommand{Service: service}
+	result, err := command.Execute(&config)
+	if err != nil {
+		t.Fatalf("Expected to not receive error. Got: %s", err)
+	}
 
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	AddService(&config, service)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Service added successfully") {
-		t.Fatalf("Expected AddService add a service. Got %s.", out)
+	if result != "Service added successfully" {
+		t.Fatalf("Expected AddServiceCommand to add service. Got %s.", result)
 	}
 }
 
@@ -87,32 +51,11 @@ func TestAddServiceAddFileNotFound(t *testing.T) {
 		URL:  "http://localhost:3333",
 	}
 
-	newConfig := proxy.Config{
-		Services:   config.Services,
-		ConfigFile: "anyfilethatdoesnotexist.here",
-	}
+	config.ConfigFile = "anyfilethatdoesnotexist.here"
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	AddService(&newConfig, service)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Error") {
-		t.Fatalf("Expected AddService add a service. Got %s.", out)
+	command := AddServiceCommand{Service: service}
+	result, err := command.Execute(&config)
+	if err == nil {
+		t.Fatalf("Expected to not receive error. Got: %s", result)
 	}
 }

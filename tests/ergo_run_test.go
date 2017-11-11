@@ -138,7 +138,7 @@ func TestShowUrlForName(t *testing.T) {
 
 func TestAddService(t *testing.T) {
 	t.Run("it adds new service if not present", func(tt *testing.T) {
-		appsOutput := fmt.Sprintf("%s\n", "Service added successfully!")
+		appsOutput := fmt.Sprintf("%s\n", "Service added successfully")
 
 		c, err := newConfigFromFile("./.ergo")
 		if err != nil {
@@ -155,12 +155,12 @@ func TestAddService(t *testing.T) {
 		output := string(bs)
 
 		if strings.Compare(output, appsOutput) != 0 {
-			tt.Errorf("Expected output:\n %s \n got %s", appsOutput, output)
+			tt.Errorf("Expected output: '%s' \n got '%s'", appsOutput, output)
 		}
 	})
 
 	t.Run("it prints message for already added service", func(tt *testing.T) {
-		appsOutput := fmt.Sprintf("%s\n", "Service already present!")
+		appsOutput := fmt.Sprintf("%s\n", "Service already present")
 
 		cmd := ergo("add", "foo", "http://localhost:3000")
 		bs, err := cmd.Output()
@@ -171,7 +171,7 @@ func TestAddService(t *testing.T) {
 		output := string(bs)
 
 		if strings.Compare(output, appsOutput) != 0 {
-			tt.Errorf("Expected output:\n %s \n got %s", appsOutput, output)
+			tt.Errorf("Expected output:\n '%s' \n got '%s'", appsOutput, output)
 		}
 	})
 }
