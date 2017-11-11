@@ -136,9 +136,7 @@ func command() func() {
 
 		service := proxy.NewService(nameOrURL, nameOrURL)
 
-		return func() {
-			commands.RemoveService(config, service, *configFile)
-		}
+		return execute(commands.RemoveServiceCommand{Service: service}, config)
 	}
 
 	return nil
