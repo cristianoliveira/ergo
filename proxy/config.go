@@ -52,6 +52,11 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
+//GetProxyPacURL returns the correct url for the pac file
+func (c *Config) GetProxyPacURL() string {
+	return "http://127.0.0.1:" + c.Port + "/proxy.pac"
+}
+
 //NewConfig gets the new config.
 func NewConfig() *Config {
 	return &Config{
