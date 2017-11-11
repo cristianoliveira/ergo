@@ -1,107 +1,49 @@
 package commands
 
 import (
-	"bytes"
-	"io"
-	"os"
 	"strings"
 	"testing"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-func TestRemoveOK(t *testing.T) {
+func TestRemove(t *testing.T) {
 	config := buildConfig([]proxy.Service{
 		{Name: "test.dev", URL: "localhost:999"},
 	})
 
-	service := proxy.Service{Name: "test.dev"}
+	t.Run("when remove service", func(tt *testing.T) {
+		service := proxy.Service{Name: "test.dev"}
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+		command := RemoveServiceCommand{Service: service}
+		out, err := command.Execute(&config)
+		if err != nil {
+			t.Fatalf("Expected no error got: %s", err)
+		}
 
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	RemoveService(&config, service, config.ConfigFile)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Service Removed") {
-		t.Fatalf("Expected RemoveService to remove an existing service. Got %s", out)
-	}
-}
-
-func TestRemoveFailIfNotExists(t *testing.T) {
-	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		if !strings.Contains(out, "Service Removed") {
+			t.Fatalf("Expected RemoveService to remove an existing service. Got %s", out)
+		}
 	})
 
-	service := proxy.Service{Name: "doesntexist.dev"}
+	t.Run("when service not found", func(tt *testing.T) {
+		service := proxy.Service{Name: "doesntexist.dev"}
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	RemoveService(&config, service, config.ConfigFile)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Service doesntexist.dev not found") {
-		t.Fatalf("Expected RemoveService to fail removing non-existing service. Got %s", out)
-	}
-}
-
-func TestRemoveOKUrl(t *testing.T) {
-	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		command := RemoveServiceCommand{Service: service}
+		_, err := command.Execute(&config)
+		if err == nil {
+			t.Fatalf("Expected error got: %s", err)
+		}
 	})
 
-	service := proxy.Service{URL: "localhost:999"}
+	t.Run("when config file not found", func(tt *testing.T) {
+		service := proxy.Service{Name: "test.dev"}
+		config.ConfigFile = "undefined"
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	RemoveService(&config, service, config.ConfigFile)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "Service Removed") {
-		t.Fatalf("Expected RemoveService to remove based on url. Got %s", out)
-	}
+		command := RemoveServiceCommand{Service: service}
+		_, err := command.Execute(&config)
+		if err == nil {
+			t.Fatalf("Expected error got: %s", err)
+		}
+	})
 }

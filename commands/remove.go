@@ -6,41 +6,43 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// RemoveService removes a service from the configuration and tells the proxy to
-// remove it from the configFile.
-// USAGE: ergo remove myservicename
-func RemoveService(config *proxy.Config, service proxy.Service, configFile string) {
+// RemoveServiceCommand removes a service from the configuration
+// and tells the proxy to remove it from the config file.
+// USAGE:
+// ergo remove myservicename
+type RemoveServiceCommand struct {
+	Service proxy.Service
+}
 
+// Execute apply the RemoveServiceCommand
+func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
 	var oldService *proxy.Service
 	for _, srv := range config.Services {
-		if srv.URL == service.URL || srv.Name == service.Name {
+		if srv.URL == c.Service.URL || srv.Name == c.Service.Name {
 			oldService = &srv
 		}
 	}
 
 	if oldService == nil {
-		fmt.Printf("Service %s not found\n", service.Name)
-		return
+		return "", fmt.Errorf("Service %s not found", c.Service.Name)
 	}
 
 	services := []proxy.Service{}
 	for _, srv := range config.Services {
-		if srv.Name != service.Name || srv.URL == service.URL {
+		if srv.Name != c.Service.Name || srv.URL == c.Service.URL {
 			services = append(services, srv)
 		}
 	}
 
 	if len(services) > len(config.Services) {
-		fmt.Printf("Failed to remove service %s", service.Name)
-		return
+		return "", fmt.Errorf("Failed to remove service %s", c.Service.Name)
 	}
 
 	config.Services = services
-	err := proxy.RemoveService(configFile, *oldService)
+	err := proxy.RemoveService(config.ConfigFile, *oldService)
 	if err != nil {
-		fmt.Printf("Failed to remove service %s", service.Name)
-		return
+		return "", fmt.Errorf("Failed to remove service cause %s", err)
 	}
 
-	fmt.Println("Service Removed")
+	return "Service Removed", nil
 }
