@@ -2,11 +2,9 @@ package proxy
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
@@ -40,41 +38,6 @@ func formatRequest(r *http.Request) string {
 	}
 
 	return strings.Join(request, "\n")
-}
-
-func pollConfigChange(config *Config) {
-	fmt.Println("pollIntervall")
-	ticker := time.NewTicker(pollIntervall * time.Millisecond)
-
-	quit = make(chan struct{})
-
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				fmt.Println("tick", config)
-				info, err := os.Stat(config.ConfigFile)
-				if err != nil {
-					log.Printf("Error reading config file: %s\r\n", err.Error())
-					continue
-				}
-
-				if info.ModTime().Before(modTime) || info.Size() != size {
-					fmt.Println("changed")
-					err := config.LoadServices()
-					fmt.Println("changed", config.Services, err)
-					if err != nil {
-						log.Printf("Error reading the modified config file: %s\r\n", err.Error())
-						continue
-					}
-				}
-
-			case <-quit:
-				ticker.Stop()
-				return
-			}
-		}
-	}()
 }
 
 //NewErgoProxy returns the new reverse proxy.
@@ -142,6 +105,12 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "- %s -> %s \n", localURL, s.URL)
 		}
 	}
+}
+
+func pollConfigChange(config *Config) {
+	servicesSignal := make(chan []Service)
+	go config.Sync(servicesSignal)
+	go config.WatchConfigFile(servicesSignal)
 }
 
 //ServeProxy listens & serves the HTTP proxy.

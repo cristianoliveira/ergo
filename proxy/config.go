@@ -26,6 +26,7 @@ type Service struct {
 
 //Config holds the configuration for the proxy.
 type Config struct {
+	mutex      *sync.Mutex
 	Port       string
 	Domain     string
 	URLPattern string
@@ -51,17 +52,38 @@ func (c *Config) GetService(host string) *Service {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
-	var mutex = &sync.Mutex{}
+	c.getMutex().Lock()
+	defer c.getMutex().Unlock()
 
-	mutex.Lock()
-	defer mutex.Unlock()
 	var err error
-	c.Services, err = loadServices(c.ConfigFile)
+	c.Services, err = LoadServicesFromConfig(c.ConfigFile)
 
 	return err
 }
 
-func loadServices(filepath string) ([]Service, error) {
+func (c *Config) getMutex() *sync.Mutex {
+	if c.mutex == nil {
+		c.mutex = &sync.Mutex{}
+	}
+
+	return c.mutex
+}
+
+//Sync updates the services for each message in a given channel
+func (c *Config) Sync(servicesSignal <-chan []Service) {
+	for {
+		select {
+		case services := <-servicesSignal:
+			fmt.Println("signal", services)
+			c.getMutex().Lock()
+			c.Services = services
+			c.mutex.Unlock()
+		}
+	}
+}
+
+// LoadServicesFromConfig reads the given path and parse it into services
+func LoadServicesFromConfig(filepath string) ([]Service, error) {
 
 	info, err := os.Stat(filepath)
 
@@ -150,4 +172,34 @@ func RemoveService(filepath string, service Service) error {
 	ioutil.WriteFile(filepath, file, 0755)
 
 	return nil
+}
+
+// WatchConfigFile listen for file changes and sends signal for updates
+func (c *Config) WatchConfigFile(servicesChan chan []Service) {
+	ticker := time.NewTicker(pollIntervall * time.Millisecond)
+	quit = make(chan struct{})
+
+	for {
+		select {
+		case <-ticker.C:
+			info, err := os.Stat(c.ConfigFile)
+			if err != nil {
+				log.Printf("Error reading config file: %s\r\n", err.Error())
+				continue
+			}
+
+			if info.ModTime().Before(modTime) || info.Size() != size {
+				services, err := LoadServicesFromConfig(c.ConfigFile)
+				if err != nil {
+					log.Printf("Error reading the modified config file: %s\r\n", err.Error())
+					continue
+				}
+				servicesChan <- services
+			}
+
+		case <-quit:
+			ticker.Stop()
+			return
+		}
+	}
 }
