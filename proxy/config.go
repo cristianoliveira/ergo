@@ -11,12 +11,7 @@ import (
 	"time"
 )
 
-var (
-	modTime time.Time
-	size    int64
-)
-
-var configChan = make(chan []Service, 1)
+const pollIntervall = 500
 
 //Service holds the details of the service (Name and URL)
 type Service struct {
@@ -27,6 +22,9 @@ type Service struct {
 //Config holds the configuration for the proxy.
 type Config struct {
 	mutex      *sync.Mutex
+	lastChange time.Time
+	size       int64
+
 	Port       string
 	Domain     string
 	URLPattern string
@@ -52,13 +50,16 @@ func (c *Config) GetService(host string) *Service {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
+	services, err := LoadServicesFromConfig(c.ConfigFile)
+	if err != nil {
+		return err
+	}
+
 	c.getMutex().Lock()
 	defer c.getMutex().Unlock()
+	c.Services = services
 
-	var err error
-	c.Services, err = LoadServicesFromConfig(c.ConfigFile)
-
-	return err
+	return nil
 }
 
 func (c *Config) getMutex() *sync.Mutex {
@@ -69,12 +70,11 @@ func (c *Config) getMutex() *sync.Mutex {
 	return c.mutex
 }
 
-//Sync updates the services for each message in a given channel
-func (c *Config) Sync(servicesSignal <-chan []Service) {
+// ListenServices updates the services for each message in a given channel
+func (c *Config) ListenServices(servicesSignal <-chan []Service) {
 	for {
 		select {
 		case services := <-servicesSignal:
-			fmt.Println("signal", services)
 			c.getMutex().Lock()
 			c.Services = services
 			c.mutex.Unlock()
@@ -82,28 +82,48 @@ func (c *Config) Sync(servicesSignal <-chan []Service) {
 	}
 }
 
+// WatchConfigFile listen for file changes and sends signal for updates
+func (c *Config) WatchConfigFile(servicesChan chan []Service) {
+	ticker := time.NewTicker(pollIntervall * time.Millisecond)
+	quit = make(chan struct{})
+
+	for {
+		select {
+		case <-ticker.C:
+			info, err := os.Stat(c.ConfigFile)
+			if err != nil {
+				log.Printf("Error reading config file: %s\r\n", err.Error())
+				continue
+			}
+
+			if info.ModTime().Before(c.lastChange) || info.Size() != c.size {
+				services, err := LoadServicesFromConfig(c.ConfigFile)
+				if err != nil {
+					log.Printf("Error reading the modified config file: %s\r\n", err.Error())
+					continue
+				}
+
+				c.size = info.Size()
+				c.lastChange = info.ModTime()
+				servicesChan <- services
+			}
+
+		case <-quit:
+			ticker.Stop()
+			return
+		}
+	}
+}
+
 // LoadServicesFromConfig reads the given path and parse it into services
 func LoadServicesFromConfig(filepath string) ([]Service, error) {
-
-	info, err := os.Stat(filepath)
-
+	file, err := os.Open(filepath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("file error: %v", err)
 	}
-
-	size = info.Size()
-	modTime = info.ModTime()
-
-	file, e := os.Open(filepath)
-
-	if e != nil {
-		return nil, fmt.Errorf("file error: %v", e)
-	}
-
 	defer file.Close()
 
 	services := []Service{}
-
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -159,7 +179,6 @@ func AddService(filepath string, service Service) error {
 // RemoveService removes a service from the filepath
 func RemoveService(filepath string, service Service) error {
 	file, err := ioutil.ReadFile(filepath)
-
 	if err != nil {
 		log.Printf("File error: %v\n", err)
 		return err
@@ -172,34 +191,4 @@ func RemoveService(filepath string, service Service) error {
 	ioutil.WriteFile(filepath, file, 0755)
 
 	return nil
-}
-
-// WatchConfigFile listen for file changes and sends signal for updates
-func (c *Config) WatchConfigFile(servicesChan chan []Service) {
-	ticker := time.NewTicker(pollIntervall * time.Millisecond)
-	quit = make(chan struct{})
-
-	for {
-		select {
-		case <-ticker.C:
-			info, err := os.Stat(c.ConfigFile)
-			if err != nil {
-				log.Printf("Error reading config file: %s\r\n", err.Error())
-				continue
-			}
-
-			if info.ModTime().Before(modTime) || info.Size() != size {
-				services, err := LoadServicesFromConfig(c.ConfigFile)
-				if err != nil {
-					log.Printf("Error reading the modified config file: %s\r\n", err.Error())
-					continue
-				}
-				servicesChan <- services
-			}
-
-		case <-quit:
-			ticker.Stop()
-			return
-		}
-	}
 }

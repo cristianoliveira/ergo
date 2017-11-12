@@ -13,8 +13,6 @@ import (
 //when the configuration watcher should stop
 var quit chan struct{}
 
-const pollIntervall = 500
-
 func singleJoiningSlash(a, b string) string {
 	aslash := strings.HasSuffix(a, "/")
 	bslash := strings.HasPrefix(b, "/")
@@ -109,7 +107,7 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 
 func pollConfigChange(config *Config) {
 	servicesSignal := make(chan []Service)
-	go config.Sync(servicesSignal)
+	go config.ListenServices(servicesSignal)
 	go config.WatchConfigFile(servicesSignal)
 }
 
