@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sync"
 	"time"
 )
 
@@ -50,6 +51,10 @@ func (c *Config) GetService(host string) *Service {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
+	var mutex = &sync.Mutex{}
+
+	mutex.Lock()
+	defer mutex.Unlock()
 	var err error
 	c.Services, err = loadServices(c.ConfigFile)
 
@@ -80,7 +85,6 @@ func loadServices(filepath string) ([]Service, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		fmt.Println(line)
 
 		declaration := regexp.MustCompile(`(\S+)`)
 		config := declaration.FindAllString(line, -1)

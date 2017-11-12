@@ -67,7 +67,6 @@ func pollConfigChange(config *Config) {
 						log.Printf("Error reading the modified config file: %s\r\n", err.Error())
 						continue
 					}
-					configChan <- config.Services
 				}
 
 			case <-quit:
