@@ -78,9 +78,10 @@ func command() func() {
 		setupRemove := command.Bool("remove", false, "Set remove proxy configurations.")
 		command.Parse(command.Args()[1:])
 
-		return func() {
-			commands.Setup(system, *setupRemove, config)
-		}
+		return execute(commands.SetupCommand{
+			System: system,
+			Remove: *setupRemove,
+		}, config)
 
 	case "url":
 		if len(os.Args) != 3 {

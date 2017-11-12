@@ -1,11 +1,7 @@
 package commands
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"os"
 	"strings"
 	"testing"
 
@@ -13,69 +9,20 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-func initialize() (proxy.Config, error) {
-	tmpfile, err := ioutil.TempFile("", "testaddservice")
-	if err != nil {
-		return proxy.Config{}, fmt.Errorf("Error creating tempfile: %s", err.Error())
-	}
-
-	defer os.Remove(tmpfile.Name())
-
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
-		return proxy.Config{}, fmt.Errorf("Error writing to temporary file: %s", err.Error())
-	}
-
-	if err = tmpfile.Close(); err != nil {
-		return proxy.Config{}, fmt.Errorf("Error closing temp file: %s", err.Error())
-	}
-
-	if err != nil {
-		return proxy.Config{}, fmt.Errorf("No error expected while initializing Config file. Got %s", err.Error())
-	}
-	config := proxy.Config{}
-	config.ConfigFile = tmpfile.Name()
-	config.Services, err = proxy.LoadServices(config.ConfigFile)
-
-	if err != nil {
-		return proxy.Config{}, fmt.Errorf("No error expected while loading services from config file. Got %s", err.Error())
-	}
-
-	return config, nil
-}
-
 func TestSetup(t *testing.T) {
-
-	config, err := initialize()
-
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	config := buildConfig([]proxy.Service{
+		{Name: "test.dev", URL: "localhost:999"},
+	})
 
 	service := proxy.Service{}
 	service.Name = config.Services[0].Name
 
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	command := SetupCommand{System: "inexistent-os", Remove: false}
+	_, err := command.Execute(&config)
 
-	outC := make(chan string)
-	var buf bytes.Buffer
-
-	go func() {
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	Setup("inexistent-os", false, &config)
-
-	w.Close()
-
-	os.Stdout = old
-
-	out := <-outC
-
-	if !strings.Contains(out, "List of supported system") {
-		t.Fatalf("Expected Setup to tell us about the supported systems if we ask it to run an unsupported system. Got %s.", out)
+	if !strings.Contains(err.Error(), "List of supported system") {
+		t.Fatalf("Expected Setup to tell us about the supported systems if we ask"+
+			" it to run an unsupported system. Got %s.", err.Error())
 	}
 }
 
@@ -102,11 +49,9 @@ func (r *TestRunner) Run(command string) error {
 }
 
 func TestSetupLinuxGnome(t *testing.T) {
-	config, err := initialize()
-
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	config := buildConfig([]proxy.Service{
+		{Name: "test.dev", URL: "localhost:999"},
+	})
 
 	t.Run("when setting up", func(t *testing.T) {
 		var cases = []struct {
@@ -134,7 +79,11 @@ func TestSetupLinuxGnome(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("linux-gnome", false, &config)
+				command := SetupCommand{System: "linux-gnome", Remove: false}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})
@@ -165,18 +114,20 @@ func TestSetupLinuxGnome(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("linux-gnome", true, &config)
+				command := SetupCommand{System: "linux-gnome", Remove: true}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})
 }
 
 func TestSetupOSX(t *testing.T) {
-	config, err := initialize()
-
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	config := buildConfig([]proxy.Service{
+		{Name: "test.dev", URL: "localhost:999"},
+	})
 
 	t.Run("when setting up", func(t *testing.T) {
 		var cases = []struct {
@@ -200,7 +151,11 @@ func TestSetupOSX(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("osx", false, &config)
+				command := SetupCommand{System: "osx", Remove: false}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})
@@ -227,18 +182,20 @@ func TestSetupOSX(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("osx", true, &config)
+				command := SetupCommand{System: "osx", Remove: true}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})
 }
 
 func TestSetupWindows(t *testing.T) {
-	config, err := initialize()
-
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	config := buildConfig([]proxy.Service{
+		{Name: "test.dev", URL: "localhost:999"},
+	})
 
 	t.Run("when setting up", func(t *testing.T) {
 		var cases = []struct {
@@ -262,7 +219,11 @@ func TestSetupWindows(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("windows", false, &config)
+				command := SetupCommand{System: "windows", Remove: false}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})
@@ -289,7 +250,11 @@ func TestSetupWindows(t *testing.T) {
 					ExpectToInclude: c.CommandExpectToInclude,
 				}
 
-				Setup("windows", true, &config)
+				command := SetupCommand{System: "windows", Remove: true}
+				_, err := command.Execute(&config)
+				if err != nil {
+					t.Fatalf(err.Error())
+				}
 			})
 		}
 	})

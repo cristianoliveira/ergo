@@ -8,7 +8,7 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// Setup command tries set ergo as the proxy on networking settings.
+// SetupCommand tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
 //
 //   - OSX
@@ -19,15 +19,12 @@ import (
 //
 // `ergo setup osx`
 //
-func Setup(system string, remove bool, config *proxy.Config) {
-	fmt.Println("Current detected system: " + runtime.GOOS)
+type SetupCommand struct {
+	System string
+	Remove bool
+}
 
-	proxyURL := config.GetProxyPacURL()
-
-	c := setup.GetConfigurator(system)
-
-	if c == nil {
-		fmt.Println(`
+var usage = `
 List of supported systems:
 
 -linux-gnome
@@ -35,19 +32,30 @@ List of supported systems:
 -windows
 
 For more support please open an issue on: https://github.com/cristianoliveira/ergo
-`)
+`
 
-		return
+// Execute apply the SetupCommand
+func (c SetupCommand) Execute(config *proxy.Config) (string, error) {
+	fmt.Println("Current detected system: " + runtime.GOOS)
+
+	proxyURL := config.GetProxyPacURL()
+
+	configurator := setup.GetConfigurator(c.System)
+
+	if configurator == nil {
+		return "", fmt.Errorf(usage)
 	}
 
 	var err error
-	if remove {
-		err = c.SetDown()
+	if c.Remove {
+		err = configurator.SetDown()
 	} else {
-		err = c.SetUp(proxyURL)
+		err = configurator.SetUp(proxyURL)
 	}
 
 	if err != nil {
-		fmt.Printf(`Setup failed cause %s`, err)
+		return "", fmt.Errorf("Setup failed cause %s", err)
 	}
+
+	return "Setup executed", nil
 }
