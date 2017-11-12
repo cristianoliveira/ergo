@@ -37,12 +37,7 @@ type Config struct {
 func (c *Config) GetService(host string) *Service {
 	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
 	parts := domainPattern.FindAllString(host, -1)
-	//we must lock the access as the configuration can be dynamically loaded
-	select {
-	case srv := <-configChan:
-		c.Services = srv
-	default:
-	}
+
 	for _, s := range c.Services {
 		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
 			return &s
@@ -52,27 +47,16 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
-//NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
-		Port:       "2000",
-		Domain:     ".dev",
-		URLPattern: `.*\.dev$`,
-		Services:   nil,
-	}
-}
-
-//NewService gets the new service.
-func NewService(name, url string) Service {
-	return Service{
-		Name: name,
-		URL:  url,
-	}
-}
-
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
-func LoadServices(filepath string) ([]Service, error) {
+func (c *Config) LoadServices() error {
+	var err error
+	c.Services, err = loadServices(c.ConfigFile)
+
+	return err
+}
+
+func loadServices(filepath string) ([]Service, error) {
 
 	info, err := os.Stat(filepath)
 
@@ -91,13 +75,12 @@ func LoadServices(filepath string) ([]Service, error) {
 
 	defer file.Close()
 
-	log.Println("Just received ", filepath)
-
 	services := []Service{}
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
+		fmt.Println(line)
 
 		declaration := regexp.MustCompile(`(\S+)`)
 		config := declaration.FindAllString(line, -1)
@@ -112,6 +95,24 @@ func LoadServices(filepath string) ([]Service, error) {
 	}
 
 	return services, nil
+}
+
+//NewConfig gets the new config.
+func NewConfig() *Config {
+	return &Config{
+		Port:       "2000",
+		Domain:     ".dev",
+		URLPattern: `.*\.dev$`,
+		Services:   nil,
+	}
+}
+
+//NewService gets the new service.
+func NewService(name, url string) Service {
+	return Service{
+		Name: name,
+		URL:  url,
+	}
 }
 
 //AddService adds new service to the filepath

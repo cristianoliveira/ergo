@@ -35,7 +35,7 @@ func initialize() (proxy.Config, error) {
 	}
 	config := proxy.Config{}
 	config.ConfigFile = tmpfile.Name()
-	config.Services, err = proxy.LoadServices(config.ConfigFile)
+	err = config.LoadServices()
 
 	if err != nil {
 		return proxy.Config{}, fmt.Errorf("No error expected while loading services from config file. Got %s", err.Error())

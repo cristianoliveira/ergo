@@ -18,11 +18,12 @@ import (
 
 func TestWhenHasCollectionFile(t *testing.T) {
 	config := NewConfig()
-	services, err := LoadServices("../.ergo")
+	config.ConfigFile = "../.ergo"
+	err := config.LoadServices()
 	if err != nil {
 		t.Fatal("could not load requied configuration file for tests")
 	}
-	config.Services = services
+
 	proxy := NewErgoProxy(config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {
@@ -227,19 +228,23 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	config := Config{}
 	config.ConfigFile = tmpfile.Name()
 
+	fmt.Println(config.ConfigFile)
+
 	pollConfigChange(&config)
 
 	stop := struct{}{}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
-	err = ioutil.WriteFile(tmpfile.Name(), []byte("test.dev http://localhost:9900"), 0644)
+	err = ioutil.WriteFile(config.ConfigFile, []byte("test.dev http://localhost:9900"), 0644)
+
+	fmt.Println(config.ConfigFile)
 
 	if err != nil {
 		t.Fatalf("Expected no error while rewriting the temporary config file. Got %s", err.Error())
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	var srv []Service
 
@@ -356,7 +361,8 @@ func TestListFunction(t *testing.T) {
 	config.ConfigFile = tmpfile.Name()
 	config.Domain = "dev"
 	config.Port = "2000"
-	config.Services, err = LoadServices(tmpfile.Name())
+	config.ConfigFile = tmpfile.Name()
+	err = config.LoadServices()
 	if err != nil {
 		t.Fatalf("Expected no error while loading services from temp file. Got %s", err.Error())
 	}
