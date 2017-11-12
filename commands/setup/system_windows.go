@@ -1,6 +1,6 @@
-// +build windows
+//+build windows
 
-package commands
+package setup
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ func InetRefresh() {
 
 	if ret == 0 {
 		log.Printf(`
-			Could not auto refresh the proxy settings. 
+			Could not auto refresh the proxy settings.
 			Step 1
 			The received error is: %s
 			Please press OK on the next dialog.\r\n`,
@@ -45,7 +45,7 @@ func InetRefresh() {
 	ret, _, callErr = inetsetoption.Call(0, 37, 0, 0)
 	if ret == 0 {
 		log.Printf(`
-			Could not auto refresh the proxy settings. 
+			Could not auto refresh the proxy settings.
 			Step 2
 			The received error is: %s
 			Please press OK on the next dialog.\r\n`,
