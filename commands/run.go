@@ -11,9 +11,7 @@ import (
 //
 // Usage:
 // `ergo run`
-type RunCommand struct {
-	FilterName string
-}
+type RunCommand struct{}
 
 // Execute apply the RunCommand
 func (c RunCommand) Execute(config *proxy.Config) (string, error) {
