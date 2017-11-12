@@ -2,19 +2,31 @@ package commands
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-// Run command starts the ergo proxy server.
+// RunCommand starts the ergo proxy server.
 //
 // Usage:
 // `ergo run`
-func Run(config *proxy.Config) {
+type RunCommand struct {
+	FilterName string
+}
+
+// Execute apply the RunCommand
+func (c RunCommand) Execute(config *proxy.Config) (string, error) {
+	if !strings.HasPrefix(config.Domain, ".") {
+		return "", fmt.Errorf("Domain has a wrong format")
+	}
+
 	fmt.Println("Ergo Proxy listening on port " + config.Port + " for domains " + config.Domain)
+
 	err := proxy.ServeProxy(config)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
+
+	return "Finishied", nil
 }
