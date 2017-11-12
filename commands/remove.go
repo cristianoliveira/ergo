@@ -27,18 +27,6 @@ func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
 		return "", fmt.Errorf("Service %s not found", c.Service.Name)
 	}
 
-	services := []proxy.Service{}
-	for _, srv := range config.Services {
-		if srv.Name != c.Service.Name || srv.URL == c.Service.URL {
-			services = append(services, srv)
-		}
-	}
-
-	if len(services) > len(config.Services) {
-		return "", fmt.Errorf("Failed to remove service %s", c.Service.Name)
-	}
-
-	config.Services = services
 	err := proxy.RemoveService(config.ConfigFile, *oldService)
 	if err != nil {
 		return "", fmt.Errorf("Failed to remove service cause %s", err)

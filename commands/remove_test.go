@@ -10,6 +10,7 @@ import (
 func TestRemove(t *testing.T) {
 	config := buildConfig([]proxy.Service{
 		{Name: "test.dev", URL: "localhost:999"},
+		{Name: "test2.dev", URL: "localhost:9292"},
 	})
 
 	t.Run("when remove service", func(tt *testing.T) {
