@@ -38,8 +38,8 @@ func Setup(system string, remove bool, config *proxy.Config) {
 				gsettings set org.gnome.system.proxy mode 'auto'
 				gsettings set org.gnome.system.proxy autoconfig-url '` + proxyURL + `'`
 
-			fmt.Println(`To configure the proxy on your terminal execute:
-			export http_proxy=http://127.0.0.1:` + config.Port)
+			fmt.Println("To configure the proxy on your terminal execute:\n" +
+				"export http_proxy=http://127.0.0.1:" + config.Port)
 		}
 
 		cmd.Stdin = strings.NewReader(script)
