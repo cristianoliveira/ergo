@@ -55,8 +55,7 @@ func command() func() {
 	command.StringVar(&config.Domain, "domain", ".dev", "Set a custom domain for services")
 	command.Parse(os.Args[2:])
 
-	var err error
-	config.Services, err = proxy.LoadServices(config.ConfigFile)
+	err := config.LoadServices()
 	if err != nil {
 		log.Fatalf("Could not load services: %v\n", err)
 		return nil
@@ -112,11 +111,10 @@ func command() func() {
 		command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
 		command.Parse(os.Args[4:])
 
-		services, err := proxy.LoadServices(config.ConfigFile)
+		err := config.LoadServices()
 		if err != nil {
-			log.Printf("Could not load services: %v\n", err)
+			log.Fatalf("Could not load services: %v\n", err)
 		}
-		config.Services = services
 
 		return execute(commands.AddServiceCommand{Service: service}, config)
 

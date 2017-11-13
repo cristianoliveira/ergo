@@ -18,11 +18,12 @@ import (
 
 func TestWhenHasCollectionFile(t *testing.T) {
 	config := NewConfig()
-	services, err := LoadServices("../.ergo")
+	config.ConfigFile = "../.ergo"
+	err := config.LoadServices()
 	if err != nil {
 		t.Fatal("could not load requied configuration file for tests")
 	}
-	config.Services = services
+
 	proxy := NewErgoProxy(config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {
@@ -184,8 +185,6 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 
 	pollConfigChange(&config)
 
-	stop := struct{}{}
-
 	time.Sleep(2 * time.Second)
 	logbuf := new(bytes.Buffer)
 
@@ -198,8 +197,6 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 	}
 
 	time.Sleep(2 * time.Second)
-
-	quit <- stop
 
 	if len(logbuf.String()) == 0 {
 		t.Fatalf("Expected to get a read from the log. Got none")
@@ -226,16 +223,20 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 
 	config := Config{}
 	config.ConfigFile = tmpfile.Name()
+	config.LoadServices()
 
 	pollConfigChange(&config)
 
-	stop := struct{}{}
-
 	time.Sleep(2 * time.Second)
 
-	err = ioutil.WriteFile(tmpfile.Name(), []byte("test.dev http://localhost:9900"), 0644)
-
+	configFile, err := os.OpenFile(config.ConfigFile, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
+		t.Fatalf("Error while opening the config file %s", err.Error())
+	}
+
+	defer configFile.Close()
+
+	if _, err = configFile.WriteString("\ntest.dev http://localhost:9900"); err != nil {
 		t.Fatalf("Expected no error while rewriting the temporary config file. Got %s", err.Error())
 	}
 
@@ -243,19 +244,13 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 
 	var srv []Service
 
-	select {
-	case srv = <-configChan:
-		if len(srv) != 1 {
-			t.Fatalf("Expected to get 1 service Got %d", len(srv))
-		}
-		if srv[0].URL != "http://localhost:9900" || srv[0].Name != "test.dev" {
-			t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", srv[0].URL, srv[0].Name)
-		}
-	default:
-		quit <- stop
-		t.Fatalf("Expected to get the changed services. Got nothing")
+	if len(config.Services) != 2 {
+		t.Fatalf("Expected to get 2 service Got %d", len(srv))
 	}
-	quit <- stop
+
+	if config.Services[1].URL != "http://localhost:9900" || config.Services[1].Name != "test.dev" {
+		t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", config.Services[1].URL, config.Services[1].Name)
+	}
 }
 
 //structure to mock a http ResponseWriter
@@ -356,7 +351,8 @@ func TestListFunction(t *testing.T) {
 	config.ConfigFile = tmpfile.Name()
 	config.Domain = "dev"
 	config.Port = "2000"
-	config.Services, err = LoadServices(tmpfile.Name())
+	config.ConfigFile = tmpfile.Name()
+	err = config.LoadServices()
 	if err != nil {
 		t.Fatalf("Expected no error while loading services from temp file. Got %s", err.Error())
 	}
