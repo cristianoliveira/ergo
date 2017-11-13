@@ -2,90 +2,60 @@ package commands
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
 	"runtime"
-	"strings"
 
+	"github.com/cristianoliveira/ergo/commands/setup"
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-var ergoCmd = exec.Command
-
-// Setup command tries set ergo as the proxy on networking settings.
+// SetupCommand tries set ergo as the proxy on networking settings.
 // For now, this feature is only supported for:
+//
 //   - OSX
 //   - Linux-gnome
 //   - Windows
 //
 // Usage:
+//
 // `ergo setup osx`
-func Setup(system string, remove bool, config *proxy.Config) {
+//
+type SetupCommand struct {
+	System string
+	Remove bool
+}
 
-	fmt.Println("Current detected system: " + runtime.GOOS)
-	proxyURL := "http://127.0.0.1:" + config.Port + "/proxy.pac"
-	script := ""
-	cmd := ergoCmd("/bin/bash")
-	switch system {
-	case "linux-gnome":
-		if remove {
-			script = `
-				gsettings set org.gnome.system.proxy mode 'none'
-				gsettings set org.gnome.system.proxy autoconfig-url ''`
-
-		} else {
-			script = `
-				gsettings set org.gnome.system.proxy mode 'auto'
-				gsettings set org.gnome.system.proxy autoconfig-url '` + proxyURL + `'`
-
-			fmt.Println("To configure the proxy on your terminal execute:\n" +
-				"export http_proxy=http://127.0.0.1:" + config.Port)
-		}
-
-		cmd.Stdin = strings.NewReader(script)
-		err := cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-	case "osx":
-		if remove {
-			script = `sudo networksetup -setautoproxyurl "Wi-Fi" ""`
-		} else {
-			script = `sudo networksetup -setautoproxyurl "Wi-Fi" "` + proxyURL + `"`
-
-			fmt.Println(`To configure the proxy on your terminal execute:
-			export http_proxy=http://127.0.0.1:` + config.Port)
-		}
-
-		cmd.Stdin = strings.NewReader(script)
-		err := cmd.Run()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-	case "windows":
-		if remove {
-			cmd = ergoCmd("reg", "delete", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/f")
-		} else {
-			cmd = ergoCmd("reg", "add", `HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings`, "/v", "AutoConfigURL", "/t", "REG_SZ", "/d", proxyURL, "/f")
-		}
-		if err := cmd.Run(); err != nil {
-			log.Fatal(err)
-		}
-		//this is because windows needs to be told about the change
-		InetRefresh()
-	default:
-		fmt.Println(`
-List of supported system
+var usage = `
+List of supported systems:
 
 -linux-gnome
 -osx
 -windows
 
 For more support please open an issue on: https://github.com/cristianoliveira/ergo
-		`)
+`
+
+// Execute apply the SetupCommand
+func (c SetupCommand) Execute(config *proxy.Config) (string, error) {
+	fmt.Println("Current detected system: " + runtime.GOOS)
+
+	proxyURL := config.GetProxyPacURL()
+
+	configurator := setup.GetConfigurator(c.System)
+
+	if configurator == nil {
+		return "", fmt.Errorf(usage)
 	}
 
-	fmt.Println("Ergo proxy setup executed.")
+	var err error
+	if c.Remove {
+		err = configurator.SetDown()
+	} else {
+		err = configurator.SetUp(proxyURL)
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("Setup failed cause %s", err)
+	}
+
+	return "Setup executed", nil
 }

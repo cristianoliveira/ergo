@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/cristianoliveira/ergo/commands"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,6 +14,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/cristianoliveira/ergo/commands/setup"
 )
 
 var initialSetup interface{}
@@ -295,7 +296,7 @@ func cleanSetup() error {
 		if err != nil {
 			return err
 		}
-		commands.InetRefresh()
+		setup.InetRefresh()
 	}
 	return nil
 }

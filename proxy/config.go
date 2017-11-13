@@ -47,6 +47,29 @@ func (c *Config) GetService(host string) *Service {
 	return nil
 }
 
+//GetProxyPacURL returns the correct url for the pac file
+func (c *Config) GetProxyPacURL() string {
+	return "http://127.0.0.1:" + c.Port + "/proxy.pac"
+}
+
+//NewConfig gets the new config.
+func NewConfig() *Config {
+	return &Config{
+		Port:       "2000",
+		Domain:     ".dev",
+		URLPattern: `.*\.dev$`,
+		Services:   nil,
+	}
+}
+
+//NewService gets the new service.
+func NewService(name, url string) Service {
+	return Service{
+		Name: name,
+		URL:  url,
+	}
+}
+
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
@@ -141,24 +164,6 @@ func LoadServicesFromConfig(filepath string) ([]Service, error) {
 	}
 
 	return services, nil
-}
-
-//NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
-		Port:       "2000",
-		Domain:     ".dev",
-		URLPattern: `.*\.dev$`,
-		Services:   nil,
-	}
-}
-
-//NewService gets the new service.
-func NewService(name, url string) Service {
-	return Service{
-		Name: name,
-		URL:  url,
-	}
 }
 
 //AddService adds new service to the filepath
