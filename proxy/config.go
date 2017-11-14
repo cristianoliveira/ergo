@@ -53,8 +53,8 @@ func (c *Config) GetProxyPacURL() string {
 }
 
 //NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
+func NewConfig() Config {
+	return Config{
 		Port:       "2000",
 		Domain:     ".dev",
 		URLPattern: `.*\.dev$`,

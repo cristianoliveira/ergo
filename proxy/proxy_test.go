@@ -24,7 +24,7 @@ func TestWhenHasCollectionFile(t *testing.T) {
 		t.Fatal("could not load requied configuration file for tests")
 	}
 
-	proxy := NewErgoProxy(config)
+	proxy := NewErgoProxy(&config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {
 		req, err := http.NewRequest("GET", "http://foo.dev/", nil)
