@@ -15,10 +15,10 @@ type ListCommand struct{}
 func (c ListCommand) Execute(config *proxy.Config) (string, error) {
 	output := "Ergo Proxy current list:\n"
 
-	for _, s := range config.Services {
-		localURL := `http://` + s.Name + config.Domain
+	for name, service := range config.Services {
+		localURL := `http://` + name + config.Domain
 
-		output = fmt.Sprintf("%s - %s -> %s \n", output, localURL, s.URL)
+		output = fmt.Sprintf("%s - %s -> %s \n", output, localURL, service.URL)
 	}
 
 	return output, nil

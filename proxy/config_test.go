@@ -27,7 +27,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	t.Run("It match the service host bla.dev", func(t *testing.T) {
 		result := config.GetService("bla.dev")
 
-		if result == nil {
+		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
 		}
 	})
@@ -35,7 +35,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	t.Run("It match the service host foo.dev", func(t *testing.T) {
 		result := config.GetService("foo.dev")
 
-		if result == nil {
+		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
 		}
 	})
@@ -43,7 +43,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	t.Run("It match the service host withspaces.dev", func(t *testing.T) {
 		result := config.GetService("withspaces.dev")
 
-		if result == nil {
+		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
 		}
 	})
@@ -51,26 +51,26 @@ func TestWhenHasErgoFile(t *testing.T) {
 	t.Run("It does not match the service host", func(t *testing.T) {
 		result := config.GetService("undefined.dev")
 
-		if result != nil {
+		if !result.Empty() {
 			t.Errorf("Expected result to be nil got: %#v", result)
 		}
 	})
 
 	t.Run("It does match the other protocols than http", func(t *testing.T) {
-		if result := config.GetService("redis://redislocal.dev"); result == nil {
+		if result := config.GetService("redis://redislocal.dev"); result.Empty() {
 			t.Errorf("Expected  result to not be nil")
 		}
 	})
 
 	t.Run("It match subdomains", func(tt *testing.T) {
 		tt.Run("for one.domain.dev", func(tt *testing.T) {
-			if result := config.GetService("one.domain.dev"); result == nil {
+			if result := config.GetService("one.domain.dev"); result.Empty() {
 				tt.Errorf("Expected  result to not be nil")
 			}
 		})
 
 		tt.Run("for two.domain.dev", func(tt *testing.T) {
-			if result := config.GetService("two.domain.dev"); result == nil {
+			if result := config.GetService("two.domain.dev"); result.Empty() {
 				tt.Errorf("Expected  result to not be nil")
 			}
 		})

@@ -180,7 +180,7 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 		t.Fatalf("No error expected while closing the temporary file. Got %s.", err.Error())
 	}
 
-	config := Config{}
+	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 
 	pollConfigChange(&config)
@@ -196,7 +196,7 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 		t.Fatalf("Expected no error while rewriting the temporary config file. Got %s", err.Error())
 	}
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	if len(logbuf.String()) == 0 {
 		t.Fatalf("Expected to get a read from the log. Got none")
@@ -221,35 +221,33 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 		t.Fatalf("No error expected while closing the temporary file. Got %s.", err.Error())
 	}
 
-	config := Config{}
+	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 	config.LoadServices()
 
 	pollConfigChange(&config)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	configFile, err := os.OpenFile(config.ConfigFile, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		t.Fatalf("Error while opening the config file %s", err.Error())
 	}
 
-	defer configFile.Close()
-
-	if _, err = configFile.WriteString("\ntest.dev http://localhost:9900"); err != nil {
+	if _, err = configFile.WriteString("\ntest2.dev http://localhost:9900"); err != nil {
 		t.Fatalf("Expected no error while rewriting the temporary config file. Got %s", err.Error())
 	}
 
-	time.Sleep(2 * time.Second)
-
-	var srv []Service
+	configFile.Close()
+	time.Sleep(1 * time.Second)
 
 	if len(config.Services) != 2 {
-		t.Fatalf("Expected to get 2 service Got %d", len(srv))
+		t.Fatalf("Expected to get 2 service Got %d", len(config.Services))
 	}
 
-	if config.Services[1].URL != "http://localhost:9900" || config.Services[1].Name != "test.dev" {
-		t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", config.Services[1].URL, config.Services[1].Name)
+	service := config.Services["test2.dev"]
+	if service.URL != "http://localhost:9900" {
+		t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", service.URL, service.Name)
 	}
 }
 
@@ -347,11 +345,10 @@ func TestListFunction(t *testing.T) {
 		t.Fatalf("No error expected while closing the temporary file. Got %s.", err.Error())
 	}
 
-	config := Config{}
+	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 	config.Domain = "dev"
 	config.Port = "2000"
-	config.ConfigFile = tmpfile.Name()
 	err = config.LoadServices()
 	if err != nil {
 		t.Fatalf("Expected no error while loading services from temp file. Got %s", err.Error())

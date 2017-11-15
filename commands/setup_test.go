@@ -14,9 +14,6 @@ func TestSetup(t *testing.T) {
 		{Name: "test.dev", URL: "localhost:999"},
 	})
 
-	service := proxy.Service{}
-	service.Name = config.Services[0].Name
-
 	command := SetupCommand{System: "inexistent-os", Remove: false}
 	_, err := command.Execute(&config)
 

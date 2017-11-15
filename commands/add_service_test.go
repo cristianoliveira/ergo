@@ -8,10 +8,10 @@ import (
 
 func TestAddServiceAllreadyThere(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.Service{Name: "test.dev", URL: "localhost:9999"},
+		proxy.Service{Name: "test", URL: "localhost:9999"},
 	})
 
-	service := proxy.Service{Name: "test.dev"}
+	service := proxy.Service{Name: "test"}
 
 	command := AddServiceCommand{Service: service}
 	result, err := command.Execute(&config)

@@ -12,8 +12,12 @@ func buildConfig(services []proxy.Service) proxy.Config {
 		panic("Error creating tempfile" + err.Error())
 	}
 
-	return proxy.Config{
-		ConfigFile: tmpfile.Name(),
-		Services:   services,
+	config := proxy.NewConfig()
+	config.ConfigFile = tmpfile.Name()
+
+	for _, s := range services {
+		config.AddService(s)
 	}
+
+	return config
 }
