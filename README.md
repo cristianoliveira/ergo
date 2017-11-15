@@ -24,6 +24,8 @@ Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](h
 This project is constantly undergoing development, however, it's ready to use. Feel free to provide
 feedback as well as open issues. All suggestions and contributions are welcome. :)
 
+For help and feedback you can find us at #ergo-proxy channel on https://gopher.slack.com
+
 ## Why?
 
 Dealing with multiple apps locally, and having to remember each port representing each microservice is frustrating. I wanted a simple way to assign each service a proper local domain. Ergos solves this problem.
@@ -145,6 +147,10 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
 ```
   make test
+  make test-integration
+  
+  # or building it all
+  make all
 ```
 
 ## Contributing
