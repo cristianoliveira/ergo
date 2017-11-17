@@ -38,9 +38,14 @@ type Config struct {
 	ConfigFile string
 }
 
+var domainPattern *regexp.Regexp
+
 //GetService gets the service for the given host.
 func (c *Config) GetService(host string) Service {
-	domainPattern := regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
+	if domainPattern == nil {
+		domainPattern = regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
+	}
+
 	parts := domainPattern.FindAllStringSubmatch(host, -1)
 
 	if len(parts) < 1 {
