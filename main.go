@@ -133,8 +133,8 @@ func command() func() {
 	return nil
 }
 
-func execute(command commands.Command, config *proxy.Config) func() {
-	result, err := command.Execute(config)
+func execute(command commands.Command, config proxy.Config) func() {
+	result, err := command.Execute(&config)
 	return func() {
 		if err != nil {
 			fmt.Println(err)

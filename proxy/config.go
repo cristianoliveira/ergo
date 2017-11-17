@@ -19,6 +19,11 @@ type Service struct {
 	URL  string
 }
 
+// Empty service means no name or no url
+func (s Service) Empty() bool {
+	return s.Name == "" || s.URL == ""
+}
+
 //Config holds the configuration for the proxy.
 type Config struct {
 	mutex      *sync.Mutex
@@ -29,22 +34,25 @@ type Config struct {
 	Domain     string
 	URLPattern string
 	Verbose    bool
-	Services   []Service
+	Services   map[string]Service
 	ConfigFile string
 }
 
-//GetService gets the service for the given host.
-func (c *Config) GetService(host string) *Service {
-	domainPattern := regexp.MustCompile(`(\w*\:\/\/)?(.+)` + c.Domain)
-	parts := domainPattern.FindAllString(host, -1)
+var domainPattern *regexp.Regexp
 
-	for _, s := range c.Services {
-		if len(parts) > 0 && s.Name+c.Domain == parts[0] {
-			return &s
-		}
+//GetService gets the service for the given host.
+func (c *Config) GetService(host string) Service {
+	if domainPattern == nil {
+		domainPattern = regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
 	}
 
-	return nil
+	parts := domainPattern.FindAllStringSubmatch(host, -1)
+
+	if len(parts) < 1 {
+		return Service{}
+	}
+
+	return c.Services[parts[0][1]]
 }
 
 //GetProxyPacURL returns the correct url for the pac file
@@ -53,12 +61,12 @@ func (c *Config) GetProxyPacURL() string {
 }
 
 //NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
+func NewConfig() Config {
+	return Config{
 		Port:       "2000",
 		Domain:     ".dev",
 		URLPattern: `.*\.dev$`,
-		Services:   nil,
+		Services:   make(map[string]Service),
 	}
 }
 
@@ -68,6 +76,16 @@ func NewService(name, url string) Service {
 		Name: name,
 		URL:  url,
 	}
+}
+
+//AddService add a service using the correct key
+func (c *Config) AddService(service Service) error {
+	if service.Empty() {
+		return fmt.Errorf("Service is invalid")
+	}
+
+	c.Services[service.Name] = service
+	return nil
 }
 
 //LoadServices loads the services from filepath, returns an error
@@ -80,7 +98,11 @@ func (c *Config) LoadServices() error {
 
 	c.getMutex().Lock()
 	defer c.getMutex().Unlock()
-	c.Services = services
+	for _, s := range services {
+		if !s.Empty() {
+			c.AddService(s)
+		}
+	}
 
 	return nil
 }
@@ -91,18 +113,6 @@ func (c *Config) getMutex() *sync.Mutex {
 	}
 
 	return c.mutex
-}
-
-// ListenServices updates the services for each message in a given channel
-func (c *Config) ListenServices(servicesSignal <-chan []Service) {
-	for {
-		select {
-		case services := <-servicesSignal:
-			c.getMutex().Lock()
-			c.Services = services
-			c.mutex.Unlock()
-		}
-	}
 }
 
 // WatchConfigFile listen for file changes and sends signal for updates
@@ -120,15 +130,14 @@ func (c *Config) WatchConfigFile(servicesChan chan []Service) {
 			}
 
 			if info.ModTime().Before(c.lastChange) || info.Size() != c.size {
-				services, err := LoadServicesFromConfig(c.ConfigFile)
-				if err != nil {
-					log.Printf("Error reading the modified config file: %s\r\n", err.Error())
-					continue
-				}
-
 				c.size = info.Size()
 				c.lastChange = info.ModTime()
-				servicesChan <- services
+
+				err = c.LoadServices()
+				if err != nil {
+					log.Printf("Error reading the modified config file")
+					continue
+				}
 			}
 
 		case <-quit:

@@ -55,7 +55,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 		}
 
 		service := config.GetService(req.URL.Host)
-		if service != nil {
+		if !service.Empty() {
 			target, _ := url.Parse(service.URL)
 			targetQuery := target.RawQuery
 
@@ -107,7 +107,6 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 
 func pollConfigChange(config *Config) {
 	servicesSignal := make(chan []Service)
-	go config.ListenServices(servicesSignal)
 	go config.WatchConfigFile(servicesSignal)
 }
 
