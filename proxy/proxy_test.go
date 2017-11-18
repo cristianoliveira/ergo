@@ -24,7 +24,7 @@ func TestWhenHasCollectionFile(t *testing.T) {
 		t.Fatal("could not load requied configuration file for tests")
 	}
 
-	proxy := NewErgoProxy(&config)
+	proxy := NewErgoProxy(config)
 
 	t.Run("it redirects foo.dev to localhost 3000", func(t *testing.T) {
 		req, err := http.NewRequest("GET", "http://foo.dev/", nil)
@@ -148,7 +148,7 @@ func TestPollConfigChangeShouldNotFindFile(t *testing.T) {
 
 	log.SetOutput(logbuf)
 
-	pollConfigChange(&config)
+	go config.WatchConfigFile()
 
 	stop := struct{}{}
 
@@ -183,7 +183,7 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 
-	pollConfigChange(&config)
+	go config.WatchConfigFile()
 
 	time.Sleep(2 * time.Second)
 	logbuf := new(bytes.Buffer)
@@ -225,7 +225,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	config.ConfigFile = tmpfile.Name()
 	config.LoadServices()
 
-	pollConfigChange(&config)
+	go config.WatchConfigFile()
 
 	time.Sleep(1 * time.Second)
 
@@ -354,7 +354,7 @@ func TestListFunction(t *testing.T) {
 		t.Fatalf("Expected no error while loading services from temp file. Got %s", err.Error())
 	}
 
-	fncList := list(&config)
+	fncList := list(config)
 	m := &mockHTTPResponse{}
 	m.MyHeader = make(http.Header)
 	r := http.Request{}

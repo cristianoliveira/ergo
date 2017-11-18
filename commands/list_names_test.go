@@ -13,7 +13,7 @@ func TestListNames(t *testing.T) {
 		{Name: "test.dev", URL: "localhost:9999"},
 	})
 
-	out, _ := ListNameCommand{}.Execute(&config)
+	out, _ := ListNameCommand{}.Execute(config)
 
 	if !strings.Contains(out, "Ergo Proxy current list:") {
 		t.Fatalf("Expected ListNames to return something containing\"Ergo Proxy current list:\". Got %s.", out)

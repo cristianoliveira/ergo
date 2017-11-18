@@ -17,7 +17,7 @@ func TestRemove(t *testing.T) {
 		service := proxy.Service{Name: "test.dev"}
 
 		command := RemoveServiceCommand{Service: service}
-		out, err := command.Execute(&config)
+		out, err := command.Execute(config)
 		if err != nil {
 			t.Fatalf("Expected no error got: %s", err)
 		}
@@ -31,7 +31,7 @@ func TestRemove(t *testing.T) {
 		service := proxy.Service{Name: "doesntexist.dev"}
 
 		command := RemoveServiceCommand{Service: service}
-		_, err := command.Execute(&config)
+		_, err := command.Execute(config)
 		if err == nil {
 			t.Fatalf("Expected error got: %s", err)
 		}
@@ -42,7 +42,7 @@ func TestRemove(t *testing.T) {
 		config.ConfigFile = "undefined"
 
 		command := RemoveServiceCommand{Service: service}
-		_, err := command.Execute(&config)
+		_, err := command.Execute(config)
 		if err == nil {
 			t.Fatalf("Expected error got: %s", err)
 		}

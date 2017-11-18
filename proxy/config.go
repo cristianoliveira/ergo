@@ -26,7 +26,7 @@ func (s Service) Empty() bool {
 
 //Config holds the configuration for the proxy.
 type Config struct {
-	mutex      *sync.Mutex
+	mutex      sync.Mutex
 	lastChange time.Time
 	size       int64
 
@@ -61,8 +61,8 @@ func (c *Config) GetProxyPacURL() string {
 }
 
 //NewConfig gets the new config.
-func NewConfig() Config {
-	return Config{
+func NewConfig() *Config {
+	return &Config{
 		Port:       "2000",
 		Domain:     ".dev",
 		URLPattern: `.*\.dev$`,
@@ -96,27 +96,21 @@ func (c *Config) LoadServices() error {
 		return err
 	}
 
-	c.getMutex().Lock()
-	defer c.getMutex().Unlock()
 	for _, s := range services {
 		if !s.Empty() {
-			c.AddService(s)
+			c.mutex.Lock()
+			{
+				c.AddService(s)
+			}
+			c.mutex.Unlock()
 		}
 	}
 
 	return nil
 }
 
-func (c *Config) getMutex() *sync.Mutex {
-	if c.mutex == nil {
-		c.mutex = &sync.Mutex{}
-	}
-
-	return c.mutex
-}
-
 // WatchConfigFile listen for file changes and sends signal for updates
-func (c *Config) WatchConfigFile(servicesChan chan []Service) {
+func (c *Config) WatchConfigFile() {
 	ticker := time.NewTicker(pollIntervall * time.Millisecond)
 	quit = make(chan struct{})
 

@@ -15,7 +15,7 @@ func TestSetup(t *testing.T) {
 	})
 
 	command := SetupCommand{System: "inexistent-os", Remove: false}
-	_, err := command.Execute(&config)
+	_, err := command.Execute(config)
 
 	if !strings.Contains(err.Error(), "List of supported system") {
 		t.Fatalf("Expected Setup to tell us about the supported systems if we ask"+
@@ -77,7 +77,7 @@ func TestSetupLinuxGnome(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "linux-gnome", Remove: false}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -112,7 +112,7 @@ func TestSetupLinuxGnome(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "linux-gnome", Remove: true}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -149,7 +149,7 @@ func TestSetupOSX(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "osx", Remove: false}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -180,7 +180,7 @@ func TestSetupOSX(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "osx", Remove: true}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -217,7 +217,7 @@ func TestSetupWindows(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "windows", Remove: false}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -248,7 +248,7 @@ func TestSetupWindows(t *testing.T) {
 				}
 
 				command := SetupCommand{System: "windows", Remove: true}
-				_, err := command.Execute(&config)
+				_, err := command.Execute(config)
 				if err != nil {
 					t.Fatalf(err.Error())
 				}

@@ -17,7 +17,7 @@ func TestRunCommand(t *testing.T) {
 
 		config.Domain = "foobar"
 
-		out, err := command.Execute(&config)
+		out, err := command.Execute(config)
 		if err == nil {
 			tt.Errorf("Expected error got none. Output: %s", out)
 		}
