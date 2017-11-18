@@ -105,15 +105,10 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func pollConfigChange(config *Config) {
-	servicesSignal := make(chan []Service)
-	go config.WatchConfigFile(servicesSignal)
-}
-
 //ServeProxy listens & serves the HTTP proxy.
 func ServeProxy(config *Config) error {
 
-	pollConfigChange(config)
+	go config.WatchConfigFile()
 
 	http.HandleFunc("/proxy.pac", proxy(config))
 

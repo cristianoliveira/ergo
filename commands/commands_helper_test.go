@@ -6,7 +6,7 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-func buildConfig(services []proxy.Service) proxy.Config {
+func buildConfig(services []proxy.Service) *proxy.Config {
 	tmpfile, err := ioutil.TempFile("", "testaddservice")
 	if err != nil {
 		panic("Error creating tempfile" + err.Error())

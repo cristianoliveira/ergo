@@ -15,7 +15,7 @@ func TestURLCommand(t *testing.T) {
 	t.Run("when found the service", func(tt *testing.T) {
 		command := URLCommand{FilterName: "test.dev"}
 
-		out, err := command.Execute(&config)
+		out, err := command.Execute(config)
 
 		if err != nil {
 			t.Fatalf("Expected no error. Got: %s", err)
@@ -29,7 +29,7 @@ func TestURLCommand(t *testing.T) {
 	t.Run("when doesnt found the service", func(tt *testing.T) {
 		command := URLCommand{FilterName: "undefined"}
 
-		_, err := command.Execute(&config)
+		_, err := command.Execute(config)
 
 		if err == nil {
 			t.Fatalf("Expected error. Got: %s", err)
