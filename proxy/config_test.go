@@ -11,7 +11,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	config.ConfigFile = "../.ergo"
 	err := config.LoadServices()
 	if err != nil {
-		t.Fatal("could not load requied configuration file for tests")
+		t.Fatal("could not load required configuration file for tests")
 	}
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
