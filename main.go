@@ -147,17 +147,16 @@ func main() {
 	}
 
 	command, config := prepareSubCommand(os.Args)
-
-	err := config.LoadServices()
-	if err != nil {
-		log.Fatalf("Could not load services: %v\n", err)
-		os.Exit(1)
-	}
-
 	if command == nil {
 		fmt.Println(USAGE)
-		os.Exit(1)
+
 	} else {
+
+		err := config.LoadServices()
+		if err != nil {
+			log.Fatalf("Could not load services: %v\n", err)
+		}
+
 		execute(command, config)
 	}
 }

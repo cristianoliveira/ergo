@@ -14,7 +14,15 @@ import (
 	"github.com/cristianoliveira/ergo/proxy"
 )
 
-func TestHelperFlags(t *testing.T) {
+func TestMain(t *testing.T) {
+	t.Run("it shows usage", func(tt *testing.T) {
+		args := []string{"ergo"}
+		os.Args = args
+
+		main()
+		// Output: USAGE
+	})
+
 	t.Run("it shows help", func(tt *testing.T) {
 		args := []string{"ergo", "-h"}
 		os.Args = args
