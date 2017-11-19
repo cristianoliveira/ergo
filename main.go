@@ -18,24 +18,22 @@ var VERSION = "unofficial version"
 //USAGE details the usage for ergo proxy.
 const USAGE = `
 Ergo proxy.
-The local proxy agent for multiple services development.
+The management apps running on different ports made easy through custom local domains.
 
 Usage:
   ergo run [options]
-  ergo list
-  ergo list-names
-  ergo url <name>
-  ergo setup [options] [linux-gnome|osx|windows] [-remove]
-  ergo add [options] <service-name> <host:port>
-  ergo remove [options] <service-name|host:port>
+  ergo list [options]
+  ergo list-names [options]
+  ergo url <name> [options]
+  ergo setup [linux-gnome|osx|windows] [-remove] [options]
+  ergo add <service-name> <host:port> [options]
+  ergo remove <service-name|host:port> [options]
 
 Options:
   -h      Shows this message.
   -v      Shows ergo's version.
   -config     Set the config file to the proxy.
   -domain     Set a custom domain for services.
-
-run:
   -p          Set ports to proxy.
   -V          Set verbosity on output.
 
@@ -101,7 +99,7 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 
 		name := args[2]
 		url := args[3]
-		service := proxy.NewService(name, url)
+		service := proxy.Service{Name: name, URL: url}
 
 		command.Parse(args[4:])
 
@@ -113,7 +111,7 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		}
 
 		nameOrURL := args[2]
-		service := proxy.NewService(nameOrURL, nameOrURL)
+		service := proxy.Service{Name: nameOrURL, URL: nameOrURL}
 
 		command.Parse(args[3:])
 

@@ -86,7 +86,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		//we clean after the test. Otherwise the next test will fail
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := NewService("testservice", "http://localhost:8080")
+		service := Service{Name: "testservice", URL: "http://localhost:8080"}
 
 		if err := AddService("../.ergo", service); err != nil {
 			tt.Errorf("Expected service to be added")
@@ -104,7 +104,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		//we clean after the test. Otherwise the next test will fail
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := NewService("servicetoberemoved", "http://localhost:8083")
+		service := Service{Name: "servicetoberemoved", URL: "http://localhost:8083"}
 
 		if err := RemoveService("../.ergo", service); err != nil {
 			tt.Errorf("Expected no error while removing service. Got %v\n", err)
@@ -133,8 +133,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It fails to remove service with invalid path", func(tt *testing.T) {
-
-		service := NewService("testservice", "http://localhost:8080")
+		service := Service{Name: "testservice", URL: "http://localhost:8080"}
 
 		if err := RemoveService("foobarinvalid", service); err == nil {
 			tt.Errorf("Expected failure to read invalid path.\n")
@@ -150,7 +149,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := NewService("service-without-url", "")
+		service := Service{Name: "service-without-url", URL: ""}
 		AddService(config.ConfigFile, service)
 		err = config.LoadServices()
 		if err == nil {
