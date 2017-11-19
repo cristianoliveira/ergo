@@ -17,14 +17,6 @@ type Service struct {
 	URL  string
 }
 
-//NewService gets the new service.
-func NewService(name, url string) Service {
-	return Service{
-		Name: name,
-		URL:  url,
-	}
-}
-
 // Empty service means no name or no url
 func (s Service) Empty() bool {
 	return s.Name == "" || s.URL == ""
