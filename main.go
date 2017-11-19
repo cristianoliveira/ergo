@@ -43,111 +43,99 @@ setup:
   -remove     Set remove proxy configurations.
 `
 
-func command() func() {
+func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 	// Fail fast if we didn't receive a command argument
-	if len(os.Args) == 1 {
-		return nil
+	if len(args) == 1 {
+		return nil, nil
 	}
 
 	config := proxy.NewConfig()
-	command := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+
+	command := flag.NewFlagSet(args[1], flag.ExitOnError)
 	command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
 	command.StringVar(&config.Domain, "domain", ".dev", "Set a custom domain for services")
-	command.Parse(os.Args[2:])
+	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
-	err := config.LoadServices()
-	if err != nil {
-		log.Fatalf("Could not load services: %v\n", err)
-		return nil
-	}
-
-	switch os.Args[1] {
+	switch args[1] {
 	case "list":
-		return execute(commands.ListCommand{}, config)
+		command.Parse(args[2:])
+		return commands.ListCommand{}, config
 
 	case "list-names":
-		return execute(commands.ListNameCommand{}, config)
+		command.Parse(args[2:])
+		return commands.ListNameCommand{}, config
 
 	case "setup":
-		if len(os.Args) <= 2 {
-			return nil
+		if len(args) <= 2 {
+			return nil, nil
 		}
 
-		system := command.Args()[0]
-		setupRemove := command.Bool("remove", false, "Set remove proxy configurations.")
-		command.Parse(command.Args()[1:])
+		system := args[2]
+		setupCommand := commands.SetupCommand{System: system}
 
-		return execute(commands.SetupCommand{
-			System: system,
-			Remove: *setupRemove,
-		}, config)
+		command.BoolVar(&setupCommand.Remove, "remove", false, "Set remove proxy configurations.")
+		command.Parse(args[3:])
+
+		return setupCommand, config
 
 	case "url":
-		if len(os.Args) != 3 {
-			return nil
+		if len(args) < 3 {
+			return nil, nil
 		}
 
-		name := os.Args[2]
+		name := args[2]
+		command.Parse(args[3:])
 
-		return execute(commands.URLCommand{FilterName: name}, config)
+		return commands.URLCommand{FilterName: name}, config
 
 	case "run":
-		command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
-		command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+		command.Parse(args[2:])
 
-		command.Parse(os.Args[2:])
+		return commands.RunCommand{}, config
 
-		return execute(commands.RunCommand{}, config)
 	case "add":
-		if len(os.Args) <= 3 {
-			return nil
+		if len(args) < 4 {
+			return nil, nil
 		}
 
-		name := os.Args[2]
-		url := os.Args[3]
+		name := args[2]
+		url := args[3]
 		service := proxy.NewService(name, url)
 
-		command = flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-		command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
-		command.Parse(os.Args[4:])
+		command.Parse(args[4:])
 
-		err := config.LoadServices()
-		if err != nil {
-			log.Fatalf("Could not load services: %v\n", err)
-		}
-
-		return execute(commands.AddServiceCommand{Service: service}, config)
+		return commands.AddServiceCommand{Service: service}, config
 
 	case "remove":
-		if len(os.Args) <= 2 {
-			return nil
+		if len(args) <= 2 {
+			return nil, nil
 		}
 
-		nameOrURL := os.Args[2]
-
+		nameOrURL := args[2]
 		service := proxy.NewService(nameOrURL, nameOrURL)
 
-		return execute(commands.RemoveServiceCommand{Service: service}, config)
+		command.Parse(args[3:])
+
+		return commands.RemoveServiceCommand{Service: service}, config
 	}
 
-	return nil
+	return nil, nil
 }
 
-func execute(command commands.Command, config *proxy.Config) func() {
+func execute(command commands.Command, config *proxy.Config) {
 	result, err := command.Execute(config)
-	return func() {
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(result)
-		}
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(result)
 	}
 }
+
+var help = flag.Bool("h", false, "Shows ergo's help.")
+var version = flag.Bool("v", false, "Shows ergo's version.")
 
 func main() {
-	help := flag.Bool("h", false, "Shows ergo's help.")
-	version := flag.Bool("v", false, "Shows ergo's version.")
-
 	flag.Parse()
 
 	if *version {
@@ -160,12 +148,18 @@ func main() {
 		return
 	}
 
-	cmd := command()
+	command, config := prepareSubCommand(os.Args)
 
-	if cmd == nil {
+	err := config.LoadServices()
+	if err != nil {
+		log.Fatalf("Could not load services: %v\n", err)
+		os.Exit(1)
+	}
+
+	if command == nil {
 		fmt.Println(USAGE)
 		os.Exit(1)
 	} else {
-		cmd()
+		execute(command, config)
 	}
 }
