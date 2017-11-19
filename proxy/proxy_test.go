@@ -141,20 +141,19 @@ func TestWhenHasCollectionFile(t *testing.T) {
 
 func TestPollConfigChangeShouldNotFindFile(t *testing.T) {
 
-	config := Config{}
+	config := NewConfig()
 	config.ConfigFile = ".notexistent"
 
 	logbuf := new(bytes.Buffer)
 
 	log.SetOutput(logbuf)
 
-	go config.WatchConfigFile()
+	ticker := time.NewTicker(200 * time.Millisecond)
+	defer ticker.Stop()
 
-	stop := struct{}{}
+	go config.WatchConfigFile(ticker.C)
 
-	time.Sleep(2 * time.Second)
-
-	quit <- stop
+	time.Sleep(1 * time.Second)
 
 	if len(logbuf.String()) == 0 {
 		t.Fatalf("Expected to get a read from the log. Got none")
@@ -180,15 +179,18 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 		t.Fatalf("No error expected while closing the temporary file. Got %s.", err.Error())
 	}
 
+	logbuf := new(bytes.Buffer)
+	log.SetOutput(logbuf)
+
 	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 
-	go config.WatchConfigFile()
+	ticker := time.NewTicker(200 * time.Millisecond)
+	defer ticker.Stop()
+
+	go config.WatchConfigFile(ticker.C)
 
 	time.Sleep(2 * time.Second)
-	logbuf := new(bytes.Buffer)
-
-	log.SetOutput(logbuf)
 
 	err = ioutil.WriteFile(tmpfile.Name(), []byte("test.devlocalhost:9900"), 0644)
 
@@ -225,7 +227,10 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	config.ConfigFile = tmpfile.Name()
 	config.LoadServices()
 
-	go config.WatchConfigFile()
+	ticker := time.NewTicker(200 * time.Millisecond)
+	defer ticker.Stop()
+
+	go config.WatchConfigFile(ticker.C)
 
 	time.Sleep(1 * time.Second)
 

@@ -11,12 +11,18 @@ import (
 	"time"
 )
 
-const pollIntervall = 500
-
 //Service holds the details of the service (Name and URL)
 type Service struct {
 	Name string
 	URL  string
+}
+
+//NewService gets the new service.
+func NewService(name, url string) Service {
+	return Service{
+		Name: name,
+		URL:  url,
+	}
 }
 
 // Empty service means no name or no url
@@ -38,13 +44,24 @@ type Config struct {
 	ConfigFile string
 }
 
+//NewConfig gets the new config.
+func NewConfig() *Config {
+	return &Config{
+		Port:       "2000",
+		Domain:     ".dev",
+		URLPattern: `.*\.dev$`,
+		Services:   make(map[string]Service),
+	}
+}
+
+var once sync.Once
 var domainPattern *regexp.Regexp
 
 //GetService gets the service for the given host.
 func (c *Config) GetService(host string) Service {
-	if domainPattern == nil {
+	once.Do(func() {
 		domainPattern = regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
-	}
+	})
 
 	parts := domainPattern.FindAllStringSubmatch(host, -1)
 
@@ -60,24 +77,6 @@ func (c *Config) GetProxyPacURL() string {
 	return "http://127.0.0.1:" + c.Port + "/proxy.pac"
 }
 
-//NewConfig gets the new config.
-func NewConfig() *Config {
-	return &Config{
-		Port:       "2000",
-		Domain:     ".dev",
-		URLPattern: `.*\.dev$`,
-		Services:   make(map[string]Service),
-	}
-}
-
-//NewService gets the new service.
-func NewService(name, url string) Service {
-	return Service{
-		Name: name,
-		URL:  url,
-	}
-}
-
 //AddService add a service using the correct key
 func (c *Config) AddService(service Service) error {
 	if service.Empty() {
@@ -91,7 +90,7 @@ func (c *Config) AddService(service Service) error {
 //LoadServices loads the services from filepath, returns an error
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
-	services, err := LoadServicesFromConfig(c.ConfigFile)
+	services, err := readServicesFromFile(c.ConfigFile)
 	if err != nil {
 		return err
 	}
@@ -109,40 +108,30 @@ func (c *Config) LoadServices() error {
 	return nil
 }
 
-// WatchConfigFile listen for file changes and sends signal for updates
-func (c *Config) WatchConfigFile() {
-	ticker := time.NewTicker(pollIntervall * time.Millisecond)
-	quit = make(chan struct{})
+// WatchConfigFile listen for file changes and updates the config services
+func (c *Config) WatchConfigFile(tickerChan <-chan time.Time) {
+	for _ = range tickerChan {
+		info, err := os.Stat(c.ConfigFile)
+		if err != nil {
+			log.Printf("Error reading config file: %s\r\n", err.Error())
+			continue
+		}
 
-	for {
-		select {
-		case <-ticker.C:
-			info, err := os.Stat(c.ConfigFile)
+		if info.ModTime().Before(c.lastChange) || info.Size() != c.size {
+			c.size = info.Size()
+			c.lastChange = info.ModTime()
+
+			err = c.LoadServices()
 			if err != nil {
-				log.Printf("Error reading config file: %s\r\n", err.Error())
+				log.Printf("Error reading the modified config file")
 				continue
 			}
-
-			if info.ModTime().Before(c.lastChange) || info.Size() != c.size {
-				c.size = info.Size()
-				c.lastChange = info.ModTime()
-
-				err = c.LoadServices()
-				if err != nil {
-					log.Printf("Error reading the modified config file")
-					continue
-				}
-			}
-
-		case <-quit:
-			ticker.Stop()
-			return
 		}
 	}
 }
 
-// LoadServicesFromConfig reads the given path and parse it into services
-func LoadServicesFromConfig(filepath string) ([]Service, error) {
+// readServicesFromFile reads the given path and parse it into services
+func readServicesFromFile(filepath string) ([]Service, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("file error: %v", err)

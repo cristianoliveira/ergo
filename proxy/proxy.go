@@ -9,35 +9,6 @@ import (
 	"time"
 )
 
-//this should be called ( quit.Stop() )
-//when the configuration watcher should stop
-var quit chan struct{}
-
-func singleJoiningSlash(a, b string) string {
-	aslash := strings.HasSuffix(a, "/")
-	bslash := strings.HasPrefix(b, "/")
-	switch {
-	case aslash && bslash:
-		return a + b[1:]
-	case !aslash && !bslash:
-		return a + "/" + b
-	}
-	return a + b
-}
-
-func formatRequest(r *http.Request) string {
-	var request []string
-	request = append(request, fmt.Sprintf("Host: %v", r.Host))
-
-	for name, headers := range r.Header {
-		for _, h := range headers {
-			request = append(request, fmt.Sprintf("%v: %v", name, h))
-		}
-	}
-
-	return strings.Join(request, "\n")
-}
-
 //NewErgoProxy returns the new reverse proxy.
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
@@ -80,6 +51,20 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	}
 }
 
+//ServeProxy listens & serves the HTTP proxy.
+func ServeProxy(config *Config) error {
+	ticker := time.NewTicker(500 * time.Millisecond)
+	go config.WatchConfigFile(ticker.C)
+
+	http.HandleFunc("/proxy.pac", proxy(config))
+
+	http.HandleFunc("/_ergo/list", list(config))
+
+	http.Handle("/", NewErgoProxy(config))
+
+	return http.ListenAndServe(":"+config.Port, nil)
+}
+
 func proxy(config *Config) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		content := `
@@ -105,16 +90,27 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//ServeProxy listens & serves the HTTP proxy.
-func ServeProxy(config *Config) error {
+func singleJoiningSlash(a, b string) string {
+	aslash := strings.HasSuffix(a, "/")
+	bslash := strings.HasPrefix(b, "/")
+	switch {
+	case aslash && bslash:
+		return a + b[1:]
+	case !aslash && !bslash:
+		return a + "/" + b
+	}
+	return a + b
+}
 
-	go config.WatchConfigFile()
+func formatRequest(r *http.Request) string {
+	var request []string
+	request = append(request, fmt.Sprintf("Host: %v", r.Host))
 
-	http.HandleFunc("/proxy.pac", proxy(config))
+	for name, headers := range r.Header {
+		for _, h := range headers {
+			request = append(request, fmt.Sprintf("%v: %v", name, h))
+		}
+	}
 
-	http.HandleFunc("/_ergo/list", list(config))
-
-	http.Handle("/", NewErgoProxy(config))
-
-	return http.ListenAndServe(":"+config.Port, nil)
+	return strings.Join(request, "\n")
 }
