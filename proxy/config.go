@@ -87,15 +87,18 @@ func (c *Config) LoadServices() error {
 		return err
 	}
 
+	updatedServices := make(map[string]Service)
 	for _, s := range services {
 		if !s.Empty() {
-			c.mutex.Lock()
-			{
-				c.AddService(s)
-			}
-			c.mutex.Unlock()
+			updatedServices[s.Name] = s
 		}
 	}
+
+	c.mutex.Lock()
+	{
+		c.Services = updatedServices
+	}
+	c.mutex.Unlock()
 
 	return nil
 }
