@@ -54,6 +54,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 //ServeProxy listens & serves the HTTP proxy.
 func ServeProxy(config *Config) error {
 	ticker := time.NewTicker(500 * time.Millisecond)
+	defer ticker.Stop()
 	go config.WatchConfigFile(ticker.C)
 
 	http.HandleFunc("/proxy.pac", proxy(config))
