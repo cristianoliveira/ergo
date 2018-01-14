@@ -295,7 +295,7 @@ func TestProxyFunction(t *testing.T) {
 	config := Config{}
 	config.ConfigFile = tmpfile.Name()
 	config.Domain = "dev"
-	config.Port = "2000"
+	config.Port = PortDefault
 
 	fncProxy := proxy(&config)
 	m := &mockHTTPResponse{}
@@ -353,7 +353,7 @@ func TestListFunction(t *testing.T) {
 	config := NewConfig()
 	config.ConfigFile = tmpfile.Name()
 	config.Domain = "dev"
-	config.Port = "2000"
+	config.Port = PortDefault
 	err = config.LoadServices()
 	if err != nil {
 		t.Fatalf("Expected no error while loading services from temp file. Got %s", err.Error())

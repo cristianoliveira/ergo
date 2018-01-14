@@ -47,12 +47,11 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		return nil, nil
 	}
 
-	config := proxy.NewConfig()
-
+	config := &proxy.Config{}
 	command := flag.NewFlagSet(args[1], flag.ExitOnError)
-	command.StringVar(&config.ConfigFile, "config", "./.ergo", "Set the services file")
-	command.StringVar(&config.Domain, "domain", ".dev", "Set a custom domain for services")
-	command.StringVar(&config.Port, "p", "2000", "Set port to the proxy")
+	command.StringVar(&config.ConfigFile, "config", "", "Set the services file")
+	command.StringVar(&config.Domain, "domain", "", "Set a custom domain for services")
+	command.StringVar(&config.Port, "p", "", "Set port to the proxy")
 	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
 	switch args[1] {
@@ -146,11 +145,14 @@ func main() {
 		return
 	}
 
-	command, config := prepareSubCommand(os.Args)
+	command, argConfig := prepareSubCommand(os.Args)
 	if command == nil {
 		fmt.Println(USAGE)
 
 	} else {
+
+		config := proxy.NewConfig()
+		config.OverrideBy(argConfig)
 
 		err := config.LoadServices()
 		if err != nil {

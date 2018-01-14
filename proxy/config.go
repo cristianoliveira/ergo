@@ -30,19 +30,68 @@ type Config struct {
 
 	Port       string
 	Domain     string
-	URLPattern string
 	Verbose    bool
 	Services   map[string]Service
 	ConfigFile string
 }
 
-//NewConfig gets the new config.
+//Defines the name of ergo env variable for configuration.
+const (
+	PortEnv       = "ERGO_PORT"
+	DomainEnv     = "ERGO_DOMAIN"
+	VerboseEnv    = "ERGO_VERBOSE"
+	ConfigFileEnv = "ERGO_CONFIG_FILE"
+
+	PortDefault           = "2000"
+	DomainDefault         = ".dev"
+	ConfigFilePathDefault = "./.ergo"
+)
+
+//NewConfig gets the defaults config.
 func NewConfig() *Config {
-	return &Config{
-		Port:       "2000",
-		Domain:     ".dev",
-		URLPattern: `.*\.dev$`,
+	var config = &Config{
+		Port:       PortDefault,
+		Domain:     DomainDefault,
+		ConfigFile: ConfigFilePathDefault,
+		Verbose:    os.Getenv(VerboseEnv) != "",
 		Services:   make(map[string]Service),
+	}
+
+	port, isPortPresent := os.LookupEnv(PortEnv)
+	if isPortPresent {
+		config.Port = port
+	}
+
+	domain, isDomainPresent := os.LookupEnv(DomainEnv)
+	if isDomainPresent {
+		config.Domain = domain
+	}
+
+	configFile, isConfigFilePresent := os.LookupEnv(ConfigFileEnv)
+	if isConfigFilePresent {
+		config.ConfigFile = configFile
+	}
+
+	return config
+}
+
+//OverrideBy makes sure that it sets the correct config based on
+//the defaults and the passed by argument
+func (c *Config) OverrideBy(new *Config) {
+	if new.Port != "" {
+		c.Port = new.Port
+	}
+
+	if new.Domain != "" {
+		c.Domain = new.Domain
+	}
+
+	if new.Verbose != c.Verbose {
+		c.Verbose = new.Verbose
+	}
+
+	if new.ConfigFile != "" {
+		c.ConfigFile = new.ConfigFile
 	}
 }
 
