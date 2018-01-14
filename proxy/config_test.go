@@ -3,6 +3,7 @@ package proxy
 import (
 	"bytes"
 	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -156,4 +157,115 @@ func TestWhenHasErgoFile(t *testing.T) {
 			tt.Error("Expected LoadServices to fail")
 		}
 	})
+}
+
+func TestChangingByEnvironmentVariable(t *testing.T) {
+	cases := []struct {
+		title       string
+		varName     string
+		value       string
+		expectation func(config *Config) bool
+	}{
+		{
+			title:   "Variable env " + PortEnv + " changes port config",
+			varName: PortEnv,
+			value:   "3000",
+			expectation: func(config *Config) bool {
+				return config.Port == "3000"
+			},
+		},
+		{
+			title:   "Variable env " + DomainEnv + " changes port config",
+			varName: DomainEnv,
+			value:   ".new",
+			expectation: func(config *Config) bool {
+				return config.Domain == ".new"
+			},
+		},
+		{
+			title:   "Variable env " + VerboseEnv + " changes port config",
+			varName: VerboseEnv,
+			value:   "1",
+			expectation: func(config *Config) bool {
+				return config.Verbose == true
+			},
+		},
+		{
+			title:   "Variable env " + ConfigFileEnv + " changes port config",
+			varName: ConfigFileEnv,
+			value:   "/tmp/dev.txt",
+			expectation: func(config *Config) bool {
+				return config.ConfigFile == "/tmp/dev.txt"
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.title, func(tt *testing.T) {
+			os.Setenv(c.varName, c.value)
+
+			config := NewConfig()
+
+			if !c.expectation(config) {
+				tt.Fatal("Expected config to be changed", config)
+			}
+
+			os.Setenv(c.varName, "")
+		})
+	}
+}
+
+func TestOverrideBy(t *testing.T) {
+	cases := []struct {
+		title       string
+		newConfig   *Config
+		expectation func(config *Config) bool
+	}{
+		{
+			title: "It changes only the default value domain",
+			newConfig: &Config{
+				Domain: ".foo",
+			},
+			expectation: func(config *Config) bool {
+				return config.Domain == ".foo" ||
+					config.Port != PortDefault ||
+					config.ConfigFile != ConfigFilePathDefault ||
+					config.Verbose != false
+			},
+		},
+		{
+			title: "It changes only the default value port",
+			newConfig: &Config{
+				Port: "2111",
+			},
+			expectation: func(config *Config) bool {
+				return config.Port == "2111" ||
+					config.Domain != DomainDefault ||
+					config.ConfigFile != ConfigFilePathDefault ||
+					config.Verbose != false
+			},
+		},
+		{
+			title: "It changes only the default value config file",
+			newConfig: &Config{
+				ConfigFile: "/tmp/ergo",
+			},
+			expectation: func(config *Config) bool {
+				return config.ConfigFile == "/tmp/ergo" ||
+					config.Domain != DomainDefault ||
+					config.Port != PortDefault ||
+					config.Verbose != false
+			},
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.title, func(tt *testing.T) {
+			config := NewConfig()
+			config.OverrideBy(c.newConfig)
+			if !c.expectation(config) {
+				tt.Fatal("Expected config to be changed", config)
+			}
+		})
+	}
 }

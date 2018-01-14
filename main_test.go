@@ -251,7 +251,10 @@ func TestUrlCommand(t *testing.T) {
 		expectedOutput := "http://foo.dev"
 		args := []string{"ergo", "url", "foo"}
 
-		command, config := prepareSubCommand(args)
+		command, argconfig := prepareSubCommand(args)
+
+		config := proxy.NewConfig()
+		config.OverrideBy(argconfig)
 		config.Services = services
 
 		if command == nil || config == nil {
@@ -276,7 +279,10 @@ func TestUrlCommand(t *testing.T) {
 	t.Run("when there is no service", func(tt *testing.T) {
 		args := []string{"ergo", "url", "foobla"}
 
-		command, config := prepareSubCommand(args)
+		command, argconfig := prepareSubCommand(args)
+
+		config := proxy.NewConfig()
+		config.OverrideBy(argconfig)
 		config.Services = services
 
 		if command == nil || config == nil {
