@@ -17,6 +17,19 @@
 
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
+## Summary
+* [Filosophy](#filosophy)
+* [Installation](#installation)
+  - [osx](#osx)
+  - [linux](#linux)
+  - [windows](#windows)
+* [Usage](#usage)
+* [Configuration](#configuration)
+* [Testing](#run-tests)
+* [Contributing](#contributing)
+
+### Filosophy
+
 Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and doing it well. Simplicity means no magic involved. Just a flexible reverse proxy which extends the well-known `/etc/hosts` declaration.
 
 **Feedback**
@@ -28,7 +41,7 @@ For help and feedback you can find us at #ergo-proxy channel on https://gopher.s
 
 ## Why?
 
-Dealing with multiple apps locally, and having to remember each port representing each microservice is frustrating. I wanted a simple way to assign each service a proper local domain. Ergos solves this problem.
+Dealing with multiple apps locally, and having to remember each port representing each microservice is frustrating. I wanted a simple way to assign each service a proper local domain. Ergo solves this problem.
 
 ## Installation
 
@@ -82,7 +95,7 @@ ergo setup <operation-system>
 
 In case of errors / it doesn't work, please look at the detailed config session below.
 
-### Showtime
+### Adding Services and Running
 
 ```
 echo "ergoproxy http://localhost:3000" > .ergo
@@ -102,19 +115,25 @@ ergo run
 
 Restart the server and access: `http://otherservice.dev`
 
+### Ergo's configuration
+
+Ergo accepts different configurations like run in different `port` (default: 2000) and change `domain` (default: dev). You can find all this configs on ergo's help running `ergo -h`.
+
 ## Configuration
 
 In order to use Ergo domains you need to set it as a proxy. Set the `http://127.0.0.1:2000/proxy.pac` on:
 
-##### OS X
+### Networking Web Proxy
+
+#### OS X
 
 `Network Preferences > Advanced > Proxies > Automatic Proxy Configuration`
 
-##### Windows
+#### Windows
 
 `Settings > Network and Internet > Proxy > Use setup script`
 
-##### Linux
+#### Linux
 
 On Ubuntu
 
@@ -126,7 +145,7 @@ For other distributions, check your network manager and look for proxy configura
 
 Browsers can be configured to use a specific proxy. Use this method as an alternative to system-wide configuration.
 
-##### Chrome
+#### Chrome
 
 Exit Chrome and start it using the following option:
 
@@ -138,12 +157,20 @@ $ google-chrome --proxy-pac-url=http://localhost:2000/proxy.pac
 $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 ```
 
+### Using on terminal
+
+In order to use ergo as your web proxy on terminal you must set the `http_proxy` variable. (Only for linux/osx)
+
+```sh
+export http_proxy="http://localhost:2000"
+```
+
 ### Ephemeral Setup
 
 As an alternative you can see the scripts inside `/resources` for running an
 ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
-## Run tests
+## Testing
 
 ```
   make test
