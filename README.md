@@ -18,7 +18,7 @@
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
 ## Summary
-* [Filosophy](#filosophy)
+* [Philosophy](#philosophy)
 * [Installation](#installation)
   - [osx](#osx)
   - [linux](#linux)
@@ -28,7 +28,7 @@ See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/exam
 * [Testing](#run-tests)
 * [Contributing](#contributing)
 
-### Filosophy
+### Philosophy
 
 Ergo's goal is to be a simple reverse proxy that follows the [Unix philosophy](https://en.wikipedia.org/wiki/Unix_philosophy) of doing only one thing and doing it well. Simplicity means no magic involved. Just a flexible reverse proxy which extends the well-known `/etc/hosts` declaration.
 
