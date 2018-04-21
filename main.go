@@ -32,10 +32,12 @@ Usage:
 Options:
   -h      Shows this message.
   -v      Shows ergo's version.
-  -config     Set the config file to the proxy.
-  -domain     Set a custom domain for services.
-  -p          Set ports to proxy.
-  -V          Set verbosity on output.
+  -config     Set the config file to the proxy. (ERGO_CONFIG_FILE)
+  -domain     Set a custom domain for services. (ERGO_DOMAIN)
+  -p          Set ports to proxy. (ERGO_PORT)
+  -V          Set verbosity on output. (ERGO_VERBOSE)
+
+  ** Use the names inside the parentesis to configure it via environment variables.
 
 setup:
   -remove     Set remove proxy configurations.

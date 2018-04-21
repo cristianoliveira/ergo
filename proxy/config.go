@@ -154,7 +154,7 @@ func (c *Config) LoadServices() error {
 
 // WatchConfigFile listen for file changes and updates the config services
 func (c *Config) WatchConfigFile(tickerChan <-chan time.Time) {
-	for _ = range tickerChan {
+	for range tickerChan {
 		info, err := os.Stat(c.ConfigFile)
 		if err != nil {
 			log.Printf("Error reading config file: %s\r\n", err.Error())
