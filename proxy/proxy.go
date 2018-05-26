@@ -48,6 +48,10 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 
 	return &httputil.ReverseProxy{
 		Director: director,
+		Transport: &http.Transport{
+			ResponseHeaderTimeout: time.Duration(config.TimeOutInSeconds) * time.Second,
+			TLSHandshakeTimeout:   time.Duration(config.TimeOutInSeconds) * time.Second,
+		},
 	}
 }
 

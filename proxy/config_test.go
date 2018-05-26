@@ -198,6 +198,14 @@ func TestChangingByEnvironmentVariable(t *testing.T) {
 				return config.ConfigFile == "/tmp/dev.txt"
 			},
 		},
+		{
+			title:   "Variable env " + TimeOutInSecondsEnv + " changes timeout config",
+			varName: TimeOutInSecondsEnv,
+			value:   "3000",
+			expectation: func(config *Config) bool {
+				return config.TimeOutInSeconds == 3000
+			},
+		},
 	}
 
 	for _, c := range cases {

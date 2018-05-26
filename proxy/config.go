@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -28,23 +29,26 @@ type Config struct {
 	lastChange time.Time
 	size       int64
 
-	Port       string
-	Domain     string
-	Verbose    bool
-	Services   map[string]Service
-	ConfigFile string
+	Port             string
+	Domain           string
+	Verbose          bool
+	Services         map[string]Service
+	ConfigFile       string
+	TimeOutInSeconds int64
 }
 
 //Defines the name of ergo env variable for configuration.
 const (
-	PortEnv       = "ERGO_PORT"
-	DomainEnv     = "ERGO_DOMAIN"
-	VerboseEnv    = "ERGO_VERBOSE"
-	ConfigFileEnv = "ERGO_CONFIG_FILE"
+	PortEnv             = "ERGO_PORT"
+	DomainEnv           = "ERGO_DOMAIN"
+	VerboseEnv          = "ERGO_VERBOSE"
+	ConfigFileEnv       = "ERGO_CONFIG_FILE"
+	TimeOutInSecondsEnv = "ERGO_TIMEOUT_IN_SECONDS"
 
 	PortDefault           = "2000"
 	DomainDefault         = ".dev"
 	ConfigFilePathDefault = "./.ergo"
+	TimeOutInSeconds      = "0" // Means infinit
 )
 
 //NewConfig gets the defaults config.
@@ -72,6 +76,16 @@ func NewConfig() *Config {
 		config.ConfigFile = configFile
 	}
 
+	timeout, isTimeoutPresent := os.LookupEnv(TimeOutInSecondsEnv)
+	if isTimeoutPresent {
+		timeInt, err := strconv.ParseInt(timeout, 10, 64)
+		if err != nil {
+			log.Fatalf("Timeout setting is invalid: %s. Error: %v\n", timeout, err)
+		}
+
+		config.TimeOutInSeconds = timeInt
+	}
+
 	return config
 }
 
@@ -92,6 +106,10 @@ func (c *Config) OverrideBy(new *Config) {
 
 	if new.ConfigFile != "" {
 		c.ConfigFile = new.ConfigFile
+	}
+
+	if new.TimeOutInSeconds != 0 {
+		c.TimeOutInSeconds = new.TimeOutInSeconds
 	}
 }
 

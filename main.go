@@ -34,6 +34,7 @@ Options:
   -v      Shows ergo's version.
   -config     Set the config file to the proxy. (ERGO_CONFIG_FILE)
   -domain     Set a custom domain for services. (ERGO_DOMAIN)
+  -timeout    Set a custom timeout for responses. (ERGO_TIMEOUT_IN_SECONDS)
   -p          Set ports to proxy. (ERGO_PORT)
   -V          Set verbosity on output. (ERGO_VERBOSE)
 
@@ -53,6 +54,7 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 	command := flag.NewFlagSet(args[1], flag.ExitOnError)
 	command.StringVar(&config.ConfigFile, "config", "", "Set the services file")
 	command.StringVar(&config.Domain, "domain", "", "Set a custom domain for services")
+	command.Int64Var(&config.TimeOutInSeconds, "timeout", 0, "Set the timeout for responses")
 	command.StringVar(&config.Port, "p", "", "Set port to the proxy")
 	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
 
