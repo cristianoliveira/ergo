@@ -56,15 +56,15 @@ func TestSetupLinuxGnome(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
+				Title: "expect to run with sh",
 				CommandExpectToInclude: "/bin/sh -c",
 			},
 			{
-				Title:                  "expect to set networking mode auto",
+				Title: "expect to set networking mode auto",
 				CommandExpectToInclude: "mode 'auto'",
 			},
 			{
-				Title:                  "expect to set networking url",
+				Title: "expect to set networking url",
 				CommandExpectToInclude: `autoconfig-url '` + config.GetProxyPacURL() + `'`,
 			},
 		}
@@ -91,15 +91,15 @@ func TestSetupLinuxGnome(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
+				Title: "expect to run with sh",
 				CommandExpectToInclude: "/bin/sh -c",
 			},
 			{
-				Title:                  "expect to set networking mode none",
+				Title: "expect to set networking mode none",
 				CommandExpectToInclude: "mode 'none'",
 			},
 			{
-				Title:                  "expect to set networking no url",
+				Title: "expect to set networking no url",
 				CommandExpectToInclude: `autoconfig-url ''`,
 			},
 		}
@@ -132,11 +132,11 @@ func TestSetupOSX(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
+				Title: "expect to run with sh",
 				CommandExpectToInclude: "/bin/sh -c",
 			},
 			{
-				Title:                  "expect to set networking proxy pac url",
+				Title: "expect to set networking proxy pac url",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" "` + config.GetProxyPacURL() + `"`,
 			},
 		}
@@ -163,11 +163,11 @@ func TestSetupOSX(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
+				Title: "expect to run with sh",
 				CommandExpectToInclude: "/bin/sh -c",
 			},
 			{
-				Title:                  "expect to set networking wi-fi to none",
+				Title: "expect to set networking wi-fi to none",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" ""`,
 			},
 		}
@@ -200,11 +200,11 @@ func TestSetupWindows(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to add a new register",
+				Title: "expect to add a new register",
 				CommandExpectToInclude: "reg add",
 			},
 			{
-				Title:                  "expect to set networking proxy pac url",
+				Title: "expect to set networking proxy pac url",
 				CommandExpectToInclude: `AutoConfigURL /t REG_SZ /d ` + config.GetProxyPacURL(),
 			},
 		}
@@ -231,11 +231,11 @@ func TestSetupWindows(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to delete the register",
+				Title: "expect to delete the register",
 				CommandExpectToInclude: "reg delete",
 			},
 			{
-				Title:                  "expect to set networking wi-fi to none",
+				Title: "expect to set networking wi-fi to none",
 				CommandExpectToInclude: "AutoConfigURL /f",
 			},
 		}
