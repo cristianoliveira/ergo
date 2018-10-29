@@ -92,7 +92,7 @@ func TestShowUsage(t *testing.T) {
 
 type TestRunner struct{}
 
-func (r *TestRunner) Run(command string) error {
+func (r *TestRunner) Run(command, args string) error {
 	return nil
 }
 

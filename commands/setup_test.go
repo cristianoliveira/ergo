@@ -28,17 +28,17 @@ type TestRunner struct {
 	ExpectToInclude string
 }
 
-func (r *TestRunner) Run(command string) error {
+func (r *TestRunner) Run(command, args string) error {
 	if r.ExpectToInclude == "" {
 		fmt.Println("No expectation")
 		return nil
 	}
 
-	if !strings.Contains(command, r.ExpectToInclude) {
+	if !strings.Contains(args, r.ExpectToInclude) {
 		r.Test.Fatalf(
 			"Expected command to include '%s' but it is not present.\n Command: %s",
 			r.ExpectToInclude,
-			command,
+			args,
 		)
 	}
 
@@ -55,10 +55,6 @@ func TestSetupLinuxGnome(t *testing.T) {
 			Title                  string
 			CommandExpectToInclude string
 		}{
-			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
 			{
 				Title:                  "expect to set networking mode auto",
 				CommandExpectToInclude: "mode 'auto'",
@@ -90,10 +86,6 @@ func TestSetupLinuxGnome(t *testing.T) {
 			Title                  string
 			CommandExpectToInclude string
 		}{
-			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
 			{
 				Title:                  "expect to set networking mode none",
 				CommandExpectToInclude: "mode 'none'",
@@ -132,10 +124,6 @@ func TestSetupOSX(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
-			{
 				Title:                  "expect to set networking proxy pac url",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" "` + config.GetProxyPacURL() + `"`,
 			},
@@ -162,10 +150,6 @@ func TestSetupOSX(t *testing.T) {
 			Title                  string
 			CommandExpectToInclude string
 		}{
-			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
 			{
 				Title:                  "expect to set networking wi-fi to none",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" ""`,
@@ -201,7 +185,7 @@ func TestSetupWindows(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to add a new register",
-				CommandExpectToInclude: "reg add",
+				CommandExpectToInclude: "add",
 			},
 			{
 				Title:                  "expect to set networking proxy pac url",
@@ -232,7 +216,7 @@ func TestSetupWindows(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to delete the register",
-				CommandExpectToInclude: "reg delete",
+				CommandExpectToInclude: "delete",
 			},
 			{
 				Title:                  "expect to set networking wi-fi to none",
