@@ -51,9 +51,10 @@ start:
 	@go run main.go run
 
 tools:
-	@(go get github.com/golang/lint)
+	@(go get golang.org/x/lint/golint)
+	# @(go get github.com/golang/lint)
 
-fmt:
+fmt: tools
 	@(echo "${OK_COLOR}Running fmt ...${NO_COLOR}")
 	@([ $$(gofmt -l . | wc -l) != 0 ] && \
 	echo "${WARN_COLOR}The following files are not correctly formated:${NO_COLOR}" && \
