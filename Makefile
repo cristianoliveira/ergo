@@ -60,7 +60,7 @@ fmt:
 	echo "${ERROR_COLOR}" && gofmt -l . && \
 	echo "${NO_COLOR}"  && exit 1 || exit 0)
 
-vet:
+vet: tools
 	@(echo "${OK_COLOR}Running vet ...${NO_COLOR}")
 	go vet ./...
 
