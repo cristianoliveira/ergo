@@ -170,16 +170,6 @@ export http_proxy="http://localhost:2000"
 As an alternative you can see the scripts inside `/resources` for running an
 ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
-## Testing
-
-```
-  make test
-  make test-integration
-  
-  # or building it all
-  make all
-```
-
 ## Contributing
  - Fork it!
  - Create your feature branch: `git checkout -b my-new-feature`
@@ -187,6 +177,21 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
  - Push to the branch: `git push origin my-new-feature`
  - Submit a pull request, they are welcome!
  - Please include unit tests in your pull requests
+ 
+## Buiding
+
+**Minimal required golang version 1.10**
+
+```sh
+  make all
+```
+
+## Testing
+
+```sh
+  make test
+  make test-integration
+```
 
 # License
 
