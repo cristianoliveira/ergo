@@ -26,19 +26,21 @@ func TestSetup(t *testing.T) {
 type TestRunner struct {
 	Test            *testing.T
 	ExpectToInclude string
+	History         string
 }
 
-func (r *TestRunner) Run(command string) error {
+func (r *TestRunner) Run(command string, args ...string) error {
 	if r.ExpectToInclude == "" {
 		fmt.Println("No expectation")
 		return nil
 	}
 
-	if !strings.Contains(command, r.ExpectToInclude) {
+	r.History = r.History + " > " + command + " " + strings.Join(args, " ")
+	if !strings.Contains(r.History, r.ExpectToInclude) {
 		r.Test.Fatalf(
 			"Expected command to include '%s' but it is not present.\n Command: %s",
 			r.ExpectToInclude,
-			command,
+			r.History,
 		)
 	}
 
@@ -56,10 +58,6 @@ func TestSetupLinuxGnome(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
-			{
 				Title:                  "expect to set networking mode auto",
 				CommandExpectToInclude: "mode 'auto'",
 			},
@@ -69,13 +67,13 @@ func TestSetupLinuxGnome(t *testing.T) {
 			},
 		}
 
+		testRunner := &TestRunner{}
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
-				}
+				testRunner.Test = tt
+				testRunner.ExpectToInclude = c.CommandExpectToInclude
 
+				setup.RunnerDefault = testRunner
 				command := SetupCommand{System: "linux-gnome", Remove: false}
 				_, err := command.Execute(config)
 				if err != nil {
@@ -91,10 +89,6 @@ func TestSetupLinuxGnome(t *testing.T) {
 			CommandExpectToInclude string
 		}{
 			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
-			{
 				Title:                  "expect to set networking mode none",
 				CommandExpectToInclude: "mode 'none'",
 			},
@@ -104,13 +98,14 @@ func TestSetupLinuxGnome(t *testing.T) {
 			},
 		}
 
+		testRunner := &TestRunner{}
+
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
-				}
+				testRunner.Test = tt
+				testRunner.ExpectToInclude = c.CommandExpectToInclude
 
+				setup.RunnerDefault = testRunner
 				command := SetupCommand{System: "linux-gnome", Remove: true}
 				_, err := command.Execute(config)
 				if err != nil {
@@ -131,10 +126,6 @@ func TestSetupOSX(t *testing.T) {
 			Title                  string
 			CommandExpectToInclude string
 		}{
-			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
 			{
 				Title:                  "expect to set networking proxy pac url",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" "` + config.GetProxyPacURL() + `"`,
@@ -162,10 +153,6 @@ func TestSetupOSX(t *testing.T) {
 			Title                  string
 			CommandExpectToInclude string
 		}{
-			{
-				Title:                  "expect to run with sh",
-				CommandExpectToInclude: "/bin/sh -c",
-			},
 			{
 				Title:                  "expect to set networking wi-fi to none",
 				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" ""`,
@@ -201,7 +188,7 @@ func TestSetupWindows(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to add a new register",
-				CommandExpectToInclude: "reg add",
+				CommandExpectToInclude: "add",
 			},
 			{
 				Title:                  "expect to set networking proxy pac url",
@@ -232,7 +219,7 @@ func TestSetupWindows(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to delete the register",
-				CommandExpectToInclude: "reg delete",
+				CommandExpectToInclude: "delete",
 			},
 			{
 				Title:                  "expect to set networking wi-fi to none",
