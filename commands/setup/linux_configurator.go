@@ -5,17 +5,22 @@ type LinuxConfigurator struct{}
 
 // SetUp is responsible for setting up the ergo as proxy
 func (c *LinuxConfigurator) SetUp(proxyURL string) error {
-	script := `gsettings set org.gnome.system.proxy mode 'auto' &&
-	gsettings set org.gnome.system.proxy autoconfig-url '` + proxyURL + `'`
+	err := RunnerDefault.Run("gsettings", "set", "org.gnome.system.proxy", "mode", "'auto'")
 
-	return RunnerDefault.Run(`/bin/sh`, ` -c '`+script+`'`)
+	if err != nil {
+		return err
+	}
 
+	return RunnerDefault.Run("gsettings", "set", "org.gnome.system.proxy", "autoconfig-url", `'`+proxyURL+`'`)
 }
 
 // SetDown is responsible for remove the ergo as proxy
 func (c *LinuxConfigurator) SetDown() error {
-	script := `gsettings set org.gnome.system.proxy mode 'none' &&
-	gsettings set org.gnome.system.proxy autoconfig-url ''`
+	err := RunnerDefault.Run("gsettings", "set", "org.gnome.system.proxy", "mode", "'none'")
 
-	return RunnerDefault.Run(`/bin/sh`, ` -c '`+script+`'`)
+	if err != nil {
+		return err
+	}
+
+	return RunnerDefault.Run("gsettings", "set", "org.gnome.system.proxy", "autoconfig-url", "''")
 }

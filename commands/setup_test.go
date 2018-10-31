@@ -26,19 +26,21 @@ func TestSetup(t *testing.T) {
 type TestRunner struct {
 	Test            *testing.T
 	ExpectToInclude string
+	History         string
 }
 
-func (r *TestRunner) Run(command, args string) error {
+func (r *TestRunner) Run(command string, args ...string) error {
 	if r.ExpectToInclude == "" {
 		fmt.Println("No expectation")
 		return nil
 	}
 
-	if !strings.Contains(args, r.ExpectToInclude) {
+	r.History = r.History + " > " + command + " " + strings.Join(args, " ")
+	if !strings.Contains(r.History, r.ExpectToInclude) {
 		r.Test.Fatalf(
 			"Expected command to include '%s' but it is not present.\n Command: %s",
 			r.ExpectToInclude,
-			args,
+			r.History,
 		)
 	}
 
@@ -65,13 +67,13 @@ func TestSetupLinuxGnome(t *testing.T) {
 			},
 		}
 
+		testRunner := &TestRunner{}
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
-				}
+				testRunner.Test = tt
+				testRunner.ExpectToInclude = c.CommandExpectToInclude
 
+				setup.RunnerDefault = testRunner
 				command := SetupCommand{System: "linux-gnome", Remove: false}
 				_, err := command.Execute(config)
 				if err != nil {
@@ -96,13 +98,14 @@ func TestSetupLinuxGnome(t *testing.T) {
 			},
 		}
 
+		testRunner := &TestRunner{}
+
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
-				}
+				testRunner.Test = tt
+				testRunner.ExpectToInclude = c.CommandExpectToInclude
 
+				setup.RunnerDefault = testRunner
 				command := SetupCommand{System: "linux-gnome", Remove: true}
 				_, err := command.Execute(config)
 				if err != nil {
