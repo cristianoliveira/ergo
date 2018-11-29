@@ -1,4 +1,9 @@
-# Contributing
+# Contribution Guidelines
+
+This project is made under a [Code of
+Conduct](https://github.com/cristianoliveira/ergo/blob/master/CODE_OF_CONDUCT.md). By participating you agree to abide by its terms.
+
+----
 
 We accept pull requests from everyone. 
 To contribute to this project you should follow the following steps:
