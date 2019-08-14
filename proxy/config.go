@@ -132,8 +132,13 @@ func (c *Config) AddService(service Service) error {
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
 	services, err := readServicesFromFile(c.ConfigFile)
+
 	if err != nil {
-		return err
+		// We will only inform the error but continue running the proxy
+		log.Println("-------------MISSING CONFIG FILE---------------")
+		log.Println("Please make sure a file named `.ergo` is present in this path:")
+		log.Printf("Config file path: %s\r\n", c.ConfigFile)
+		log.Printf("Error: %s\r\n", err.Error())
 	}
 
 	updatedServices := make(map[string]Service)
