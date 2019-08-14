@@ -158,7 +158,11 @@ func main() {
 
 		err := config.LoadServices()
 		if err != nil {
-			log.Fatalf("Could not load services: %v\n", err)
+			// We will only inform the error but continue running the proxy
+			log.Println("-------------MISSING CONFIG FILE---------------")
+			log.Println("Please make sure a file named `.ergo` is present in this path:")
+			log.Printf("Config file path: %s\r\n", config.ConfigFile)
+			log.Printf("Error: %s\r\n", err.Error())
 		}
 
 		execute(command, config)
