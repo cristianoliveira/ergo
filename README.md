@@ -178,7 +178,7 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
  - Submit a pull request, they are welcome!
  - Please include unit tests in your pull requests
  
-## Buiding
+## Building
 
 **Minimal required golang version 1.10**
 
