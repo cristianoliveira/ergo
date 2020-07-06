@@ -26,8 +26,8 @@ Usage:
   ergo list-names [options]
   ergo url <name> [options]
   ergo setup [linux-gnome|osx|windows] [-remove] [options]
-  ergo add <service-name> <host:port> [options]
-  ergo remove <service-name|host:port> [options]
+  ergo add <service-name> <schema://host:port> [options]
+  ergo remove <service-name|schema://host:port> [options]
 
 Options:
   -h      Shows this message.
