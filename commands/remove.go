@@ -28,13 +28,13 @@ func findService(service proxy.Service, services map[string]proxy.Service) (*pro
 func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
 	srv, isPresent := findService(c.Service, config.Services)
 
-	if isPresent {
-		err := proxy.RemoveService(config.ConfigFile, *srv)
-		if err != nil {
-			return "", fmt.Errorf("Failed to remove service cause %s", err)
-		}
-	} else {
+	if !isPresent {
 		return "", fmt.Errorf("Service %s not found", c.Service.Name)
+	}
+
+	err := proxy.RemoveService(config.ConfigFile, *srv)
+	if err != nil {
+		return "", fmt.Errorf("Failed to remove service cause %s", err)
 	}
 
 	return "Service Removed", nil
