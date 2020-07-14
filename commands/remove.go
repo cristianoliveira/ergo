@@ -14,22 +14,27 @@ type RemoveServiceCommand struct {
 	Service proxy.Service
 }
 
-// Execute apply the RemoveServiceCommand
-func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
-	var oldService *proxy.Service
-	for _, srv := range config.Services {
-		if srv.URL == c.Service.URL || srv.Name == c.Service.Name {
-			oldService = &srv
+func findService(service proxy.Service, services map[string]proxy.Service) (*proxy.Service, bool) {
+	for _, srv := range services {
+		if srv.URL == service.URL || srv.Name == service.Name {
+			return &srv, true
 		}
 	}
 
-	if oldService == nil {
-		return "", fmt.Errorf("Service %s not found", c.Service.Name)
-	}
+	return nil, false
+}
 
-	err := proxy.RemoveService(config.ConfigFile, *oldService)
-	if err != nil {
-		return "", fmt.Errorf("Failed to remove service cause %s", err)
+// Execute apply the RemoveServiceCommand
+func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
+	srv, isPresent := findService(c.Service, config.Services)
+
+	if isPresent {
+		err := proxy.RemoveService(config.ConfigFile, *srv)
+		if err != nil {
+			return "", fmt.Errorf("Failed to remove service cause %s", err)
+		}
+	} else {
+		return "", fmt.Errorf("Service %s not found", c.Service.Name)
 	}
 
 	return "Service Removed", nil
