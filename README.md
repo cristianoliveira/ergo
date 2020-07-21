@@ -113,7 +113,9 @@ ergo list
 ergo run
 ```
 
-Restart the server and access: `http://otherservice.dev`
+Restart the ergo server and access: `http://otherservice.dev`
+
+`ergo add otherservice http://localhost:5000` is a shorthand for appending lines to `./.ergo`
 
 ### Ergo's configuration
 
@@ -145,6 +147,10 @@ For other distributions, check your network manager and look for proxy configura
 
 Browsers can be configured to use a specific proxy. Use this method as an alternative to system-wide configuration.
 
+Keep in mind that if you requested the site before setting the proxy properly, you have to reset the cache of the browser or change the name of the service. In `incognito` windows cache is disabled by default, so you can use them if you don't wish to delete the cache
+
+Also you should not use the default `.dev` domain, we suggest `.test` instead (see [#58](https://github.com/cristianoliveira/ergo/issues/58)) unless your service supports https out of the box and you have already a certificate
+
 #### Chrome
 
 Exit Chrome and start it using the following option:
@@ -156,6 +162,20 @@ $ google-chrome --proxy-pac-url=http://localhost:2000/proxy.pac
 # OS X
 $ open -a "Google Chrome" --args --proxy-pac-url=http://localhost:2000/proxy.pac
 ```
+
+#### Firefox
+
+##### through menus and mouse
+1. Click the hamburger button otherwise click on "Edit" Menu
+1. then "Preferences"
+1. then "Settings" button at the bottom of the page ("General" active in sidebar) with title "Network Settings"
+1. check `Automatic Proxy configuration URL` and enter value `http://localhost:2000/proxy.pac` below
+1. hit "ok"
+
+
+##### from about:config
+`network.proxy.autoconfig_url` -> `http://localhost:2000/proxy.pac`
+
 
 ### Using on terminal
 
