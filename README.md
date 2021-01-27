@@ -50,6 +50,10 @@ Dealing with multiple apps locally, and having to remember each port representin
 brew tap cristianoliveira/tap
 brew install ergo
 ```
+or
+```
+port install ergo
+```
 
 ### Linux
 ```
