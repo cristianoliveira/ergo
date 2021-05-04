@@ -42,7 +42,7 @@ install(){
     [ $? -ne 0 ] && die "unable to copy ergo to destination folder"
 
     echo "Application was successfully installed."
-    echo "For uninstalling execute: rm ${DEST_FOLDER}ergo"
+    echo "For uninstalling execute: rm ${DEST_FOLDER%%/}/ergo"
 }
 
 show_help(){
