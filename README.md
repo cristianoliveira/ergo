@@ -45,14 +45,12 @@ Dealing with multiple apps locally, and having to remember each port representin
 
 ## Installation
 
+**Important** These are the only official ways to install ergo.
+
 ### OSX
 ```
 brew tap cristianoliveira/tap
 brew install ergo
-```
-or
-```
-port install ergo
 ```
 
 ### Linux
