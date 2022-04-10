@@ -212,10 +212,19 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
  - Push to the branch: `git push origin my-new-feature`
  - Submit a pull request, they are welcome!
  - Please include unit tests in your pull requests
- 
-## Building
 
-**Minimal required golang version 1.10**
+## Development
+
+Minimal required golang version `go1.17.6`.
+We recommend using [GVM](https://github.com/moovweb/gvm) for managing
+your go versions.
+
+Then simply run:
+```sh
+gvm use $(cat .gvmrc)
+```
+
+### Building
 
 ```sh
   make all
@@ -223,9 +232,9 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
 ## Testing
 
-```sh
+  ```sh
   make test
-  make test-integration
+  make test-integration # Requires admin permission so use it carefully.
 ```
 
 # License

@@ -51,7 +51,7 @@ start:
 	@go run main.go run
 
 tools:
-	@(go get golang.org/x/lint/golint)
+	@(go install golang.org/x/lint/golint)
 	# @(go get github.com/golang/lint)
 
 fmt: tools
