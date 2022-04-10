@@ -6,7 +6,7 @@ ERROR_COLOR=\033[31m
 
 WARN_COLOR=\33[33m
 
-.PHONY: all start build test test-integration coverage deps help fmt vet lint tools
+.PHONY: all start build test test-integration coverage deps help fmt vet lint tools setup-golant
 
 VERSION=`git describe --tag --always`
 LDFLAGS_f1=-ldflags "-w -s -X main.VERSION=${VERSION}"
@@ -86,6 +86,9 @@ watch:
 
 clean:
 	rm bin/ergo
+
+setup-golant:
+	gvm use $(cat .gvmrc)
 
 deps:
 	@go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v ergo | go get
