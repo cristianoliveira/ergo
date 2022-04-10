@@ -8,7 +8,7 @@ clone_folder: c:\gopath\src\github.com\cristianoliveira\ergo
 environment:
   GOPATH: c:\gopath
   DEPTESTBYPASS501: 1
-  GOVERSION: 1.17
+  GOVERSION: 1.17.6
 
 init:
   - git config --global core.autocrlf input
@@ -17,14 +17,11 @@ init:
 
 install:
   # Install the specific Go version.
-  - choco install -y golang --version=1.17.6
-  - refreshenv
-  -
-  # - rmdir c:\go /s /q
-  # - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
-  # - msiexec /i go%GOVERSION%.windows-amd64.msi /q
-  # # - choco install bzr
-  - set Path=C:\ProgramData\chocolatey\lib\go;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Mercurial\%Path%
+  - rmdir c:\go /s /q
+  - appveyor DownloadFile https://storage.googleapis.com/golang/go%GOVERSION%.windows-amd64.msi
+  - msiexec /i go%GOVERSION%.windows-amd64.msi /q
+  # - choco install bzr
+  - set Path=c:\go\bin;c:\gopath\bin;C:\Program Files (x86)\Bazaar\;C:\Program Files\Mercurial\%Path%
   - go version
   - go env
 
