@@ -8,7 +8,7 @@ clone_folder: c:\gopath\src\github.com\cristianoliveira\ergo
 environment:
   GOPATH: c:\gopath
 
-image: Visual Studio 2021
+image: Visual Studio 2022
 
 init:
   - git config --global core.autocrlf input
