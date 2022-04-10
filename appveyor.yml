@@ -8,7 +8,7 @@ clone_folder: c:\gopath\src\github.com\cristianoliveira\ergo
 environment:
   GOPATH: c:\gopath
   DEPTESTBYPASS501: 1
-  GOVERSION: 1.17.6
+  GOVERSION: 1.17
 
 init:
   - git config --global core.autocrlf input
