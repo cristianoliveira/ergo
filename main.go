@@ -40,8 +40,7 @@ Options:
   ** Use the names inside the parentesis to configure it via environment variables.
 
 setup:
-  -remove     Set remove proxy configurations.
-`
+  -remove     Set remove proxy configurations.`
 
 func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 	// Fail fast if we didn't receive a command argument
