@@ -1,12 +1,23 @@
 name: CI
 on: [push]
+
+env:
+  PROJECT_NAME: ergo
+
 jobs:
   tests:
-    name: Quick checks
+    name: Linux
+    env:
+      GOOS: linux
+      GOARCH: amd64
+      TARGET: linux-amd64
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-go@v3
       with:
-        go-version: '1.10.1' # The Go version to download (if necessary) and use.
+        go-version: '1.18'
+    - run: make all
+    - run: make coverage
     - run: make test
