@@ -15,6 +15,7 @@ help:
 	@(echo "${WARN_COLOR}Usage:${NO_COLOR}")
 	@(echo "${OK_COLOR}make all${NO_COLOR}                      Run the tests and build the executable")
 	@(echo "${OK_COLOR}make help${NO_COLOR}                     Show this help")
+	@(echo "${OK_COLOR}make build-darwin-amd${NO_COLOR}         Builds the executable for osx amd")
 	@(echo "${OK_COLOR}make build-darwin-arm${NO_COLOR}         Builds the executable for osx arm")
 	@(echo "${OK_COLOR}make build-linux-arm${NO_COLOR}          Builds the executable for linux arm")
 	@(echo "${OK_COLOR}make build-windows-i386${NO_COLOR}       Builds the executable for windows")
@@ -30,6 +31,9 @@ help:
 	@(echo "${OK_COLOR}make deps${NO_COLOR}                     Get the dependencies needed to build the project")
 
 all: deps test build test-integration bump-version
+
+build-darwin-amd:
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o bin/darwin-amd/ergo
 
 build-darwin-arm:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/darwin/ergo
