@@ -31,6 +31,9 @@ help:
 
 all: deps test build test-integration bump-version
 
+build-darwin-amd:
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o bin/darwin-amd/ergo
+
 build-darwin-arm:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o bin/darwin/ergo
 
