@@ -15,6 +15,7 @@ help:
 	@(echo "${WARN_COLOR}Usage:${NO_COLOR}")
 	@(echo "${OK_COLOR}make all${NO_COLOR}                      Run the tests and build the executable")
 	@(echo "${OK_COLOR}make help${NO_COLOR}                     Show this help")
+	@(echo "${OK_COLOR}make build-darwin-amd${NO_COLOR}         Builds the executable for osx amd")
 	@(echo "${OK_COLOR}make build-darwin-arm${NO_COLOR}         Builds the executable for osx arm")
 	@(echo "${OK_COLOR}make build-linux-arm${NO_COLOR}          Builds the executable for linux arm")
 	@(echo "${OK_COLOR}make build-windows-i386${NO_COLOR}       Builds the executable for windows")
