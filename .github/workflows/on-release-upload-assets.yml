@@ -1,0 +1,65 @@
+name: Release artifacts
+
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+jobs:
+  build_release_osx:
+    env:
+      GOOS: darwin
+      GOARCH: amd64
+      TARGET: darwin-amd64
+
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create artifacts folder
+        run: mkdir artifacts
+
+      - name: Release info
+        run: echo "RELEASE_TAG=${GITHUB_REF_NAME//(\/|\.)/_}" >> $GITHUB_ENV
+
+      - name: Create artifacts for darwin
+        run: sh ci/script.sh
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ergo-${{ env.RELEASE_TAG }}-${{ env.TARGET }}.tar.gz
+          asset_name: ergo-${{ env.RELEASE_TAG }}-${{ env.TARGET }}.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+
+  build_release_linux:
+    env:
+      GOOS: linux
+      GOARCH: amd64
+      TARGET: linux-amd64
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create artifacts folder
+        run: mkdir artifacts
+
+      - name: Release info
+        run: echo "RELEASE_TAG=${GITHUB_REF_NAME//(\/|\.)/_}" >> $GITHUB_ENV
+
+      - name: Create artifacts for linux
+        run: sh ci/script.sh
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ergo-${{ env.RELEASE_TAG }}-${{ env.TARGET }}.tar.gz
+          asset_name: ergo-${{ env.RELEASE_TAG }}-${{ env.TARGET }}.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
