@@ -15,7 +15,7 @@ import (
 // For instance, installing through `go get github.com/cristianoliveira/ergo` or `go build`.
 var VERSION = "unofficial version"
 
-//USAGE details the usage for ergo proxy.
+// USAGE details the usage for ergo proxy.
 const USAGE = `
 Ergo proxy.
 The management apps running on different ports made easy through custom local domains.
