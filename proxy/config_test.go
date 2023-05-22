@@ -16,7 +16,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	}
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 6
+		expected := 8
 		result := len(config.Services)
 
 		if expected != result {
@@ -120,7 +120,9 @@ func TestWhenHasErgoFile(t *testing.T) {
 			tt.Errorf("Expected service to be removed")
 		}
 
-		expected := []byte(`foo http://localhost:3000
+		expected := []byte(`mysite  http://localhost:80
+		mydomain  http://localhost:8282
+		foo http://localhost:3000
 		bla http://localhost:5000
 		withspaces       http://localhost:8080
 		one.domain       http://localhost:8081
