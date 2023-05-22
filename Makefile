@@ -75,7 +75,7 @@ lint: tools
 coverage:
 	@sh ./ci/coverage.sh
 
-test: fmt vet lint
+test:
 	@(go test -v ./...)
 
 test-integration: build
