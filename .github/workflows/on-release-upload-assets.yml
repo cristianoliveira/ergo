@@ -2,6 +2,9 @@ name: Release artifacts
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: ["ci/upload-artifacts"]
+
   release:
     types: [created]
 
