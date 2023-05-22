@@ -3,9 +3,9 @@ name: Release artifacts
 on:
   workflow_dispatch:
   push:
-    branches: ["ci/upload-artifacts"]
+    branches: ["ci-upload-artifacts"]
   pull_request:
-    branches: ["ci/upload-artifacts"]
+    branches: ["ci-upload-artifacts"]
 
   release:
     types: [created]
