@@ -16,12 +16,28 @@ func TestWhenHasErgoFile(t *testing.T) {
 	}
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 6
+		expected := 8
 		result := len(config.Services)
 
 		if expected != result {
 			t.Errorf("Expected to get %d services, but got %d\r\n%q",
 				expected, result, config.Services)
+		}
+	})
+
+	t.Run("It match the service host mysite", func(t *testing.T) {
+		result := config.GetService("mysite.dev")
+
+		if result.Empty() {
+			t.Errorf("Expected result to not be nil")
+		}
+	})
+
+	t.Run("It match the service host mylocalsite", func(t *testing.T) {
+		result := config.GetService("mylocalsite.dev")
+
+		if result.Empty() {
+			t.Errorf("Expected result to not be nil")
 		}
 	})
 
@@ -120,12 +136,15 @@ func TestWhenHasErgoFile(t *testing.T) {
 			tt.Errorf("Expected service to be removed")
 		}
 
-		expected := []byte(`foo http://localhost:3000
-		bla http://localhost:5000
-		withspaces       http://localhost:8080
-		one.domain       http://localhost:8081
-		two.domain       http://localhost:8082
-		redis://redislocal       redis://localhost:6543
+		expected := []byte(`http://localhost:80 mysite
+			http://localhost:8282 mylocalsite
+			http://localhost:8082  two.domain
+			foo http://localhost:3000
+			bla http://localhost:5000
+			withspaces       http://localhost:8080
+			one.domain       http://localhost:8081
+			two.domain       http://localhost:8082
+			redis://redislocal       redis://localhost:6543
 		`)
 
 		if !bytes.Equal(expected, newFileContent) {

@@ -101,7 +101,7 @@ In case of errors / it doesn't work, please look at the detailed config session 
 
 #### OS X / Linux
 ```
-echo "ergoproxy http://localhost:3000" > .ergo
+echo "http://localhost:3000 ergoproxy" > .ergo
 ergo run
 ```
 
@@ -112,7 +112,7 @@ Ergo redirects anything ending with `.dev` to the configured url.
 You should not use the default `.dev` domain, we suggest `.test` instead (see [#58](https://github.com/cristianoliveira/ergo/issues/58)) unless your service supports https out of the box and you have already a certificate
 ```
 set ERGO_DOMAIN=.test
-echo ergoproxy http://localhost:3000 > .ergo
+echo "http://localhost:3000 ergoproxy" > .ergo
 ergo list # you shouldn't see any quotas in the output
 ergo run
 ```
@@ -123,7 +123,7 @@ Simple, right? No magic involved.
 
 Do you want to add more services? It's easy, just add more lines in `.ergo`:
 ```
-echo "otherservice http://localhost:5000" >> .ergo
+echo "http://localhost:5000 otherservice" >> .ergo
 ergo list
 ergo run
 ```

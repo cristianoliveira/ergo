@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
 )
@@ -132,6 +133,7 @@ func (c *Config) AddService(service Service) error {
 //if the configuration could not be parsed
 func (c *Config) LoadServices() error {
 	services, err := readServicesFromFile(c.ConfigFile)
+	fmt.Println("services", services)
 	if err != nil {
 		return err
 	}
@@ -187,16 +189,29 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		declaration := regexp.MustCompile(`(\S+)`)
-		config := declaration.FindAllString(line, -1)
-		if config == nil {
-			continue
+		line = regexp.MustCompile(`\s+`).ReplaceAllString(line, " ")
+
+		pair := strings.Split(line, " ")
+
+		if len(pair) != 2 {
+			return nil, fmt.Errorf("File error: invalid format `%v` expected `{NAME} {URL}`", line)
 		}
-		if len(config) != 2 {
-			return nil, fmt.Errorf("file error: invalid format `%v` expected `{NAME} {URL}`", line)
+
+		urlPattern := regexp.MustCompile(`(\w+\:\/\/)?([^ ]+):(\d+)`)
+
+		var name, urlWithPort string
+		first := urlPattern.MatchString(pair[0])
+		if first {
+			name, urlWithPort = pair[1], pair[0]
+		} else {
+			name, urlWithPort = pair[0], pair[1]
 		}
-		name, url := config[0], config[1]
-		services = append(services, Service{Name: name, URL: url})
+
+		if name == "" || urlWithPort == "" {
+			return nil, fmt.Errorf("File error: invalid format `%v` expected `{NAME} {URL}`", line)
+		}
+
+		services = append(services, Service{Name: name, URL: urlWithPort})
 	}
 
 	return services, nil

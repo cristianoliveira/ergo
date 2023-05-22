@@ -1,3 +1,6 @@
+http://localhost:80 mysite
+http://localhost:8282 mylocalsite
+http://localhost:8082  two.domain
 foo http://localhost:3000
 bla http://localhost:5000
 withspaces       http://localhost:8080
