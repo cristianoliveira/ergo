@@ -256,7 +256,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	}
 }
 
-//structure to mock a http ResponseWriter
+// structure to mock a http ResponseWriter
 type mockHTTPResponse struct {
 	WrittenData   []byte
 	WrittenHeader int

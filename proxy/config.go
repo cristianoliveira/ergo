@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-//Service holds the details of the service (Name and URL)
+// Service holds the details of the service (Name and URL)
 type Service struct {
 	Name string
 	URL  string
@@ -23,7 +23,7 @@ func (s Service) Empty() bool {
 	return s.Name == "" || s.URL == ""
 }
 
-//Config holds the configuration for the proxy.
+// Config holds the configuration for the proxy.
 type Config struct {
 	mutex      sync.Mutex
 	lastChange time.Time
@@ -36,7 +36,7 @@ type Config struct {
 	ConfigFile string
 }
 
-//Defines the name of ergo env variable for configuration.
+// Defines the name of ergo env variable for configuration.
 const (
 	PortEnv       = "ERGO_PORT"
 	DomainEnv     = "ERGO_DOMAIN"
@@ -48,7 +48,7 @@ const (
 	ConfigFilePathDefault = "./.ergo"
 )
 
-//NewConfig gets the defaults config.
+// NewConfig gets the defaults config.
 func NewConfig() *Config {
 	var config = &Config{
 		Port:       PortDefault,
@@ -76,8 +76,8 @@ func NewConfig() *Config {
 	return config
 }
 
-//OverrideBy makes sure that it sets the correct config based on
-//the defaults and the passed by argument
+// OverrideBy makes sure that it sets the correct config based on
+// the defaults and the passed by argument
 func (c *Config) OverrideBy(new *Config) {
 	if new.Port != "" {
 		c.Port = new.Port
@@ -99,7 +99,7 @@ func (c *Config) OverrideBy(new *Config) {
 var once sync.Once
 var domainPattern *regexp.Regexp
 
-//GetService gets the service for the given host.
+// GetService gets the service for the given host.
 func (c *Config) GetService(host string) Service {
 	once.Do(func() {
 		domainPattern = regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
@@ -114,12 +114,12 @@ func (c *Config) GetService(host string) Service {
 	return c.Services[parts[0][1]]
 }
 
-//GetProxyPacURL returns the correct url for the pac file
+// GetProxyPacURL returns the correct url for the pac file
 func (c *Config) GetProxyPacURL() string {
 	return "http://127.0.0.1:" + c.Port + "/proxy.pac"
 }
 
-//AddService add a service using the correct key
+// AddService add a service using the correct key
 func (c *Config) AddService(service Service) error {
 	if service.Empty() {
 		return fmt.Errorf("Service is invalid")
@@ -129,8 +129,8 @@ func (c *Config) AddService(service Service) error {
 	return nil
 }
 
-//LoadServices loads the services from filepath, returns an error
-//if the configuration could not be parsed
+// LoadServices loads the services from filepath, returns an error
+// if the configuration could not be parsed
 func (c *Config) LoadServices() error {
 	services, err := readServicesFromFile(c.ConfigFile)
 	fmt.Println("services", services)
@@ -217,7 +217,7 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 	return services, nil
 }
 
-//AddService adds new service to the filepath
+// AddService adds new service to the filepath
 func AddService(filepath string, service Service) error {
 	file, e := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 

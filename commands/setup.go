@@ -18,7 +18,6 @@ import (
 // Usage:
 //
 // `ergo setup osx`
-//
 type SetupCommand struct {
 	System string
 	Remove bool

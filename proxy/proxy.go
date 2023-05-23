@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-//NewErgoProxy returns the new reverse proxy.
+// NewErgoProxy returns the new reverse proxy.
 func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	director := func(req *http.Request) {
 		t := time.Now()
@@ -51,7 +51,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 	}
 }
 
-//ServeProxy listens & serves the HTTP proxy.
+// ServeProxy listens & serves the HTTP proxy.
 func ServeProxy(config *Config) error {
 	ticker := time.NewTicker(500 * time.Millisecond)
 	defer ticker.Stop()

@@ -9,10 +9,10 @@ import (
 	"syscall"
 )
 
-//ShowInternetOptions will display the Internet Options
-//control panel. If the user clicks OK here, then the modifications
-//will be visible without a restart
-//this is just a fallback for the InetRefresh function
+// ShowInternetOptions will display the Internet Options
+// control panel. If the user clicks OK here, then the modifications
+// will be visible without a restart
+// this is just a fallback for the InetRefresh function
 func ShowInternetOptions() {
 	cmd := exec.Command("control", "inetcpl.cpl,Connections,4")
 	fmt.Println("Starting the Internet Options control panel")
@@ -22,9 +22,9 @@ func ShowInternetOptions() {
 	}
 }
 
-//InetRefresh will inform windows that a proxy change was performed.
-//if windows is not informed about the change, then the modification will only be noticed
-//after a restart
+// InetRefresh will inform windows that a proxy change was performed.
+// if windows is not informed about the change, then the modification will only be noticed
+// after a restart
 func InetRefresh() {
 	wininet := syscall.MustLoadDLL("wininet.dll")
 	inetsetoption := wininet.MustFindProc("InternetSetOptionW")
