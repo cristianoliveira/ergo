@@ -79,7 +79,7 @@ Make sure you have `$GOPATH/bin` in your path: `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
-Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`domain`+`space`+`url`). The main difference is it also considers the specified port.
+Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`url:port`+`space`+`domain`). The main difference is it also considers the specified port.
 
 ### Simplest Setup
 
