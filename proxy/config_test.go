@@ -15,8 +15,27 @@ func TestWhenHasErgoFile(t *testing.T) {
 		t.Fatal("could not load required configuration file for tests")
 	}
 
+	t.Run("Wildcard feature", func(t *testing.T) {
+		cases := []struct {
+			host     string
+			expected bool
+		}{
+			{"foobar.wildcard.dev", true},
+			{"other.wildcard.dev", true},
+		}
+
+		for _, c := range cases {
+			t.Run("It matches the service host with wildcard "+c.host, func(t *testing.T) {
+				result := config.GetService(c.host)
+				if result.Empty() {
+					t.Errorf("Expected result to not be nil")
+				}
+			})
+		}
+	})
+
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 8
+		expected := 9
 		result := len(config.Services)
 
 		if expected != result {
@@ -73,7 +92,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		}
 	})
 
-	t.Run("It does match the other protocols than http", func(t *testing.T) {
+	t.Run("It does match other protocols than http", func(t *testing.T) {
 		if result := config.GetService("redis://redislocal.dev"); result.Empty() {
 			t.Errorf("Expected  result to not be nil")
 		}
@@ -145,6 +164,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 			one.domain       http://localhost:8081
 			two.domain       http://localhost:8082
 			redis://redislocal       redis://localhost:6543
+			*.wildcard http://localhost:4000
 		`)
 
 		if !bytes.Equal(expected, newFileContent) {
