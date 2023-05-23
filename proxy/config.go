@@ -34,6 +34,8 @@ type Config struct {
 	Verbose    bool
 	Services   map[string]Service
 	ConfigFile string
+
+	hasWildcardService bool
 }
 
 // Defines the name of ergo env variable for configuration.
@@ -106,7 +108,7 @@ func (c *Config) GetService(host string) Service {
 	})
 
 	parts := domainPattern.FindAllStringSubmatch(host, -1)
-
+	fmt.Println("-------------- parts", parts)
 	// Example: host = "http://one.domain.dev"
 	// parts = [[one.domain.dev one.domain one.domain]]
 	if len(parts) < 1 {
