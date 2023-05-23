@@ -133,7 +133,6 @@ func (c *Config) AddService(service Service) error {
 // if the configuration could not be parsed
 func (c *Config) LoadServices() error {
 	services, err := readServicesFromFile(c.ConfigFile)
-	fmt.Println("services", services)
 	if err != nil {
 		return err
 	}
