@@ -34,6 +34,8 @@ type Config struct {
 	Verbose    bool
 	Services   map[string]Service
 	ConfigFile string
+
+	hasWildcardService bool
 }
 
 // Defines the name of ergo env variable for configuration.
@@ -102,16 +104,37 @@ var domainPattern *regexp.Regexp
 // GetService gets the service for the given host.
 func (c *Config) GetService(host string) Service {
 	once.Do(func() {
-		domainPattern = regexp.MustCompile(`((\w*\:\/\/)?.+)(` + c.Domain + `)`)
+		domainPattern = regexp.MustCompile(`((.*)\.?)` + c.Domain)
 	})
 
 	parts := domainPattern.FindAllStringSubmatch(host, -1)
-
+	fmt.Println("-------------- parts", parts)
+	// Example: host = "http://one.domain.dev"
+	// parts = [[one.domain.dev one.domain one.domain]]
 	if len(parts) < 1 {
 		return Service{}
 	}
 
-	return c.Services[parts[0][1]]
+	if len(parts[0]) < 3 {
+		return Service{}
+	}
+
+	domainWithoutTld := parts[0][2]
+
+	// Since finding a wildcard service is expensive, we only do it if
+	// we have at least one wildcard service
+	if c.hasWildcardService {
+		for _, service := range c.Services {
+			if strings.Contains(service.Name, "*") {
+				serviceNameWithoutWildCard := strings.Replace(service.Name, "*", "", -1)
+				if strings.Contains(domainWithoutTld, serviceNameWithoutWildCard) {
+					return service
+				}
+			}
+		}
+	}
+
+	return c.Services[domainWithoutTld]
 }
 
 // GetProxyPacURL returns the correct url for the pac file
@@ -140,6 +163,10 @@ func (c *Config) LoadServices() error {
 	updatedServices := make(map[string]Service)
 	for _, s := range services {
 		if !s.Empty() {
+			// if service name contains wildcard, set hasWildcardService to true
+			if strings.Contains(s.Name, "*") {
+				c.hasWildcardService = true
+			}
 			updatedServices[s.Name] = s
 		}
 	}
