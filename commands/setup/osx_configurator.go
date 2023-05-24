@@ -12,17 +12,17 @@ type OSXConfigurator struct{}
 
 const SUPPORTED_OSX_VERSION = 10 // up to Catalina
 
-func checkSupportedVersion() (bool, error) {
+func checkSupportedVersion() error {
 	cmd := `sw_vers -productVersion`
 	output, err := exec.Command("/bin/sh", "-c", cmd).Output()
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	var majorVersionNumber int
 	outputString := string(output)
 	if outputString == "" {
-		return false, fmt.Errorf("Checking the current osx version failed.")
+		return fmt.Errorf("checking the current osx version failed")
 	}
 
 	if strings.Contains(outputString, ".") {
@@ -33,30 +33,24 @@ func checkSupportedVersion() (bool, error) {
 	}
 
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if majorVersionNumber >= SUPPORTED_OSX_VERSION {
 		fmt.Println("The ergo setup is not supported for the current osx version.")
 		fmt.Println("Supported versions Catalina or below.")
-		fmt.Println("Please, consider to setting up ergo as proxy manually.")
-		return false, nil
+		fmt.Println("Please, consider setting up ergo as proxy manually.")
+		return fmt.Errorf("unsupported osx version")
 	}
 
-	return true, nil
+	return nil
 }
 
 // SetUp is responsible for setting up the ergo as proxy
 func (c *OSXConfigurator) SetUp(proxyURL string) error {
-	isSupported, err := checkSupportedVersion()
+	err := checkSupportedVersion()
 	if err != nil {
-		fmt.Println("Error while checking the current osx version: ", err)
 		return err
-	}
-
-	if !isSupported {
-		fmt.Println("The ergo setup is not supported for the current osx version.")
-		return nil
 	}
 
 	return RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" "`+proxyURL+`"`)
@@ -64,15 +58,9 @@ func (c *OSXConfigurator) SetUp(proxyURL string) error {
 
 // SetDown is responsible for remove the ergo as proxy
 func (c *OSXConfigurator) SetDown() error {
-	isSupported, err := checkSupportedVersion()
+	err := checkSupportedVersion()
 	if err != nil {
-		fmt.Println("Error while checking the current osx version: ", err)
 		return err
-	}
-
-	if !isSupported {
-		fmt.Println("The ergo setup is not supported for the current osx version.")
-		return nil
 	}
 
 	return RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" ""`)
