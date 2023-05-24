@@ -16,7 +16,8 @@ func checkSupportedVersion() error {
 	cmd := `sw_vers -productVersion`
 	output, err := exec.Command("/bin/sh", "-c", cmd).Output()
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return fmt.Errorf("checking the current osx version failed")
 	}
 
 	var majorVersionNumber int
@@ -33,7 +34,8 @@ func checkSupportedVersion() error {
 	}
 
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return fmt.Errorf("checking the current osx version failed")
 	}
 
 	if majorVersionNumber >= SUPPORTED_OSX_VERSION {
