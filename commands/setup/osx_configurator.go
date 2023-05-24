@@ -38,7 +38,7 @@ func checkSupportedVersion() error {
 		return fmt.Errorf("checking the current osx version failed")
 	}
 
-	if majorVersionNumber >= SUPPORTED_OSX_VERSION {
+	if majorVersionNumber > SUPPORTED_OSX_VERSION {
 		fmt.Println("The ergo setup is not supported for the current osx version.")
 		fmt.Println("Supported versions Catalina or below.")
 		fmt.Println("Please, consider setting up ergo as proxy manually.")
