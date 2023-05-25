@@ -108,7 +108,6 @@ func (c *Config) GetService(host string) Service {
 	})
 
 	parts := domainPattern.FindAllStringSubmatch(host, -1)
-	fmt.Println("-------------- parts", parts)
 	// Example: host = "http://one.domain.dev"
 	// parts = [[one.domain.dev one.domain one.domain]]
 	if len(parts) < 1 {
