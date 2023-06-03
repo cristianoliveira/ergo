@@ -92,8 +92,8 @@ func TestShowUsage(t *testing.T) {
 
 type TestRunner struct{}
 
-func (r *TestRunner) Run(command string, args ...string) error {
-	return nil
+func (r *TestRunner) Run(command string, args ...string) ([]byte, error) {
+	return []byte(""), nil
 }
 
 func TestListCommand(t *testing.T) {
@@ -152,6 +152,31 @@ func TestListNamesCommand(t *testing.T) {
 	})
 }
 
+type TestRunnerWithOutput struct {
+	OriginalRunner setup.Runner
+	Test           *testing.T
+	History        string
+	MockedOutput   map[string][]byte
+}
+
+func (r *TestRunnerWithOutput) Mock(command string, output []byte) {
+	// parse command to a unique key
+	key := strings.Join(strings.Split(command, " "), "_")
+	r.MockedOutput[key] = output
+}
+
+func (r *TestRunnerWithOutput) Run(command string, args ...string) ([]byte, error) {
+	commandWithArgs := command + " " + strings.Join(args, " ")
+	key := strings.Join(strings.Split(commandWithArgs, " "), "_")
+
+	mockedOutput, ok := r.MockedOutput[key]
+	if !ok {
+		return r.OriginalRunner.Run(command, args...)
+	}
+
+	return mockedOutput, nil
+}
+
 func TestSetupCommand(t *testing.T) {
 	setup.RunnerDefault = &TestRunner{}
 
@@ -199,6 +224,14 @@ func TestSetupCommand(t *testing.T) {
 			if command == nil || config == nil {
 				t.Fatal("Expected result to not be nil")
 			}
+
+			mockedRunner := &TestRunnerWithOutput{
+				OriginalRunner: setup.RunnerDefault,
+				Test:           tt,
+				MockedOutput:   map[string][]byte{},
+			}
+			mockedRunner.Mock("/bin/sh -c sw_vers -productVersion", []byte("10.11.6"))
+			setup.RunnerDefault = mockedRunner
 
 			setup := command.(commands.SetupCommand)
 

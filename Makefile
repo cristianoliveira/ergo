@@ -52,7 +52,6 @@ start:
 
 tools:
 	@(go install golang.org/x/lint/golint)
-	# @(go get github.com/golang/lint)
 
 fmt: tools
 	@(echo "${OK_COLOR}Running fmt ...${NO_COLOR}")
@@ -66,7 +65,7 @@ vet: tools
 	go vet ./...
 
 lint: tools
-	@(echo "${OK_COLOR}Running lint ...${NO_COLOR}")
+	@(echo "Running lint ...")
 	@(export PATH=$$PATH:$$GOPATH/bin && [ $$(golint ./... | wc -l) != 0 ] && \
 	echo "${WARN_COLOR}Lint says the following files are not ok:${NO_COLOR}" && \
 	echo "${ERROR_COLOR}" && golint ./... && \
