@@ -29,10 +29,10 @@ type TestRunner struct {
 	History         string
 }
 
-func (r *TestRunner) Run(command string, args ...string) error {
+func (r *TestRunner) Run(command string, args ...string) ([]byte, error) {
 	if r.ExpectToInclude == "" {
 		fmt.Println("No expectation")
-		return nil
+		return []byte{}, nil
 	}
 
 	r.History = r.History + " > " + command + " " + strings.Join(args, " ")
@@ -44,7 +44,31 @@ func (r *TestRunner) Run(command string, args ...string) error {
 		)
 	}
 
-	return nil
+	return []byte{}, nil
+}
+
+type TestRunnerWithOutput struct {
+	Test         *testing.T
+	History      string
+	MockedOutput map[string][]byte
+}
+
+func (r *TestRunnerWithOutput) Mock(command string, output []byte) {
+	// parse command to a unique key
+	key := strings.Join(strings.Split(command, " "), "_")
+	r.MockedOutput[key] = output
+}
+
+func (r *TestRunnerWithOutput) Run(command string, args ...string) ([]byte, error) {
+	command_with_args := command + " " + strings.Join(args, " ")
+	key := strings.Join(strings.Split(command_with_args, " "), "_")
+	mockedOutput, ok := r.MockedOutput[key]
+	if !ok {
+		r.Test.Fatalf("No more expectation for command %s", command_with_args)
+		return []byte{}, nil
+	}
+
+	return mockedOutput, nil
 }
 
 func TestSetupLinuxGnome(t *testing.T) {
@@ -99,7 +123,6 @@ func TestSetupLinuxGnome(t *testing.T) {
 		}
 
 		testRunner := &TestRunner{}
-
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
 				testRunner.Test = tt
@@ -128,19 +151,24 @@ func TestSetupOSX(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to set networking proxy pac url",
-				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" "` + config.GetProxyPacURL() + `"`,
+				CommandExpectToInclude: `networksetup -setautoproxyurl "Wi-Fi" "` + config.GetProxyPacURL() + `"`,
 			},
 		}
 
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
+				mockedRunner := &TestRunnerWithOutput{
+					Test:         tt,
+					MockedOutput: map[string][]byte{},
 				}
 
+				mockedRunner.Mock("/bin/sh -c sw_vers -productVersion", []byte("10.11.6"))
+				mockedRunner.Mock(c.CommandExpectToInclude, []byte{})
+
+				setup.RunnerDefault = mockedRunner
 				command := SetupCommand{System: "osx", Remove: false}
 				_, err := command.Execute(config)
+
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
@@ -155,16 +183,20 @@ func TestSetupOSX(t *testing.T) {
 		}{
 			{
 				Title:                  "expect to set networking wi-fi to none",
-				CommandExpectToInclude: `-setautoproxyurl "Wi-Fi" ""`,
+				CommandExpectToInclude: `networksetup -setautoproxyurl "Wi-Fi" ""`,
 			},
 		}
 
 		for _, c := range cases {
 			t.Run(c.Title, func(tt *testing.T) {
-				setup.RunnerDefault = &TestRunner{
-					Test:            tt,
-					ExpectToInclude: c.CommandExpectToInclude,
+				mockedRunner := &TestRunnerWithOutput{
+					Test:         tt,
+					MockedOutput: map[string][]byte{},
 				}
+
+				mockedRunner.Mock("/bin/sh -c sw_vers -productVersion", []byte("10.11.6"))
+				mockedRunner.Mock(c.CommandExpectToInclude, []byte{})
+				setup.RunnerDefault = mockedRunner
 
 				command := SetupCommand{System: "osx", Remove: true}
 				_, err := command.Execute(config)
@@ -172,6 +204,23 @@ func TestSetupOSX(t *testing.T) {
 					t.Fatalf(err.Error())
 				}
 			})
+		}
+	})
+
+	t.Run("it does not work after Catalina version * > 10", func(tt *testing.T) {
+		mockedRunner := &TestRunnerWithOutput{
+			Test:         tt,
+			MockedOutput: map[string][]byte{},
+		}
+
+		mockedRunner.Mock("/bin/sh -c sw_vers -productVersion", []byte("11.11.6"))
+		setup.RunnerDefault = mockedRunner
+
+		command := SetupCommand{System: "osx", Remove: true}
+		_, err := command.Execute(config)
+		// check if the error message contains Setup failed
+		if !strings.Contains(err.Error(), "Setup failed cause unsupported osx version") {
+			t.Fatalf(err.Error())
 		}
 	})
 }

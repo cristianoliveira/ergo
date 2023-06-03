@@ -2,7 +2,6 @@ package setup
 
 import (
 	"fmt"
-	"os/exec"
 	"strconv"
 	"strings"
 )
@@ -14,7 +13,7 @@ const SUPPORTED_OSX_VERSION = 10 // up to Catalina
 
 func checkSupportedVersion() error {
 	cmd := `sw_vers -productVersion`
-	output, err := exec.Command("/bin/sh", "-c", cmd).Output()
+	output, err := RunnerDefault.Run("/bin/sh", "-c", cmd)
 	if err != nil {
 		fmt.Println(err)
 		return fmt.Errorf("checking the current osx version failed")
@@ -55,7 +54,8 @@ func (c *OSXConfigurator) SetUp(proxyURL string) error {
 		return err
 	}
 
-	return RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" "`+proxyURL+`"`)
+	_, err = RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" "`+proxyURL+`"`)
+	return err
 }
 
 // SetDown is responsible for remove the ergo as proxy
@@ -65,5 +65,6 @@ func (c *OSXConfigurator) SetDown() error {
 		return err
 	}
 
-	return RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" ""`)
+	_, err = RunnerDefault.Run(`networksetup`, `-setautoproxyurl "Wi-Fi" ""`)
+	return err
 }
