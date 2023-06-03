@@ -166,8 +166,8 @@ func (r *TestRunnerWithOutput) Mock(command string, output []byte) {
 }
 
 func (r *TestRunnerWithOutput) Run(command string, args ...string) ([]byte, error) {
-	command_with_args := command + " " + strings.Join(args, " ")
-	key := strings.Join(strings.Split(command_with_args, " "), "_")
+	commandWithArgs := command + " " + strings.Join(args, " ")
+	key := strings.Join(strings.Split(commandWithArgs, " "), "_")
 
 	mockedOutput, ok := r.MockedOutput[key]
 	if !ok {

@@ -9,7 +9,7 @@ import (
 // OSXConfigurator implements Configurator for windows
 type OSXConfigurator struct{}
 
-const SUPPORTED_OSX_VERSION = 10 // up to Catalina
+const osxVersionThatSupportsSetupCommand = 10 // up to Catalina
 
 func checkSupportedVersion() error {
 	cmd := `sw_vers -productVersion`
@@ -37,7 +37,7 @@ func checkSupportedVersion() error {
 		return fmt.Errorf("checking the current osx version failed")
 	}
 
-	if majorVersionNumber > SUPPORTED_OSX_VERSION {
+	if majorVersionNumber > osxVersionThatSupportsSetupCommand {
 		fmt.Println("The ergo setup is not supported for the current osx version.")
 		fmt.Println("Supported versions Catalina or below.")
 		fmt.Println("Please, consider setting up ergo as proxy manually.")

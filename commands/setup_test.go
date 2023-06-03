@@ -60,11 +60,11 @@ func (r *TestRunnerWithOutput) Mock(command string, output []byte) {
 }
 
 func (r *TestRunnerWithOutput) Run(command string, args ...string) ([]byte, error) {
-	command_with_args := command + " " + strings.Join(args, " ")
-	key := strings.Join(strings.Split(command_with_args, " "), "_")
+	commandWithArgs := command + " " + strings.Join(args, " ")
+	key := strings.Join(strings.Split(commandWithArgs, " "), "_")
 	mockedOutput, ok := r.MockedOutput[key]
 	if !ok {
-		r.Test.Fatalf("No more expectation for command %s", command_with_args)
+		r.Test.Fatalf("No more expectation for command %s", commandWithArgs)
 		return []byte{}, nil
 	}
 
