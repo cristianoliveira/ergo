@@ -54,8 +54,14 @@ brew install ergo
 ```
 
 ### Linux
+To install the latest official version
 ```
 curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
+```
+
+Or to install a specific version
+```
+curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh v0.2.5 | sh
 ```
 
 ### Windows
