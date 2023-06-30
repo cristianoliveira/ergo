@@ -4,9 +4,10 @@ VERSION_URL="https://raw.githubusercontent.com/cristianoliveira/ergo/master/.ver
 DOWNLOAD_URL="https://github.com/cristianoliveira/ergo/releases/download"
 DEST_FOLDER="/usr/local/bin"
 PROGNAME=`basename "$0"`
+VERSION=${1:-$(wget -q -O - "$VERSION_URL")}
 
-die () { 
-echo "$PROGNAME: [FATAL] $1" >&2; exit ${2:-1}  ; 
+die () {
+echo "$PROGNAME: [FATAL] $1" >&2; exit ${2:-1}  ;
 }
 
 getplatform(){
@@ -25,12 +26,12 @@ install(){
     echo "Using /tmp to store downloaded file"
     cd /tmp
     local platform=$(getplatform)
-    echo "Downloading version $latest_version from repo"
-    wget -q "$DOWNLOAD_URL/$latest_version/ergo-$latest_version-$platform.tar.gz"
+    echo "Downloading version $VERSION from repo"
+    wget -q "$DOWNLOAD_URL/$VERSION/ergo-$VERSION-$platform.tar.gz"
     [ $? -ne 0 ] && die "unable to download package"
 
     echo "Extracting package"
-    tar -xf ergo-$latest_version-$platform.tar.gz 
+    tar -xf ergo-$VERSION-$platform.tar.gz
     [ $? -ne 0 ] && die "unable to extract ergo from package"
 
     echo "Copying ergo to $DEST_FOLDER. May require sudo password."
@@ -50,12 +51,9 @@ show_help(){
 }
 
 main(){
- 
-    latest_version=$(wget -q -O - "$VERSION_URL")
-    [ $? -ne 0 ] && die "unable to retrieve latest version information"
+    [ -z "$VERSION" ] && die "Unable to get the version information to install"
 
     install
-
 }
 
 while getopts "h?d:" opt; do
