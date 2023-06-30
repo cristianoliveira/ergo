@@ -11,14 +11,14 @@ import (
 )
 
 // VERSION of ergo
-// When ergo is build without a proper tag/release it is named as `unofficial version`.
+// When ergo is built without a proper tag/release it is named as `unofficial version`.
 // For instance, installing through `go get github.com/cristianoliveira/ergo` or `go build`.
 var VERSION = "unofficial version"
 
 // USAGE details the usage for ergo proxy.
 const USAGE = `
 Ergo proxy.
-The management apps running on different ports made easy through custom local domains.
+The management of multiple apps running over different ports made easy through custom local domains.
 
 Usage:
   ergo run [options]
@@ -37,7 +37,7 @@ Options:
   -p          Set ports to proxy. (ERGO_PORT)
   -V          Set verbosity on output. (ERGO_VERBOSE)
 
-  ** Use the names inside the parentesis to configure it via environment variables.
+  ** Use the names inside the parenthesis to configure it via environment variables.
 
 setup:
   -remove     Set remove proxy configurations.`
