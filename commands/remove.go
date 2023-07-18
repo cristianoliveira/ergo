@@ -16,7 +16,7 @@ type RemoveServiceCommand struct {
 
 func findService(service proxy.Service, services map[string]proxy.Service) (*proxy.Service, bool) {
 	for _, srv := range services {
-		if srv.URL == service.URL || srv.Name == service.Name {
+		if srv.URL.String() == service.URL.String() || srv.Name == service.Name {
 			return &srv, true
 		}
 	}

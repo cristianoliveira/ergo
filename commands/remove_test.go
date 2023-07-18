@@ -9,12 +9,12 @@ import (
 
 func TestRemove(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
-		{Name: "test2.dev", URL: "localhost:9292"},
+		proxy.UnsafeNewService("test.dev", "localhost:999"),
+		proxy.UnsafeNewService("test2.dev", "localhost:9292"),
 	})
 
 	t.Run("when remove service", func(tt *testing.T) {
-		service := proxy.Service{Name: "test.dev"}
+		service := proxy.UnsafeNewService("test.dev", "")
 
 		command := RemoveServiceCommand{Service: service}
 		out, err := command.Execute(config)
@@ -28,7 +28,7 @@ func TestRemove(t *testing.T) {
 	})
 
 	t.Run("when service not found", func(tt *testing.T) {
-		service := proxy.Service{Name: "doesntexist.dev"}
+		service := proxy.UnsafeNewService("doesntexist.dev", "")
 
 		command := RemoveServiceCommand{Service: service}
 		_, err := command.Execute(config)
@@ -38,7 +38,7 @@ func TestRemove(t *testing.T) {
 	})
 
 	t.Run("when config file not found", func(tt *testing.T) {
-		service := proxy.Service{Name: "test.dev"}
+		service := proxy.UnsafeNewService("test.dev", "")
 		config.ConfigFile = "undefined"
 
 		command := RemoveServiceCommand{Service: service}

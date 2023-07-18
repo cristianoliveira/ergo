@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -26,7 +27,11 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 		for _, c := range cases {
 			t.Run("It matches the service host with wildcard "+c.host, func(t *testing.T) {
-				result := config.GetService(c.host)
+				result, err := config.GetService(c.host)
+				if err != nil {
+					t.Errorf("Expected no error. Got: %s", err)
+				}
+
 				if result.Empty() {
 					t.Errorf("Expected result to not be nil")
 				}
@@ -45,7 +50,10 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It match the service host mysite", func(t *testing.T) {
-		result := config.GetService("mysite.dev")
+		result, err := config.GetService("mysite.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
 
 		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
@@ -53,7 +61,10 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It match the service host mylocalsite", func(t *testing.T) {
-		result := config.GetService("mylocalsite.dev")
+		result, err := config.GetService("mylocalsite.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
 
 		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
@@ -61,7 +72,10 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It match the service host bla.dev", func(t *testing.T) {
-		result := config.GetService("bla.dev")
+		result, err := config.GetService("bla.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
 
 		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
@@ -69,7 +83,10 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It match the service host foo.dev", func(t *testing.T) {
-		result := config.GetService("foo.dev")
+		result, err := config.GetService("foo.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
 
 		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
@@ -77,7 +94,10 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It match the service host withspaces.dev", func(t *testing.T) {
-		result := config.GetService("withspaces.dev")
+		result, err := config.GetService("withspaces.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
 
 		if result.Empty() {
 			t.Errorf("Expected result to not be nil")
@@ -85,28 +105,46 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It does not match the service host", func(t *testing.T) {
-		result := config.GetService("undefined.dev")
-
-		if !result.Empty() {
+		result, err := config.GetService("undefined.dev")
+		fmt.Println("result", result)
+		if result != nil {
 			t.Errorf("Expected result to be nil got: %#v", result)
+		}
+
+		if err == nil {
+			t.Errorf("Expected error. Got none")
 		}
 	})
 
 	t.Run("It does match other protocols than http", func(t *testing.T) {
-		if result := config.GetService("redis://redislocal.dev"); result.Empty() {
+		result, err := config.GetService("redis://redislocal.dev")
+		if err != nil {
+			t.Errorf("Expected no error. Got: %s", err)
+		}
+
+		if result.Empty() {
 			t.Errorf("Expected  result to not be nil")
 		}
 	})
 
 	t.Run("It match subdomains", func(tt *testing.T) {
 		tt.Run("for one.domain.dev", func(tt *testing.T) {
-			if result := config.GetService("one.domain.dev"); result.Empty() {
+			result, err := config.GetService("one.domain.dev")
+			if err != nil {
+				t.Errorf("Expected no error. Got: %s", err)
+			}
+			if result.Empty() {
 				tt.Errorf("Expected  result to not be nil")
 			}
 		})
 
 		tt.Run("for two.domain.dev", func(tt *testing.T) {
-			if result := config.GetService("two.domain.dev"); result.Empty() {
+			result, err := config.GetService("two.domain.dev")
+			if err != nil {
+				t.Errorf("Expected no error. Got: %s", err)
+			}
+
+			if result.Empty() {
 				tt.Errorf("Expected  result to not be nil")
 			}
 		})
@@ -122,7 +160,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		//we clean after the test. Otherwise the next test will fail
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := Service{Name: "testservice", URL: "http://localhost:8080"}
+		service := UnsafeNewService("testservice", "http://localhost:8080")
 
 		if err := AddService("../.ergo", service); err != nil {
 			tt.Errorf("Expected service to be added")
@@ -140,7 +178,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 		//we clean after the test. Otherwise the next test will fail
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := Service{Name: "servicetoberemoved", URL: "http://localhost:8083"}
+		service := UnsafeNewService("servicetoberemoved", "http://localhost:8083")
 
 		if err := RemoveService("../.ergo", service); err != nil {
 			tt.Errorf("Expected no error while removing service. Got %v\n", err)
@@ -173,7 +211,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It fails to remove service with invalid path", func(tt *testing.T) {
-		service := Service{Name: "testservice", URL: "http://localhost:8080"}
+		service := UnsafeNewService("testservice", "http://localhost:8080")
 
 		if err := RemoveService("foobarinvalid", service); err == nil {
 			tt.Errorf("Expected failure to read invalid path.\n")
@@ -189,7 +227,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 
 		defer ioutil.WriteFile("../.ergo", fileContent, 0755)
 
-		service := Service{Name: "service-without-url", URL: ""}
+		service := UnsafeNewService("service-without-url", "")
 		AddService(config.ConfigFile, service)
 		err = config.LoadServices()
 		if err == nil {

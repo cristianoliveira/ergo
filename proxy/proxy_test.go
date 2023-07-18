@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	// "net/http/httptest"
 	// "strings"
 	"net/url"
@@ -251,7 +252,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	}
 
 	service := config.Services["test2.dev"]
-	if service.URL != "http://localhost:9900" {
+	if service.URL.String() != "http://localhost:9900" {
 		t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", service.URL, service.Name)
 	}
 }

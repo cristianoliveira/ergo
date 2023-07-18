@@ -12,7 +12,7 @@ func TestRunCommand(t *testing.T) {
 
 	t.Run("when domain config has wrong domain format", func(tt *testing.T) {
 		config := buildConfig([]proxy.Service{
-			{Name: "test.dev", URL: "localhost:9999"},
+			proxy.UnsafeNewService("test.dev", "localhost:9999"),
 		})
 
 		config.Domain = "foobar"

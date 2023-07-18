@@ -11,7 +11,7 @@ import (
 
 func TestSetup(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		proxy.UnsafeNewService("test.dev", "localhost:9999"),
 	})
 
 	command := SetupCommand{System: "inexistent-os", Remove: false}
@@ -73,7 +73,7 @@ func (r *TestRunnerWithOutput) Run(command string, args ...string) ([]byte, erro
 
 func TestSetupLinuxGnome(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		proxy.UnsafeNewService("test.dev", "localhost:9999"),
 	})
 
 	t.Run("when setting up", func(t *testing.T) {
@@ -141,7 +141,7 @@ func TestSetupLinuxGnome(t *testing.T) {
 
 func TestSetupOSX(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		proxy.UnsafeNewService("test.dev", "localhost:999"),
 	})
 
 	t.Run("when setting up", func(t *testing.T) {
@@ -227,7 +227,7 @@ func TestSetupOSX(t *testing.T) {
 
 func TestSetupWindows(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:999"},
+		proxy.UnsafeNewService("test.dev", "localhost:999"),
 	})
 
 	t.Run("when setting up", func(t *testing.T) {

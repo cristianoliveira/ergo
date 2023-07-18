@@ -12,17 +12,6 @@ import (
 	"time"
 )
 
-// Service holds the details of the service (Name and URL)
-type Service struct {
-	Name string
-	URL  string
-}
-
-// Empty service means no name or no url
-func (s Service) Empty() bool {
-	return s.Name == "" || s.URL == ""
-}
-
 // Config holds the configuration for the proxy.
 type Config struct {
 	mutex      sync.Mutex
@@ -102,7 +91,7 @@ var once sync.Once
 var domainPattern *regexp.Regexp
 
 // GetService gets the service for the given host.
-func (c *Config) GetService(host string) Service {
+func (c *Config) GetService(host string) (*Service, error) {
 	once.Do(func() {
 		domainPattern = regexp.MustCompile(`((.*)\.?)` + c.Domain)
 	})
@@ -111,11 +100,11 @@ func (c *Config) GetService(host string) Service {
 	// Example: host = "http://one.domain.dev"
 	// parts = [[one.domain.dev one.domain one.domain]]
 	if len(parts) < 1 {
-		return Service{}
+		return nil, fmt.Errorf("No service found for host %s \n", host)
 	}
 
 	if len(parts[0]) < 3 {
-		return Service{}
+		return nil, fmt.Errorf("No host is invalid %s", host)
 	}
 
 	domainWithoutTld := parts[0][2]
@@ -127,13 +116,18 @@ func (c *Config) GetService(host string) Service {
 			if strings.Contains(service.Name, "*") {
 				serviceNameWithoutWildCard := strings.Replace(service.Name, "*", "", -1)
 				if strings.Contains(domainWithoutTld, serviceNameWithoutWildCard) {
-					return service
+					return &service, nil
 				}
 			}
 		}
 	}
 
-	return c.Services[domainWithoutTld]
+	service, ok := c.Services[domainWithoutTld]
+	if !ok {
+		return nil, fmt.Errorf("No service found for host %s", host)
+	}
+
+	return &service, nil
 }
 
 // GetProxyPacURL returns the correct url for the pac file
@@ -219,7 +213,7 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 		pair := strings.Split(line, " ")
 
 		if len(pair) != 2 {
-			return nil, fmt.Errorf("File error: invalid format `%v` expected `{NAME} {URL}`", line)
+			return nil, fmt.Errorf("invalid service format `%v` expected `{NAME} {URL}`", line)
 		}
 
 		urlPattern := regexp.MustCompile(`(\w+\:\/\/)?([^ ]+):(\d+)`)
@@ -232,11 +226,12 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 			name, urlWithPort = pair[0], pair[1]
 		}
 
-		if name == "" || urlWithPort == "" {
-			return nil, fmt.Errorf("File error: invalid format `%v` expected `{NAME} {URL}`", line)
+		service, err := NewService(name, urlWithPort)
+		if err != nil {
+			return nil, fmt.Errorf("invalid service format `%v`. %v`", line, err)
 		}
 
-		services = append(services, Service{Name: name, URL: urlWithPort})
+		services = append(services, service)
 	}
 
 	return services, nil
@@ -252,7 +247,7 @@ func AddService(filepath string, service Service) error {
 
 	defer file.Close()
 
-	serviceStr := service.Name + " " + service.URL + "\n"
+	serviceStr := service.Name + " " + service.URL.String() + "\n"
 	_, err := file.WriteString(serviceStr)
 	return err
 }
@@ -265,7 +260,7 @@ func RemoveService(filepath string, service Service) error {
 		return err
 	}
 
-	serviceRegex := regexp.MustCompile(service.Name + "\\s+" + service.URL + "\n")
+	serviceRegex := regexp.MustCompile(service.Name + "\\s+" + service.URL.String() + "\n")
 
 	file = serviceRegex.ReplaceAll(file, []byte("\n"))
 
