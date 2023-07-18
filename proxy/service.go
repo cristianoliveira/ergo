@@ -12,6 +12,7 @@ type Service struct {
 	URL  *url.URL
 }
 
+// NewService creates a new service from a name and a URL
 func NewService(name string, rawURL string) (Service, error) {
 	if name == "" || rawURL == "" {
 		return Service{}, errors.New("Name and URL are required")
@@ -30,10 +31,12 @@ func (s Service) Empty() bool {
 	return s.Name == "" || s.URL == nil
 }
 
+// UnsafeNewService creates a new service from a name and a URL
+// without checking if the URL is valid. Must only be used in tests
 func UnsafeNewService(name string, rawURL string) Service {
 	url, err := url.Parse(rawURL)
 	if err != nil {
-		fmt.Println("Invalid URL, example of a valid format is http://example.com:8080")
+		fmt.Printf("Invalid URL %s", rawURL)
 	}
 	return Service{Name: name, URL: url}
 }

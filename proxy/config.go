@@ -100,7 +100,7 @@ func (c *Config) GetService(host string) (*Service, error) {
 	// Example: host = "http://one.domain.dev"
 	// parts = [[one.domain.dev one.domain one.domain]]
 	if len(parts) < 1 {
-		return nil, fmt.Errorf("No service found for host %s \n", host)
+		return nil, fmt.Errorf("no service found for host %s", host)
 	}
 
 	if len(parts[0]) < 3 {
