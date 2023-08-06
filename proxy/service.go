@@ -19,6 +19,10 @@ func NewService(name string, rawURL string) (Service, error) {
 		return Service{}, errors.New("Name and URL are required")
 	}
 
+	if strings.Contains(name, "://") || strings.Contains(name, ":")  {
+		return Service{}, fmt.Errorf("Name '%v' is invalid, it can't be an URL", name)
+	}
+
 	url, err := url.ParseRequestURI(rawURL)
 	isInvalidHostname := len(url.Hostname()) == 0 || strings.Contains(url.Hostname(), ":")
 	if err != nil || isInvalidHostname {
