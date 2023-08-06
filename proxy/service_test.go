@@ -1,4 +1,4 @@
-package proxy;
+package proxy
 
 import (
 	"testing"
@@ -6,60 +6,58 @@ import (
 
 func TestNewService(t *testing.T) {
 	testCases := []struct {
-		name    string;
-
-		serviceName string;
-		serviceURL  string;
+		title       string
+		serviceName string
+		serviceURL  string
 
 		expectError bool
 	}{
 		{
-			name:    "empty name",
-			serviceName: "",
-			serviceURL:  "http://localhost:8080",
-			expectError: true,
-		},
-		{
-			name:    "empty url",
-			serviceName: "test",
-			serviceURL:  "",
-			expectError: true,
-		},
-		{
-			name:    "a valid service with name and an valid URL",
+			title:       "a service with name and url is valid",
 			serviceName: "test",
 			serviceURL:  "http://localhost:8080",
 			expectError: false,
 		},
 		{
-			name:    "invalid url - double port",
+			title:       "a service with empty name is invalid",
+			serviceName: "",
+			serviceURL:  "http://localhost:8080",
+			expectError: true,
+		},
+		{
+			title:       "a service with empty url is invalid",
+			serviceName: "test",
+			serviceURL:  "",
+			expectError: true,
+		},
+		{
+			title:       "a service with doubled port url is invalid",
 			serviceName: "test",
 			serviceURL:  "http://localhost:8080:8888",
 			expectError: true,
 		},
 		{
-			name:    "invalid url - missing scheme",
+			title:       "a service with missing scheme in URL is invalid",
 			serviceName: "test",
 			serviceURL:  "localhost:8080",
 			expectError: true,
 		},
 		{
-			name:    "invalid name - name contains an URL",
+			title:       "a service with name containing an URL is invalid",
 			serviceName: "http://localhost:3333",
 			serviceURL:  "http://localhost:8080",
 			expectError: true,
 		},
 		{
-			name:    "invalid name - name contains an URL port",
+			title:       "a service with name containing a port is invalid",
 			serviceName: "localhost:3333",
 			serviceURL:  "http://localhost:8080",
 			expectError: true,
 		},
-
 	}
 
 	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+		t.Run(tc.title, func(t *testing.T) {
 			_, err := NewService(tc.serviceName, tc.serviceURL)
 			if (err != nil) != tc.expectError {
 				t.Errorf("NewService() error = %v, expectError %v", err, tc.expectError)
