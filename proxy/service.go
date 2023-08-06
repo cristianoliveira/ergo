@@ -37,14 +37,21 @@ func (s Service) Empty() bool {
 	return s.Name == "" || s.URL == nil
 }
 
+// String returns a string representation of the service
+// Example: 
+//  Service{Name: "test", URL: "http://localhost:8080"}
+//  produces the string "test http://localhost:8080"
 func (s Service) String() string {
 	return s.Name + " " + s.URL.String()
 }
 
+// GetOriginalURL returns the original URL of the service
 func (s Service) GetOriginalURL() *url.URL {
 	return s.URL
 }
 
+// GetServiceURL returns the local URL to be used
+// by the proxy server to redirect all request to the service
 func (s Service) GetServiceURL(localTLD string) string {
 	return fmt.Sprintf("%s://%s%s", s.URL.Scheme, s.Name, localTLD)
 }
