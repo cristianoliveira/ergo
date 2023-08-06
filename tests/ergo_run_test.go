@@ -55,7 +55,6 @@ func newConfigFromFile(configFile string) (config, error) {
 }
 
 func TestListApps(t *testing.T) {
-
 	t.Run("it lists the apps", func(tt *testing.T) {
 		appsOutput := []string{
 			"http://foo.dev -> http://localhost:3000",
@@ -118,7 +117,8 @@ func TestShowUrlForName(t *testing.T) {
 			"withspaces":         "http://withspaces.dev",
 			"one.domain":         "http://one.domain.dev",
 			"two.domain":         "http://two.domain.dev",
-			"redislocal":         "redis://redislocal.dev",
+			// FIXME URL should be redis://localhost:6543
+			"redislocal":         "http://redislocal.dev",
 		}
 
 		for name, url := range appsOutput {

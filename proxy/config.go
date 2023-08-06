@@ -247,7 +247,7 @@ func AddService(filepath string, service Service) error {
 
 	defer file.Close()
 
-	serviceStr := service.Name + " " + service.URL.String() + "\n"
+	serviceStr := service.String() + "\n"
 	_, err := file.WriteString(serviceStr)
 	return err
 }
@@ -259,7 +259,7 @@ func RemoveService(filepath string, service Service) error {
 		return err
 	}
 
-	serviceRegex := regexp.MustCompile(service.Name + "\\s+" + service.URL.String() + "\n")
+	serviceRegex := regexp.MustCompile(service.String() + "\n")
 
 	file = serviceRegex.ReplaceAll(file, []byte("\n"))
 

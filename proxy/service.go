@@ -19,7 +19,7 @@ func NewService(name string, rawURL string) (Service, error) {
 		return Service{}, errors.New("Name and URL are required")
 	}
 
-	if strings.Contains(name, "://") || strings.Contains(name, ":")  {
+	if strings.Contains(name, "://") || strings.Contains(name, ":") {
 		return Service{}, fmt.Errorf("Name '%v' is invalid, it can't be an URL", name)
 	}
 
@@ -35,6 +35,18 @@ func NewService(name string, rawURL string) (Service, error) {
 // Empty service means no name or no url
 func (s Service) Empty() bool {
 	return s.Name == "" || s.URL == nil
+}
+
+func (s Service) String() string {
+	return s.Name + " " + s.URL.String()
+}
+
+func (s Service) GetOriginalURL() *url.URL {
+	return s.URL
+}
+
+func (s Service) GetServiceURL(localTLD string) string {
+	return fmt.Sprintf("%s://%s%s", s.URL.Scheme, s.Name, localTLD)
 }
 
 // UnsafeNewService creates a new service from a name and a URL
