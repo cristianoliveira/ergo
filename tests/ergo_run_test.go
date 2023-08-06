@@ -63,7 +63,7 @@ func TestListApps(t *testing.T) {
 			"http://withspaces.dev -> http://localhost:8080",
 			"http://one.domain.dev -> http://localhost:8081",
 			"http://two.domain.dev -> http://localhost:8082",
-			"http://redis://redislocal.dev -> redis://localhost:6543",
+			"http://redislocal.dev -> redis://localhost:6543",
 		}
 
 		cmd := ergo("list")
@@ -91,7 +91,7 @@ func TestListAppNames(t *testing.T) {
 			"withspaces -> http://localhost:8080",
 			"one.domain -> http://localhost:8081",
 			"two.domain -> http://localhost:8082",
-			"redis://redislocal -> redis://localhost:6543",
+			"redislocal -> redis://localhost:6543",
 		}
 
 		cmd := ergo("list-names", "foo")
@@ -118,7 +118,7 @@ func TestShowUrlForName(t *testing.T) {
 			"withspaces":         "http://withspaces.dev",
 			"one.domain":         "http://one.domain.dev",
 			"two.domain":         "http://two.domain.dev",
-			"redis://redislocal": "redis://redislocal.dev",
+			"redislocal":         "redis://redislocal.dev",
 		}
 
 		for name, url := range appsOutput {
