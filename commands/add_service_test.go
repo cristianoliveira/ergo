@@ -8,7 +8,7 @@ import (
 
 func TestAddServiceAllreadyThere(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.UnsafeNewService("test", "localhost:9999"),
+		proxy.UnsafeNewService("test", "http://localhost:9999"),
 	})
 
 	service := proxy.Service{Name: "test"}
@@ -22,7 +22,7 @@ func TestAddServiceAllreadyThere(t *testing.T) {
 
 func TestAddServiceAddOK(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		proxy.UnsafeNewService("test.dev", "localhost:9999"),
+		proxy.UnsafeNewService("test.dev", "http://localhost:9999"),
 	})
 
 	service := proxy.UnsafeNewService("newtest.dev", "http://localhost:3333")

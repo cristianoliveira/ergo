@@ -11,12 +11,12 @@ import (
 // USAGE:
 // ergo remove myservicename
 type RemoveServiceCommand struct {
-	Service proxy.Service
+	SearchTerm string
 }
 
-func findService(service proxy.Service, services map[string]proxy.Service) (*proxy.Service, bool) {
+func findService(searchTerm string, services map[string]proxy.Service) (*proxy.Service, bool) {
 	for _, srv := range services {
-		if srv.URL.String() == service.URL.String() || srv.Name == service.Name {
+		if srv.URL.String() == searchTerm || srv.Name == searchTerm {
 			return &srv, true
 		}
 	}
@@ -26,10 +26,10 @@ func findService(service proxy.Service, services map[string]proxy.Service) (*pro
 
 // Execute apply the RemoveServiceCommand
 func (c RemoveServiceCommand) Execute(config *proxy.Config) (string, error) {
-	srv, isPresent := findService(c.Service, config.Services)
+	srv, isPresent := findService(c.SearchTerm, config.Services)
 
 	if !isPresent {
-		return "", fmt.Errorf("Service %s not found", c.Service.Name)
+		return "", fmt.Errorf("Service %s not found", c.SearchTerm)
 	}
 
 	err := proxy.RemoveService(config.ConfigFile, *srv)

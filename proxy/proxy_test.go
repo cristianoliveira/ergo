@@ -172,7 +172,7 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -216,7 +216,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -285,7 +285,7 @@ func TestProxyFunction(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -343,7 +343,7 @@ func TestListFunction(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 

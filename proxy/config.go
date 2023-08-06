@@ -256,7 +256,6 @@ func AddService(filepath string, service Service) error {
 func RemoveService(filepath string, service Service) error {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
-		log.Printf("File error: %v\n", err)
 		return err
 	}
 

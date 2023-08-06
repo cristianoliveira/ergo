@@ -679,28 +679,28 @@ func TestSubCommandFlags(t *testing.T) {
 		}{
 			{
 				title: "when -domain flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-domain", ".foo"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-domain", ".foo"},
 				config: &proxy.Config{
 					Domain: ".foo",
 				},
 			},
 			{
 				title: "when -config flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-config", ".file"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-config", ".file"},
 				config: &proxy.Config{
 					ConfigFile: ".file",
 				},
 			},
 			{
 				title: "when -p flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-p", "2002"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-p", "2002"},
 				config: &proxy.Config{
 					Port: "2002",
 				},
 			},
 			{
 				title: "when -V flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-V"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-V"},
 				config: &proxy.Config{
 					Verbose: true,
 				},

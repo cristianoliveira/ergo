@@ -114,14 +114,10 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		}
 
 		nameOrURL := args[2]
-		service, err := proxy.NewService(nameOrURL, nameOrURL)
-		if err != nil {
-			log.Fatal(err)
-		}
 
 		command.Parse(args[3:])
 
-		return commands.RemoveServiceCommand{Service: service}, config
+		return commands.RemoveServiceCommand{SearchTerm: nameOrURL}, config
 	}
 
 	return nil, nil

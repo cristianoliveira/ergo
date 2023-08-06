@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 // Service holds the details of the service (Name and URL)
@@ -18,8 +19,9 @@ func NewService(name string, rawURL string) (Service, error) {
 		return Service{}, errors.New("Name and URL are required")
 	}
 
-	url, err := url.Parse(rawURL)
-	if err != nil {
+	url, err := url.ParseRequestURI(rawURL)
+	isInvalidHostname := len(url.Hostname()) == 0 || strings.Contains(url.Hostname(), ":")
+	if err != nil || isInvalidHostname {
 		return Service{}, fmt.Errorf("URL '%v' is invalid, example of valid URL 'http://example.com:8080'", rawURL)
 	}
 
