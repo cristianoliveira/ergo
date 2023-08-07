@@ -9,7 +9,7 @@ import (
 
 func TestURLCommand(t *testing.T) {
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:9999"},
+		proxy.UnsafeNewService("test.dev", "localhost:9999"),
 	})
 
 	t.Run("when found the service", func(tt *testing.T) {

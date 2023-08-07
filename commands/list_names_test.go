@@ -10,7 +10,7 @@ import (
 func TestListNames(t *testing.T) {
 
 	config := buildConfig([]proxy.Service{
-		{Name: "test.dev", URL: "localhost:9999"},
+		proxy.UnsafeNewService("test.dev", "localhost:9999"),
 	})
 
 	out, _ := ListNameCommand{}.Execute(config)

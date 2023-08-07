@@ -98,8 +98,11 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		}
 
 		name := args[2]
-		url := args[3]
-		service := proxy.Service{Name: name, URL: url}
+		rawURL := args[3]
+		service, err := proxy.NewService(name, rawURL)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		command.Parse(args[4:])
 
@@ -111,11 +114,10 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		}
 
 		nameOrURL := args[2]
-		service := proxy.Service{Name: nameOrURL, URL: nameOrURL}
 
 		command.Parse(args[3:])
 
-		return commands.RemoveServiceCommand{Service: service}, config
+		return commands.RemoveServiceCommand{SearchTerm: nameOrURL}, config
 	}
 
 	return nil, nil

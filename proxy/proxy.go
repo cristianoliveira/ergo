@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
-	"net/url"
 	"strings"
 	"time"
 )
@@ -25,9 +24,13 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 			fmt.Println(formatRequest(req))
 		}
 
-		service := config.GetService(req.URL.Host)
-		if !service.Empty() {
-			target, _ := url.Parse(service.URL)
+		service, err := config.GetService(req.URL.Host)
+		if err != nil {
+			fmt.Printf("Error getting service: %v", err)
+		}
+
+		if service != nil {
+			target := service.URL
 			targetQuery := target.RawQuery
 
 			req.URL.Scheme = target.Scheme
@@ -86,7 +89,7 @@ func list(config *Config) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		for _, s := range config.Services {
 			localURL := `http://` + s.Name + config.Domain
-			fmt.Fprintf(w, "- %s -> %s \n", localURL, s.URL)
+			fmt.Fprintf(w, "- %s -> %s \n", localURL, s.URL.String())
 		}
 	}
 }

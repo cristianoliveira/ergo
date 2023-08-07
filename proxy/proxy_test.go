@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	// "net/http/httptest"
 	// "strings"
 	"net/url"
@@ -21,7 +22,7 @@ func TestWhenHasCollectionFile(t *testing.T) {
 	config.ConfigFile = "../.ergo"
 	err := config.LoadServices()
 	if err != nil {
-		t.Fatal("could not load requied configuration file for tests")
+		t.Fatalf("could not load requied configuration file for tests. %s", err)
 	}
 
 	proxy := NewErgoProxy(config)
@@ -171,7 +172,7 @@ func TestPollConfigChangeWithInvalidConfigFile(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -215,7 +216,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -251,7 +252,7 @@ func TestPollConfigChangeWithValidConfigFile(t *testing.T) {
 	}
 
 	service := config.Services["test2.dev"]
-	if service.URL != "http://localhost:9900" {
+	if service.URL.String() != "http://localhost:9900" {
 		t.Fatalf("Expected to get 1 service with the URL http://localhost:9900 and the name test.dev. Got the URL: %s and the name: %s", service.URL, service.Name)
 	}
 }
@@ -284,7 +285,7 @@ func TestProxyFunction(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 
@@ -342,7 +343,7 @@ func TestListFunction(t *testing.T) {
 
 	defer os.Remove(tmpfile.Name())
 
-	if _, err = tmpfile.Write([]byte("test.dev localhost:9999")); err != nil {
+	if _, err = tmpfile.Write([]byte("test.dev http://localhost:9999")); err != nil {
 		t.Fatalf("No error expected while writing initial config to a temporary file. Got %s.", err.Error())
 	}
 

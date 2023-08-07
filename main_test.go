@@ -98,8 +98,8 @@ func (r *TestRunner) Run(command string, args ...string) ([]byte, error) {
 
 func TestListCommand(t *testing.T) {
 	services := map[string]proxy.Service{
-		"foo": {Name: "foo", URL: "http://localhost:3000"},
-		"bar": {Name: "bar", URL: "http://localhost:5000"},
+		"foo": proxy.UnsafeNewService("foo", "http://localhost:3000"),
+		"bar": proxy.UnsafeNewService("bar", "http://localhost:5000"),
 	}
 
 	t.Run("list services", func(tt *testing.T) {
@@ -126,8 +126,8 @@ func TestListCommand(t *testing.T) {
 
 func TestListNamesCommand(t *testing.T) {
 	services := map[string]proxy.Service{
-		"foo": {Name: "foo", URL: "http://localhost:3000"},
-		"bar": {Name: "bar", URL: "http://localhost:5000"},
+		"foo": proxy.UnsafeNewService("foo", "http://localhost:3000"),
+		"bar": proxy.UnsafeNewService("bar", "http://localhost:5000"),
 	}
 
 	t.Run("list names services", func(tt *testing.T) {
@@ -276,8 +276,8 @@ func TestUrlCommand(t *testing.T) {
 	commandName := "URLCommand"
 
 	services := map[string]proxy.Service{
-		"foo": {Name: "foo", URL: "http://localhost:3000"},
-		"bar": {Name: "bar", URL: "http://localhost:5000"},
+		"foo": proxy.UnsafeNewService("foo", "http://localhost:3000"),
+		"bar": proxy.UnsafeNewService("bar", "http://localhost:5000"),
 	}
 
 	t.Run("when there is the service", func(tt *testing.T) {
@@ -356,8 +356,8 @@ func TestRunCommand(t *testing.T) {
 func TestAddCommand(t *testing.T) {
 	t.Run("success", func(tt *testing.T) {
 		services := map[string]proxy.Service{
-			"foo": {Name: "foo", URL: "http://localhost:3000"},
-			"bar": {Name: "bar", URL: "http://localhost:5000"},
+			"foo": proxy.UnsafeNewService("foo", "http://localhost:3000"),
+			"bar": proxy.UnsafeNewService("bar", "http://localhost:5000"),
 		}
 
 		tmpfile, err := ioutil.TempFile("", "testaddservice")
@@ -444,8 +444,8 @@ func TestAddCommand(t *testing.T) {
 func TestRemoveCommand(t *testing.T) {
 	t.Run("success", func(tt *testing.T) {
 		services := map[string]proxy.Service{
-			"foo": {Name: "foo", URL: "http://localhost:3000"},
-			"bar": {Name: "bar", URL: "http://localhost:5000"},
+			"foo": proxy.UnsafeNewService("foo", "http://localhost:3000"),
+			"bar": proxy.UnsafeNewService("bar", "http://localhost:5000"),
 		}
 
 		tmpfile, err := ioutil.TempFile("", "testaddservice")
@@ -679,28 +679,28 @@ func TestSubCommandFlags(t *testing.T) {
 		}{
 			{
 				title: "when -domain flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-domain", ".foo"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-domain", ".foo"},
 				config: &proxy.Config{
 					Domain: ".foo",
 				},
 			},
 			{
 				title: "when -config flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-config", ".file"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-config", ".file"},
 				config: &proxy.Config{
 					ConfigFile: ".file",
 				},
 			},
 			{
 				title: "when -p flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-p", "2002"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-p", "2002"},
 				config: &proxy.Config{
 					Port: "2002",
 				},
 			},
 			{
 				title: "when -V flag is passed for " + cmd,
-				args:  []string{"ergo", cmd, "foo", "bla", "-V"},
+				args:  []string{"ergo", cmd, "foo", "http://bla", "-V"},
 				config: &proxy.Config{
 					Verbose: true,
 				},
