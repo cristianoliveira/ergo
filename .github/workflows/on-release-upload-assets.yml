@@ -10,6 +10,7 @@ jobs:
       GOOS: darwin
       GOARCH: amd64
       TARGET: darwin-amd64
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
 
     runs-on: macos-latest
 
@@ -18,9 +19,6 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "1.18"
-
-      - name: Release info
-        run: echo "RELEASE_TAG=${GITHUB_REF_NAME//(\/|\.)/_}" >> $GITHUB_ENV
 
       - name: Create artifacts for darwin
         run: sh ci/script.sh
@@ -39,6 +37,7 @@ jobs:
       GOOS: linux
       GOARCH: amd64
       TARGET: linux-amd64
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
 
     runs-on: ubuntu-latest
 
@@ -47,9 +46,6 @@ jobs:
       - uses: actions/setup-go@v3
         with:
           go-version: "1.18"
-
-      - name: Release info
-        run: echo "RELEASE_TAG=${GITHUB_REF_NAME//(\/|\.)/_}" >> $GITHUB_ENV
 
       - name: Create artifacts for linux
         run: sh ci/script.sh
