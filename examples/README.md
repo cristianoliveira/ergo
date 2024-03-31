@@ -23,9 +23,9 @@ On `./examples/.ergo` are the configured domains.
 
 Simple :)
 
-### Using local command to bind to localhost:80
+### Using localhost loopback
 
-If you want to bind to `localhost:80` you can use the `local` command
+If you want to use subdomains with localhost loopback run the following commands:
 
 ```bash
 # It requires sudo to bind to port 80
