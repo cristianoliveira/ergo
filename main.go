@@ -56,7 +56,6 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 	command.StringVar(&argDomain, "domain", "", "Set a custom domain for services")
 	command.StringVar(&argPort, "p", "", "Set port to the proxy")
 	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
-	fmt.Printf("@@@@@@@@ argPort %+v \n", argPort)
 
 	switch args[1] {
 	case "list":
