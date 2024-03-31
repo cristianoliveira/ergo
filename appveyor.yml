@@ -16,7 +16,7 @@ init:
 # Build
 
 install:
-  - set PATH=C:\go117;%PATH%
+  - set PATH=C:\go122;%PATH%
   - go version
   - go env
 
