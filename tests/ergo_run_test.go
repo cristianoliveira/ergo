@@ -62,6 +62,7 @@ func TestListApps(t *testing.T) {
 			"http://withspaces.dev -> http://localhost:8080",
 			"http://one.domain.dev -> http://localhost:8081",
 			"http://two.domain.dev -> http://localhost:8082",
+			"http://withextraspace.dev -> http://localhost:2222",
 			"http://redislocal.dev -> redis://localhost:6543",
 		}
 

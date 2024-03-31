@@ -39,7 +39,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 9
+		expected := 10
 		service := len(config.Services)
 
 		if expected != service {
@@ -201,6 +201,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 			two.domain       http://localhost:8082
 			redislocal       redis://localhost:6543
 			*.wildcard http://localhost:4000
+			withextraspace http://localhost:2222  
 		`)
 
 		if !bytes.Equal(expected, newFileContent) {

@@ -208,6 +208,8 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
+		// trim spaces
+		line = strings.TrimSpace(line)
 		line = regexp.MustCompile(`\s+`).ReplaceAllString(line, " ")
 
 		pair := strings.Split(line, " ")
