@@ -23,6 +23,8 @@ See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/exam
   - [osx](#osx)
   - [linux](#linux)
   - [windows](#windows)
+  - [nix](#nix)
+  - [from source](#go)
 * [Usage](#usage)
 * [Configuration](#configuration)
 * [Testing](#run-tests)
@@ -77,7 +79,7 @@ _You can also find the Windows executables in [release](https://github.com/crist
 ***Disclaimer:***
 I use Unix-based systems on a daily basis, so I am not able to test each build alone. :(
 
-### Nix with flakes
+### Nix
 
 Create a `flake.nix` with the following content:
 
