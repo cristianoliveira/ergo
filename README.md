@@ -87,11 +87,15 @@ Make sure you have `$GOPATH/bin` in your path: `export PATH=$PATH:$GOPATH/bin`
 
 Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`domain`+`space`+`url`). The main difference is it also considers the specified port.
 
-### Easy route
+### Using .localhost loopback
+ 
+Run `ergo local` it'll attempt to bind to `localhost:80` and access your services through `http://serviceone.localhost` and `http://servicetwo.localhost`. (Check [examples](https://github.com/cristianoliveira/ergo/tree/master/examples) for more)
 
-Run `ergo local` to bind to `localhost:80` and access your services through `http://serviceone.localhost` and `http://servicetwo.localhost`. (Check [examples](https://github.com/cristianoliveira/ergo/tree/master/examples) for more)
+**Note:** It requires sudo to bind to port 80.
 
-**Note:** It requires sudo to bind to port 80. You can give it a different port (`ergo local -p <port>) and access it through `http://serviceone.localhost:<port>`.
+You can give it a different port by `ergo local -p <port>` and access it through `http://serviceone.localhost:<port>`.
+
+You can also add a different loopback in `/etc/hosts` like `echo '127.0.0.1 localapp' >> /etc/hosts` and run `ergo local -domain localapp` to access your services through `http://serviceone.localapp` and `http://servicetwo.localapp`.
 
 ### Setting up as an webproxy
 
