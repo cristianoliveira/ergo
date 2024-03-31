@@ -8,3 +8,4 @@ one.domain       http://localhost:8081
 two.domain       http://localhost:8082
 redislocal       redis://localhost:6543
 *.wildcard http://localhost:3030
+withextraspace http://localhost:2222  
