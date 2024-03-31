@@ -1,6 +1,6 @@
 module github.com/cristianoliveira/ergo
 
-go 1.21
+go 1.22
 
 require (
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
