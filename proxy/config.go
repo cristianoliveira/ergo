@@ -199,7 +199,7 @@ func (c *Config) WatchConfigFile(tickerChan <-chan time.Time) {
 func readServicesFromFile(filepath string) ([]Service, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
-		return nil, fmt.Errorf("file error: %v", err)
+		return nil, fmt.Errorf("issue while reading config (%s) file cause: %v", filepath, err)
 	}
 	defer file.Close()
 
