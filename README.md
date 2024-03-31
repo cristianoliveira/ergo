@@ -221,7 +221,7 @@ ephemeral setup. Those scripts set the proxy only while `ergo` is running.
 
 ## Development
 
-Minimal required golang version `go1.17.6`.
+Minimal required golang version `go1.22`.
 We recommend using [GVM](https://github.com/moovweb/gvm) for managing
 your go versions.
 
