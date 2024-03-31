@@ -48,12 +48,15 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		return nil, nil
 	}
 
+	var argPort string
+	var argDomain string
 	config := &proxy.Config{}
 	command := flag.NewFlagSet(args[1], flag.ExitOnError)
 	command.StringVar(&config.ConfigFile, "config", "", "Set the services file")
-	command.StringVar(&config.Domain, "domain", "", "Set a custom domain for services")
-	command.StringVar(&config.Port, "p", "", "Set port to the proxy")
+	command.StringVar(&argDomain, "domain", "", "Set a custom domain for services")
+	command.StringVar(&argPort, "p", "", "Set port to the proxy")
 	command.BoolVar(&config.Verbose, "V", false, "Set verbosity on proxy output")
+	fmt.Printf("@@@@@@@@ argPort %+v \n", argPort)
 
 	switch args[1] {
 	case "list":
@@ -88,6 +91,29 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 		return commands.URLCommand{FilterName: name}, config
 
 	case "run":
+		if argPort != "" {
+			config.Port = argPort
+		}
+		if argDomain != "" {
+			config.Domain = argDomain
+		}
+
+		command.Parse(args[2:])
+
+		return commands.RunCommand{}, config
+
+	case "local":
+		if argPort != "" {
+			config.Port = argPort
+		} else {
+			config.Port = "80"
+		}
+		if argDomain != "" {
+			config.Domain = argDomain
+		} else {
+			config.Domain = ".localhost"
+		}
+
 		command.Parse(args[2:])
 
 		return commands.RunCommand{}, config
