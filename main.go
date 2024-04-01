@@ -92,6 +92,18 @@ func prepareSubCommand(args []string) (commands.Command, *proxy.Config) {
 
 		return commands.RunCommand{}, config
 
+	case "local":
+		if config.Domain == "" {
+			config.Domain = ".localhost"
+		}
+		if config.Port == "" {
+			config.Port = "80"
+		}
+
+		command.Parse(args[2:])
+
+		return commands.RunCommand{}, config
+
 	case "add":
 		if len(args) < 4 {
 			return nil, nil
