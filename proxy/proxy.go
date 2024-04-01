@@ -62,7 +62,7 @@ func ServeProxy(config *Config) error {
 
 	http.HandleFunc("/proxy.pac", proxy(config))
 
-	http.HandleFunc("/_ergo/list", list(config))
+	http.HandleFunc("/__ergo__/", list(config))
 
 	http.Handle("/", NewErgoProxy(config))
 
