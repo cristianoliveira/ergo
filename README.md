@@ -136,7 +136,7 @@ Ergo looks for a `.ergo` file inside the current directory. It must contain the 
  
 Run `ergo local` it'll attempt to bind to `localhost:80` and listen for requests to your services as "subdmains" eg. `http://serviceone.localhost` and `http://servicetwo.localhost`. (Check [examples](https://github.com/cristianoliveira/ergo/tree/master/examples) for more)
 
-**Note:** It requires sudo to bind to port 80.
+**Note:** It __may__ requires sudo to bind to port 80.
 
 You can give it a different port by `ergo local -p <port>` and access it through `http://serviceone.localhost:<port>`.
 
