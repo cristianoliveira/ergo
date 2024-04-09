@@ -22,3 +22,14 @@ Then access: `http://serviceone.dev` and `http://servicetwo.dev`
 On `./examples/.ergo` are the configured domains.
 
 Simple :)
+
+### Using localhost loopback
+
+If you want to use subdomains with localhost loopback run the following commands:
+
+```bash
+# It requires sudo to bind to port 80
+sudo ergo local
+```
+
+Then access: `http://serviceone.localhost` and `http://servicetwo.localhost`

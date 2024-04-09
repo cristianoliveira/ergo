@@ -24,7 +24,7 @@ func NewErgoProxy(config *Config) *httputil.ReverseProxy {
 			fmt.Println(formatRequest(req))
 		}
 
-		service, err := config.GetService(req.URL.Host)
+		service, err := config.GetService(req.Host)
 		if err != nil {
 			fmt.Printf("Error getting service: %v", err)
 		}
@@ -62,7 +62,7 @@ func ServeProxy(config *Config) error {
 
 	http.HandleFunc("/proxy.pac", proxy(config))
 
-	http.HandleFunc("/_ergo/list", list(config))
+	http.HandleFunc("/__ergo__/", list(config))
 
 	http.Handle("/", NewErgoProxy(config))
 
