@@ -130,9 +130,18 @@ Make sure you have `$GOPATH/bin` in your path: `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
 
+### TL;DR;
+```bash
+python3 -m http.server 8800 &
+echo "http://localhost:8800 mylocalsite" > .ergo
+ergo local & # may need sudo since it binds to port 80
+curl http://mylocalsite.localhost
+```
+---
+
 Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`domain`+`space`+`url`). The main difference is it also considers the specified port.
 
-### Subdomains to http://localhost
+### Subdomains for localhost
  
 Run `ergo local` it'll attempt to bind to `localhost:80` and listen for requests to your services as "subdmains" eg. `http://serviceone.localhost` and `http://servicetwo.localhost`. (Check [examples](https://github.com/cristianoliveira/ergo/tree/master/examples) for more)
 
