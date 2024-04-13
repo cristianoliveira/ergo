@@ -17,6 +17,14 @@
 
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
+## TL;DR;
+```bash
+python3 -m http.server 8800 &
+echo "http://localhost:8800 mylocalsite" > .ergo
+ergo local & # may need sudo since it binds to port 80
+curl http://mylocalsite.localhost
+```
+
 ## Summary
 * [Philosophy](#philosophy)
 * [Installation](#installation)
@@ -129,15 +137,6 @@ go install github.com/cristianoliveira/ergo
 Make sure you have `$GOPATH/bin` in your path: `export PATH=$PATH:$GOPATH/bin`
 
 ## Usage
-
-### TL;DR;
-```bash
-python3 -m http.server 8800 &
-echo "http://localhost:8800 mylocalsite" > .ergo
-ergo local & # may need sudo since it binds to port 80
-curl http://mylocalsite.localhost
-```
----
 
 Ergo looks for a `.ergo` file inside the current directory. It must contain the names and URL of the services following the same format as `/etc/hosts` (`domain`+`space`+`url`). The main difference is it also considers the specified port.
 
