@@ -3,6 +3,7 @@ name: Release artifacts
 on:
   release:
     types: [created]
+  workflow_dispatch:
 
 jobs:
   build_release_osx:
