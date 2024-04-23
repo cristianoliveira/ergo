@@ -65,7 +65,7 @@ jobs:
       GOOS: windows
       GOARCH: amd64
       TARGET: windows-amd64
-      RELEASE_TAG: v0.4.0
+      RELEASE_TAG: ${{ github.event.release.tag_name }}
 
     runs-on: windows-latest
 
