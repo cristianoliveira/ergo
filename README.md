@@ -19,8 +19,8 @@ See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/exam
 
 ## TL;DR;
 ```bash
-python3 -m http.server 8800 &
-echo "http://localhost:8800 mylocalsite" > .ergo
+python3 -m http.server 8800 & # launch a web server listening on 8080
+echo "http://localhost:8800 mylocalsite" > .ergo # adds a service "mylocalsite" to ergo
 ergo local & # may need sudo since it binds to port 80
 curl http://mylocalsite.localhost
 ```
