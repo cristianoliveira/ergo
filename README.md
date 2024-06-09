@@ -17,12 +17,22 @@
 
 See more on [examples](https://github.com/cristianoliveira/ergo/tree/master/examples)
 
+## TL;DR;
+```bash
+python3 -m http.server 8800 &
+echo "http://localhost:8800 mylocalsite" > .ergo
+ergo local & # may need sudo since it binds to port 80
+curl http://mylocalsite.localhost
+```
+
 ## Summary
 * [Philosophy](#philosophy)
 * [Installation](#installation)
   - [osx](#osx)
   - [linux](#linux)
   - [windows](#windows)
+  - [nix](#nix)
+  - [from source](#go)
 * [Usage](#usage)
 * [Configuration](#configuration)
 * [Testing](#run-tests)
@@ -77,7 +87,7 @@ _You can also find the Windows executables in [release](https://github.com/crist
 ***Disclaimer:***
 I use Unix-based systems on a daily basis, so I am not able to test each build alone. :(
 
-### Nix with flakes
+### Nix
 
 Create a `flake.nix` with the following content:
 
