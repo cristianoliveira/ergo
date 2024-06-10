@@ -24,8 +24,12 @@ func NewService(name string, rawURL string) (Service, error) {
 	}
 
 	url, err := url.ParseRequestURI(rawURL)
+	if err != nil {
+		return Service{}, fmt.Errorf("Error parsing URL '%v': %v", rawURL, err)
+	}
+
 	isInvalidHostname := len(url.Hostname()) == 0 || strings.Contains(url.Hostname(), ":")
-	if err != nil || isInvalidHostname {
+	if isInvalidHostname {
 		return Service{}, fmt.Errorf("URL '%v' is invalid, example of valid URL 'http://example.com:8080'", rawURL)
 	}
 
