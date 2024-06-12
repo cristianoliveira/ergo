@@ -54,6 +54,12 @@ func TestNewService(t *testing.T) {
 			serviceURL:  "http://localhost:8080",
 			expectError: true,
 		},
+		{
+			title:       "a service containing an invalid URL is invalid",
+			serviceName: "ergoproxy",
+			serviceURL:  "http:///localhost:3000\n",
+			expectError: true,
+		},
 	}
 
 	for _, tc := range testCases {
