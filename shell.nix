@@ -4,6 +4,7 @@ pkgs.mkShell {
   # were you to to use nix-build not nix-shell and build whatever you were working on
   buildInputs = [
     pkgs.go
+    pkgs.funzzy
   ];
 
   shell = pkgs.zsh;
