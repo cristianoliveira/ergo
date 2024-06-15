@@ -228,6 +228,10 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 			name, urlWithPort = pair[0], pair[1]
 		}
 
+		if !strings.Contains(urlWithPort, "://") {
+			urlWithPort = "http://" + urlWithPort
+		}
+
 		service, err := NewService(name, urlWithPort)
 		if err != nil {
 			return nil, fmt.Errorf("invalid service format `%v`. %v`", line, err)
