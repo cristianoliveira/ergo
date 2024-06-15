@@ -219,13 +219,19 @@ func readServicesFromFile(filepath string) ([]Service, error) {
 		}
 
 		urlPattern := regexp.MustCompile(`(\w+\:\/\/)?([^ ]+):(\d+)`)
+		fmt.Printf("@@@@@@@@ urlPattern %+v \n", urlPattern)
 
 		var name, urlWithPort string
 		first := urlPattern.MatchString(pair[0])
+		fmt.Printf("@@@@@@@@ first %+v \n", first)
 		if first {
 			name, urlWithPort = pair[1], pair[0]
 		} else {
 			name, urlWithPort = pair[0], pair[1]
+		}
+
+		if !strings.Contains(urlWithPort, "://") {
+			urlWithPort = "http://" + urlWithPort
 		}
 
 		service, err := NewService(name, urlWithPort)
