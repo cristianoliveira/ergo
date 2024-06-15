@@ -1,0 +1,21 @@
+
+## Funzzy events file
+# more details see: https://github.com/cristianoliveira/funzzy
+#
+# list here all the events and the commands that it should execute
+
+- name: run my unit tests @quick
+  run: 'make test'
+  change: '**/*.go'
+
+- name: run lint @quick
+  run: 'make lint'
+  change: '**/*.go'
+
+- name: run tests with tag test-only @quick
+  run: 'go test -tags test-only'
+  change: '**/*.go'
+
+- name: run integration tests
+  run: 'make integration'
+  change: 'tests/*'
