@@ -39,7 +39,7 @@ func TestWhenHasErgoFile(t *testing.T) {
 	})
 
 	t.Run("It loads the services redirections", func(t *testing.T) {
-		expected := 10
+		expected := 11
 		service := len(config.Services)
 
 		if expected != service {

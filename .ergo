@@ -9,3 +9,4 @@ two.domain       http://localhost:8082
 redislocal       redis://localhost:6543
 *.wildcard http://localhost:3030
 withextraspace http://localhost:2222  
+127.0.0.1:3034 mysitewithip
