@@ -89,46 +89,9 @@ I use Unix-based systems on a daily basis, so I am not able to test each build a
 
 ### Nix
 
-Create a `flake.nix` with the following content:
-
-```nix
-{
-  description = "My ergo nix configuration";
-
-  inputs = { 
-    nixpkgs.url = "github:NixOS/nixpkgs";
-    mypkgs = {
-      url = "github:cristianoliveira/nixpkgs";
-      flake = false;
-    };
-  };
-
-  outputs = { self, nixpkgs, mypkgs, ... }:
-  { 
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ({ config, pkgs, ... }: { 
-         # Injects mypkgs into nixpkgs as custom
-         # and then can be referenced as `pkgs.custom.ergo`
-         nixpkgs.overlays = [ 
-            (final: prev: { custom = import mypkgs { inherit pkgs; }; })
-          ];
-        })
-
-        # Exemplo of installing a package from mypkgs
-        ({ config, pkgs, ... }: {
-          environment.systemPackages = [
-            pkgs.custom.ergo
-          ];
-        })
-      ];
-    };
-  };
-}
+```bash
+nix profile install 'github:cristianoliveira/nixpkgs#funzzy'
 ```
-
-Then run `nix develop` to enter the shell with `ergo` available.
 
 ### Go
 ```
