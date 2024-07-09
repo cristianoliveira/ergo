@@ -21,3 +21,11 @@ jobs:
 
       - name: Run integration tests
         run: make test-integration
+
+      - name: Check intall linux
+        shell: bash
+        run: curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | bash
+
+      - name: Check if executable is avaible
+        shell: bash
+        run: ergo -h # Check if ergo is available
