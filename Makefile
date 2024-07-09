@@ -92,5 +92,13 @@ setup-golant:
 deps:
 	@go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v ergo | go get
 
-nixbuild:
+.PHONY: nix-shell nix-build nix-check nix-hash-reset
+nix-check:
+	@nix flake check
+
+nix-build:
 	@nix build .#nightly
+	@nix build .#
+
+nix-hash-reset:
+	@sed -i '' 's/sha256-.*=//g' nix/package.nix

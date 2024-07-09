@@ -15,8 +15,9 @@
 
 - name: build nix
   run:
-    - nix flake check
-    - nix build .#nightly --verbose
+    - make nix-check
+    # if fails open nix.log which contains the new hash
+    - make nix-build 2> nix.log || nvim nix.log
   run_on_init: true
   change: 
     - '**/*.go'
