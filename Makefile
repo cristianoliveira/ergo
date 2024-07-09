@@ -91,3 +91,6 @@ setup-golant:
 
 deps:
 	@go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v ergo | go get
+
+nixbuild:
+	@nix build .#nightly

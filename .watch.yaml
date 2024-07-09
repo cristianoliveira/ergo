@@ -1,15 +1,29 @@
-
 ## Funzzy events file
 # more details see: https://github.com/cristianoliveira/funzzy
 #
 # list here all the events and the commands that it should execute
 
-- name: run my unit tests @quick
-  run: 'make test'
+- name: build @quick
+  run: 'make build'
+  run_on_init: true
   change: '**/*.go'
 
 - name: run lint @quick
   run: 'make lint'
+  run_on_init: true
+  change: '**/*.go'
+
+- name: build nix
+  run:
+    - nix flake check
+    - nix build .#nightly --verbose
+  run_on_init: true
+  change: 
+    - '**/*.go'
+    - '**/*.nix'
+
+- name: run my unit tests @quick
+  run: 'make test'
   change: '**/*.go'
 
 - name: run tests with tag test-only @quick
@@ -19,3 +33,14 @@
 - name: run integration tests
   run: 'make integration'
   change: 'tests/*'
+
+- name: after all stage file
+  run: 
+    - git add {{relative_filepath}}
+    - git add -p # start a quick review and stage the rest
+  change: 
+    - 'README.md'
+    - 'Makefile'
+    - '**/*.nix'
+    - '**/*.go'
+    - 'tests/*'
