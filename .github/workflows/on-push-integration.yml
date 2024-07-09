@@ -21,3 +21,7 @@ jobs:
 
       - name: Run integration tests
         run: make test-integration
+
+      - name: Check intall linux
+        run:
+          curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | sh
