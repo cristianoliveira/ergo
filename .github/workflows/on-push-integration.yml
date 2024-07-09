@@ -23,6 +23,7 @@ jobs:
         run: make test-integration
 
       - name: Check intall linux
+        shell: bash
         run: curl -s https://raw.githubusercontent.com/cristianoliveira/ergo/master/install.sh | bash
 
       - name: Check if executable is avaible
