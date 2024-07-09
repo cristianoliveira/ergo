@@ -20,4 +20,4 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: nix flake check
-      - run: nix build .#nightly --verbose
+      - run: make nix-build
