@@ -3,8 +3,9 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     utils.url = "github:numtide/flake-utils";
+    conixpkgs.url = "github:cristianoliveira/nixpkgs";
   };
-  outputs = { self, nixpkgs, utils }: 
+  outputs = { self, nixpkgs, utils, conixpkgs }: 
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { 
@@ -13,6 +14,7 @@
           overlays = [ 
               (_: prev: {
                 copkgs = {
+                  funzzy = conixpkgs.packages."${system}".funzzyNightly;
                   ergoProxy = pkgs.callPackage ./nix/package.nix { inherit pkgs; };
                   nightly = pkgs.callPackage ./nix/package-nightly.nix { 
                     inherit pkgs;
@@ -28,7 +30,6 @@
         };
 
         packages = {
-          default = pkgs.copkgs.ergoProxy;
           ergoProxy = pkgs.copkgs.ergoProxy;
           nightly = pkgs.copkgs.nightly;
         };

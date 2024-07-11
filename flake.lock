@@ -1,6 +1,39 @@
 {
   "nodes": {
+    "conixpkgs": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1720647500,
+        "narHash": "sha256-FOHwPz0T1G8kKniimwLLqSCCmTLtVOL2KB+47RCsndA=",
+        "owner": "cristianoliveira",
+        "repo": "nixpkgs",
+        "rev": "719721d44152f27ee90c38b0a10f55ceaa1f4eae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cristianoliveira",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1712077356,
+        "narHash": "sha256-JWHldkNh8fhYn+NfN9yizZEtfy8yPeimuNXwF66f1R0=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "8d5a3b099241f8fce1c66f0f1e1e11e30cf1a8cc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1720542800,
         "narHash": "sha256-ZgnNHuKV6h2+fQ5LuqnUaqZey1Lqqt5dTUAiAnqH0QQ=",
@@ -17,7 +50,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
+        "conixpkgs": "conixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "utils": "utils"
       }
     },

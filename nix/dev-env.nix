@@ -5,6 +5,7 @@
     buildInputs = [
       pkgs.go
       pkgs.copkgs.ergoProxy
+      pkgs.copkgs.funzzy
     ];
 
     shell = pkgs.zsh;
