@@ -90,10 +90,9 @@ I use Unix-based systems on a daily basis, so I am not able to test each build a
 ### Nix
 
 ```bash
-nix profile install 'github:cristianoliveira/ergo#nightly'
-// or
 nix profile install 'github:cristianoliveira/nixpkgs#ergoProxy'
 ```
+More examples see: https://github.com/cristianoliveira/nixpkgs
 
 ### Go
 ```
