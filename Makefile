@@ -97,8 +97,8 @@ nix-check:
 	@nix flake check
 
 nix-build:
-	@nix build .#nightly
-	@nix build .#
+	@nix build .#ergoProxyNigthly
+	@nix build .#ergoProxy
 
 nix-hash-reset:
 	@sed -i '' 's/sha256-.*=//g' nix/package.nix
