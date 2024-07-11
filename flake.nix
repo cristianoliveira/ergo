@@ -16,7 +16,7 @@
                 copkgs = {
                   funzzy = conixpkgs.packages."${system}".funzzyNightly;
                   ergoProxy = pkgs.callPackage ./nix/package.nix { inherit pkgs; };
-                  nightly = pkgs.callPackage ./nix/package-nightly.nix { 
+                  ergoProxyNigthly = pkgs.callPackage ./nix/package-nightly.nix { 
                     inherit pkgs;
                   };
                 };
@@ -31,7 +31,7 @@
 
         packages = {
           ergoProxy = pkgs.copkgs.ergoProxy;
-          nightly = pkgs.copkgs.nightly;
+          ergoProxyNigthly = pkgs.copkgs.ergoProxyNigthly;
         };
     });
 }
