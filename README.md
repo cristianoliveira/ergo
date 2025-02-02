@@ -90,7 +90,7 @@ I use Unix-based systems on a daily basis, so I am not able to test each build a
 ### Nix
 
 ```bash
-nix profile install 'github:cristianoliveira/nixpkgs#ergoProxy'
+nix profile install 'github:cristianoliveira/ergo'
 ```
 More examples see: https://github.com/cristianoliveira/nixpkgs
 
